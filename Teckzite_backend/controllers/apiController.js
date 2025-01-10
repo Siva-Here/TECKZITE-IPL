@@ -1,31 +1,5 @@
-const express=require('express')
-const app=express()
-const PORT=process.env.PORT||8000
-require('../db/conn')
-const jwt=require('jsonwebtoken')
-require('dotenv').config()
-const Player=require('../model/Players')
-const Team=require('../model/Teams')
-const authenticateAdmin=require('../middleware/auth')
-app.use(express.json())
-
-app.post("/api/login", (req, res) => {
-    try {
-        const adminID = req.body.userid;
-        const adminPD = req.body.password;
-        if (adminID === process.env.userid && adminPD === process.env.password) {
-            console.log('Admin LoggedIn')
-            const token = jwt.sign(adminID, process.env.SECRET_KEY)
-            res.status(200).json({ token })
-        } else {
-            res.status(401).json({ message: "Invalid credentials" });
-        }
-    } catch(err) {
-        res.status(400).json({ message: "Internal service error" });
-    }
-})
-
-app.get("/api/players",async(req,res)=>{
+const Player = require('../model/Players');
+const getplayers = async(req,res)=>{
     try{
         const players=await Player.find({})
         if(players.length>0){
@@ -40,9 +14,9 @@ app.get("/api/players",async(req,res)=>{
         console.log(err)
         res.status(400).send(err)
     }
-})
+}
 
-app.get("/api/playersToBuy",async(req,res)=>{
+const playersToBuy = async(req,res)=>{
     try{
         const players=await Player.find({isSold:{$ne:true}})
         if(players.length>0){
@@ -58,8 +32,9 @@ app.get("/api/playersToBuy",async(req,res)=>{
         console.log(err)
         res.status(400).send(err)
     }
-})
-app.get("/api/soldPlayers",async(req,res)=>{
+}
+
+const soldPlayers = async(req,res)=>{
     try{
         const players=await Player.find({isSold:{$eq:true}})
         res.status(200).send(players)
@@ -68,8 +43,9 @@ app.get("/api/soldPlayers",async(req,res)=>{
         console.log(err)
         res.status(400).send(err)
     }
-})
-app.get("/api/getTeams",async(req,res)=>{
+}
+
+const getTeams = async(req,res)=>{
     try{
         const teams=await Team.find()
         res.status(200).send(teams)
@@ -78,8 +54,9 @@ app.get("/api/getTeams",async(req,res)=>{
         console.log(err)
         res.status(400).send(err)
     }
-})
-app.post("/api/player",authenticateAdmin,async(req,res)=>{
+}
+
+const player = async(req,res)=>{
     try{
         const player=new Player(req.body)
         const result=await player.save()
@@ -89,9 +66,9 @@ app.post("/api/player",authenticateAdmin,async(req,res)=>{
         res.status(400).send(err)
         console.log(err)
     }
-})
+}
 
-app.post("/api/createTeam",authenticateAdmin,async(req,res)=>{
+const createTeam = async(req,res)=>{
     try{
         const team=new Team(req.body)
         const teamSave=await team.save()
@@ -100,9 +77,9 @@ app.post("/api/createTeam",authenticateAdmin,async(req,res)=>{
     catch(err){
         res.status(400).send(err)
     }
-})
+}
 
-app.post('/api/bid',authenticateAdmin,async (req, res) => {
+const bid = async (req, res) => {
     const { teamName, playerId, biddingAmount} = req.body;
     const player=await Player.findById({_id:playerId})
     if(player.isSold){
@@ -115,18 +92,6 @@ app.post('/api/bid',authenticateAdmin,async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-});
-
-const start=async()=>{
-    try{
-        app.listen(PORT,()=>{
-            console.log(`Sever Running successfully on ${PORT}`)
-        }) 
-    }
-    catch(err){
-        console.log(err)
-    }
 }
-start()
 
-// I am a hacke my hacking id is  s1v4h3r3s
+module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid};

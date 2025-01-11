@@ -5,10 +5,18 @@ require('../db/conn')
 require('dotenv').config()
 const authrouter = require('../routes/authRoute');
 const apirouter = require('../routes/apiRoute');
+const cors = require('cors');
 app.use(express.json())
+
+app.use(
+    cors({
+      origin: 'http://localhost:5173',
+    })
+  );
 
 app.use('/auth',authrouter);
 app.use('/api',apirouter);
+
 
 const start=async()=>{
     try{

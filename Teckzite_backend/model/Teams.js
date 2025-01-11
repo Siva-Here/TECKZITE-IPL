@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Player = require("../model/Players");
-const teamIDList = ["Team5", "Team4", "Team3", "Team2", "Team1"];
 const teamSchema = new mongoose.Schema({
   teamMembers: {
     type: [
@@ -31,7 +30,6 @@ const teamSchema = new mongoose.Schema({
   teamID: {
     type: String,
     unique: true,
-    default: generateTeamID,
   },
   bowlers: {
     type: Number,
@@ -62,15 +60,6 @@ const teamSchema = new mongoose.Schema({
     },
   ],
 });
-
-function generateTeamID() {
-  if (teamIDList.length > 0) {
-    let selectedTeamID = teamIDList.pop();
-    return selectedTeamID;
-  } else {
-    throw new Error("No more team IDs available.");
-  }
-}
 
 teamSchema.statics.handleBid = async function (
   teamName,

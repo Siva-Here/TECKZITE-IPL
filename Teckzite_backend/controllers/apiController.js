@@ -1,4 +1,5 @@
 const Player = require('../model/Players');
+const Team = require('../model/Teams');
 const getplayers = async(req,res)=>{
     try{
         const players=await Player.find({})
@@ -70,6 +71,7 @@ const player = async(req,res)=>{
 
 const createTeam = async(req,res)=>{
     try{
+        console.log("create team function");
         const team=new Team(req.body)
         const teamSave=await team.save()
         res.status(200).send(teamSave)

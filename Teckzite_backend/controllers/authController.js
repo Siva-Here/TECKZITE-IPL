@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const adminlogin = (req, res) => {
     try {
-        const adminID = req.body.userid;
+        console.log("body:",req.body);
+        const adminID = req.body.adminId;
         const adminPD = req.body.password;
+        console.log("UserAdmin:",process.env.userid,"password:",process.env.password);
         if (adminID === process.env.userid && adminPD === process.env.password) {
             console.log('Admin LoggedIn')
             console.log('SECRET_KEY:', process.env.SECRET_KEY);

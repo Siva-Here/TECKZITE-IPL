@@ -1,0 +1,45 @@
+
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+require('dotenv').config();
+require('./db/conn');
+
+const authrouter = require('./routes/authRoute');
+const apirouter = require('./routes/apiRoute');
+const setupWebSocket = require('./src/websocket'); // Import WebSocket setup
+
+const app = express();
+const PORT = process.env.PORT || 8000;
+
+// Middleware
+app.use(express.json());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
+
+// Routes
+app.use('/auth', authrouter);
+app.use('/api', apirouter);
+
+// Create an HTTP server to combine Express and WebSocket on the same port
+const server = http.createServer(app);
+
+// Initialize WebSocket on the same server
+setupWebSocket(server);
+
+// Start the server
+const start = async () => {
+  try {
+    server.listen(PORT, () => {
+      console.log(`Server running successfully on port ${PORT}`);
+      console.log(process.env.MONGODB_URI, process.env.PORT);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();

@@ -17,23 +17,35 @@ const getplayers = async(req,res)=>{
     }
 }
 
-const playersToBuy = async(req,res)=>{
-    try{
-        const players=await Player.find({isSold:{$ne:true}})
-        if(players.length>0){
-            
-            res.status(200).send(players)
-        }
-        else
-        {
-            res.status(200).send(`No available players to sell...`)
-        }
+const playersToBuy = async (req, res) => {
+    console.log("In playersToBuy function");
+    try {
+      const { bidPlace } = req.query; // Get bidPlace from the query parameters
+  
+      let query = { isSold: { $ne: true } };
+  
+      if (bidPlace) {
+        query = { ...query, bidplace: parseInt(bidPlace, 10) }; // Add bidPlace filter if provided
+      }
+  
+      // Fetch the player based on the query
+      const players = await Player.find(query)
+        .sort({ bidplace: 1 }) // Sort by bidPlace in ascending order
+        .limit(1); // Fetch only one player
+  
+      if (players.length > 0) {
+        console.log("Player fetched:", players[0]);
+        res.status(200).send(players[0]); // Send the player data
+      } else {
+        res.status(200).send(`No available players to sell...`);
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(400).send(err);
     }
-    catch(err){
-        console.log(err)
-        res.status(400).send(err)
-    }
-}
+  };
+  
+  
 
 const soldPlayers = async(req,res)=>{
     try{

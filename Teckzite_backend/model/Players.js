@@ -58,6 +58,9 @@ const playerSchema = new mongoose.Schema({
         default:function(){
             return this.basePrice
         }
+    },
+    "bidplace":{
+        type:Number,
     }
 });
 

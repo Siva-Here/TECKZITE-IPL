@@ -1,9 +1,8 @@
-
-
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaEdit, FaTrashAlt, FaTimes } from 'react-icons/fa'; // Importing React Icons
 import { toast } from 'react-toastify'; // Importing Toast for notifications
+import ProfileCard from '../components/Profilecard';
 
 // Styled components
 const GradientCards = styled.div`
@@ -164,33 +163,145 @@ const CloseButton = styled.button`
 const players = [
   {
     name: 'Virat Kohli',
+    nationality: 'India',
+    age: 34,
     role: 'Batsman',
     runs: 12000,
     wickets: 0,
-    strikeRate: '150.25',
+    isDebut: true,
+    image: 'https://example.com/virat.jpg',
     basePrice: 100000,
+    strikeRate: '150.25',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 100000,
   },
   {
     name: 'Rohit Sharma',
+    nationality: 'India',
+    age: 36,
     role: 'Batsman',
     runs: 8000,
     wickets: 0,
-    strikeRate: '136.50',
+    isDebut: false,
+    image: 'https://example.com/rohit.jpg',
     basePrice: 80000,
+    strikeRate: '136.50',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 80000,
   },
   {
     name: 'Jasprit Bumrah',
+    nationality: 'India',
+    age: 29,
     role: 'Bowler',
     runs: 500,
     wickets: 250,
-    strikeRate: '100.50',
+    isDebut: true,
+    image: 'https://example.com/jasprit.jpg',
     basePrice: 90000,
+    strikeRate: '100.50',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 90000,
   },
+  {
+    name: 'Ben Stokes',
+    nationality: 'England',
+    age: 33,
+    role: 'Allrounder',
+    runs: 5000,
+    wickets: 150,
+    isDebut: true,
+    image: 'https://example.com/ben_stokes.jpg',
+    basePrice: 120000,
+    strikeRate: '135.00',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 120000,
+  },
+  {
+    name: 'MS Dhoni',
+    nationality: 'India',
+    age: 42,
+    role: 'Wicketkeeper',
+    runs: 10000,
+    wickets: 0,
+    isDebut: true,
+    image: 'https://example.com/ms_dhoni.jpg',
+    basePrice: 150000,
+    strikeRate: '138.90',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 150000,
+  },
+  {
+    name: 'Kane Williamson',
+    nationality: 'New Zealand',
+    age: 33,
+    role: 'Batsman',
+    runs: 7000,
+    wickets: 0,
+    isDebut: false,
+    image: 'https://example.com/kane_williamson.jpg',
+    basePrice: 95000,
+    strikeRate: '130.75',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 95000,
+  },
+  {
+    name: 'David Warner',
+    nationality: 'Australia',
+    age: 37,
+    role: 'Batsman',
+    runs: 8000,
+    wickets: 0,
+    isDebut: false,
+    image: 'https://example.com/david_warner.jpg',
+    basePrice: 110000,
+    strikeRate: '142.00',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 110000,
+  },
+  {
+    name: 'Rashid Khan',
+    nationality: 'Afghanistan',
+    age: 25,
+    role: 'Bowler',
+    runs: 100,
+    wickets: 300,
+    isDebut: true,
+    image: 'https://example.com/rashid_khan.jpg',
+    basePrice: 85000,
+    strikeRate: '88.75',
+    isSold: false,
+    soldTeam: null,
+    soldAmount: 85000,
+  }
 ];
+
+
+
 
 const AddPlayer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPlayer, setNewPlayer] = useState({
+    name: '',
+    nationality: '',
+    age: '',
+    role: 'Batsman',
+    runs: '',
+    wickets: '',
+    strikeRate: '',
+    image: '',
+    basePrice: '',
+    isDebut: false,
+  });
+  const [playerprofile, setplayerProfile] = useState(false);
+  const [singleplayer,setSingleplayer] = useState({
     name: '',
     nationality: '',
     age: '',
@@ -247,9 +358,19 @@ const AddPlayer = () => {
     // Implement the functionality to delete the player
   };
 
+  const handleComponent = (player) =>{
+    setSingleplayer(player);
+    setplayerProfile(true);
+    console.log(playerprofile);
+  }
+  const handleClose = ()=>{
+    setplayerProfile(false);
+  }
+
   return (
     <GradientCards>
       <NeonButton onClick={handleAddPlayer}>Add New Player</NeonButton>
+      {/* <ProfileCard value={players[0]}/> */}
 
       <TableContainer>
         <Table>
@@ -266,7 +387,7 @@ const AddPlayer = () => {
           </thead>
           <tbody>
             {players.map((player, index) => (
-              <tr key={index}>
+              <tr key={index} onClick={()=>{handleComponent(player)}}>
                 <TableData>{player.name}</TableData>
                 <TableData>{player.role}</TableData>
                 <TableData>{player.runs}</TableData>
@@ -369,6 +490,41 @@ const AddPlayer = () => {
           </ModalForm>
         </ModalContent>
       </Modal>
+
+     {
+      playerprofile && (
+        <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          // backgroundColor: 'white',
+          // borderRadius: '10px',
+          // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          // padding: '20px',
+          zIndex: 1000,
+        }}
+      >
+        <button
+          onClick={handleClose}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: 'transparent',
+            border: 'none',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+          }}
+        >
+          ×
+        </button>
+        <ProfileCard player={singleplayer} />
+      </div>
+      )
+     }
     </GradientCards>
   );
 };

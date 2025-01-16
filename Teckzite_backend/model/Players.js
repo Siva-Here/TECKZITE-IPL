@@ -29,14 +29,18 @@ const playerSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
+    "set":{
+        type: Number,
+        required: true
+    },
     "isDebut": {
         type: Boolean,
         required: true
     },
     "image": {
-        type: String,
+        type: String,  // Storing the file itself as binary data
         required: true
-    },
+      },
     "basePrice": {
         type: Number,
         default: 50000

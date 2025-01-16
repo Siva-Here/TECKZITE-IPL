@@ -1,8 +1,56 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaEdit, FaTrashAlt, FaTimes } from 'react-icons/fa'; // Importing React Icons
+import { FaEdit, FaTrashAlt, FaTimes, FaSearch } from 'react-icons/fa'; // Importing React Icons
 import { toast } from 'react-toastify'; // Importing Toast for notifications
 import ProfileCard from '../components/Profilecard';
+
+
+
+
+//search styles
+const SearchContainer = styled.div`
+  width: 100%;
+  max-width: 700px;
+  margin-top: 50px auto;
+  padding: 3px;
+  background: rgb(37, 44, 59);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+   @media (max-width: 768px) {
+    margin-top:30px;
+  }
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  padding: 7px;
+  // border: 1px solid #ff00ff;
+  border-radius: 5px;
+  background: rgba(37, 44, 59, 0.8);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 10px #ff00ff;
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+`;
+
 
 // Styled components
 const GradientCards = styled.div`
@@ -21,7 +69,7 @@ const TableContainer = styled.div`
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  margin-top: 90px;
+  margin-top: 50px;
   overflow-x: auto;
 `;
 
@@ -61,6 +109,18 @@ const NeonButton = styled.button`
   right: 20px;
   &:hover {
     background: linear-gradient(45deg, #00ffff, #ff00ff);
+  }
+     @media (max-width: 768px) {
+    width: 8rem; /* Decrease the width */
+    padding: 0.5rem 1rem; /* Adjust padding */
+  }
+
+  @media (max-width: 480px) {
+    width: 6rem; /* Further decrease width for very small devices */
+    padding: 0.375rem 0.75rem; /* Adjust padding */
+    font-size: 0.875rem; /* Reduce font size if needed */
+    top:2px;
+    right:0;
   }
 `;
 
@@ -277,8 +337,8 @@ const players = [
     image: 'https://example.com/rashid_khan.jpg',
     basePrice: 85000,
     strikeRate: '88.75',
-    isSold: false,
-    soldTeam: null,
+    isSold: true,
+    soldTeam: "RCB",
     soldAmount: 85000,
   }
 ];
@@ -299,9 +359,10 @@ const AddPlayer = () => {
     image: '',
     basePrice: '',
     isDebut: false,
+    set: "",
   });
   const [playerprofile, setplayerProfile] = useState(false);
-  const [singleplayer,setSingleplayer] = useState({
+  const [singleplayer, setSingleplayer] = useState({
     name: '',
     nationality: '',
     age: '',
@@ -312,7 +373,11 @@ const AddPlayer = () => {
     image: '',
     basePrice: '',
     isDebut: false,
+    set: '',
   });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [Players, setPlayers] = useState(players);
 
   const handleAddPlayer = () => {
     setIsModalOpen(true);
@@ -330,9 +395,15 @@ const AddPlayer = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success('New player added successfully!');
+
+    if (!newPlayer.image) {
+      toast.error("Please upload an image.");
+      return;
+    }
+
+    console.log("New player:", newPlayer);
     setNewPlayer({
       name: '',
       nationality: '',
@@ -344,9 +415,11 @@ const AddPlayer = () => {
       image: '',
       basePrice: '',
       isDebut: false,
+      set: '',
     });
-    setIsModalOpen(false);
   };
+
+
 
   const handleEditPlayer = (playerName) => {
     alert(`Edit player: ${playerName}`);
@@ -358,55 +431,89 @@ const AddPlayer = () => {
     // Implement the functionality to delete the player
   };
 
-  const handleComponent = (player) =>{
+  const handleComponent = (player) => {
     setSingleplayer(player);
     setplayerProfile(true);
     console.log(playerprofile);
   }
-  const handleClose = ()=>{
+  const handleClose = () => {
     setplayerProfile(false);
   }
 
+
+  const handleSearch = (e) => {
+    const query = e.toLowerCase(); // Use a local variable for the query.
+    setSearchQuery(query);
+
+    if (query === "") {
+      setPlayers(players); // Ensure you have a separate `originalPlayers` to restore.
+    } else {
+      const filteredPlayers = players.filter((player) =>
+        player.name.toLowerCase().includes(query)
+      );
+      setPlayers(filteredPlayers);
+    }
+  };
+
+
   return (
     <GradientCards>
-      <NeonButton onClick={handleAddPlayer}>Add New Player</NeonButton>
-      {/* <ProfileCard value={players[0]}/> */}
+      <NeonButton onClick={handleAddPlayer}>New player</NeonButton>
 
-      <TableContainer>
-        <Table>
-          <thead>
-            <tr>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Role</TableHeader>
-              <TableHeader>Runs</TableHeader>
-              <TableHeader>Wickets</TableHeader>
-              <TableHeader>Strike Rate</TableHeader>
-              <TableHeader>Base Price</TableHeader>
-              <TableHeader>Actions</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player, index) => (
-              <tr key={index} onClick={()=>{handleComponent(player)}}>
-                <TableData>{player.name}</TableData>
-                <TableData>{player.role}</TableData>
-                <TableData>{player.runs}</TableData>
-                <TableData>{player.wickets}</TableData>
-                <TableData>{player.strikeRate}</TableData>
-                <TableData>${player.basePrice}</TableData>
-                <TableData>
-                  <ActionButton onClick={() => handleEditPlayer(player.name)}>
-                    <FaEdit />
-                  </ActionButton>
-                  <ActionButton onClick={() => handleDeletePlayer(player.name)}>
-                    <FaTrashAlt />
-                  </ActionButton>
-                </TableData>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </TableContainer>
+      {/* search field */}
+      <SearchContainer>
+        <SearchForm onSubmit={handleSearch}>
+          <SearchInput
+            type="text"
+            placeholder="Search players..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+
+        </SearchForm>
+      </SearchContainer>
+
+
+<TableContainer>
+  <Table>
+    <thead>
+      <tr>
+        <TableHeader>Name</TableHeader>
+        <TableHeader>Role</TableHeader>
+        <TableHeader>Runs</TableHeader>
+        <TableHeader>Wickets</TableHeader>
+        <TableHeader>Strike Rate</TableHeader>
+        <TableHeader>Base Price</TableHeader>
+        <TableHeader>Actions</TableHeader>
+      </tr>
+    </thead>
+    <tbody>
+      {Players.map((player, index) => (
+        <tr key={index} onClick={() => handleComponent(player)}>
+          <TableData>{player.name}</TableData>
+          <TableData>{player.role}</TableData>
+          <TableData>{player.runs}</TableData>
+          <TableData>{player.wickets}</TableData>
+          <TableData>{player.strikeRate}</TableData>
+          <TableData>${player.basePrice}</TableData>
+          <TableData
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent row click event.
+            }}
+          >
+            <ActionButton onClick={() => handleEditPlayer(player.name)}>
+              <FaEdit />
+            </ActionButton>
+            <ActionButton onClick={() => handleDeletePlayer(player.name)}>
+              <FaTrashAlt />
+            </ActionButton>
+          </TableData>
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+</TableContainer>
+
 
       <Modal isOpen={isModalOpen}>
         <ModalContent>
@@ -445,9 +552,10 @@ const AddPlayer = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="Batsman">Batsman</option>
-              <option value="Bowler">Bowler</option>
-              <option value="All-Rounder">All-Rounder</option>
+              <option value="batsman">Batsman</option>
+              <option value="bowler">Bowler</option>
+              <option value="allrounder">All-Rounder</option>
+              <option value="wicketkeeper">Wicket Keeper</option>
             </ModalSelect>
             <ModalInput
               type="number"
@@ -474,11 +582,13 @@ const AddPlayer = () => {
               type="file"
               name="image"
               title="Upload player image"
-              onChange={(e) =>
-                setNewPlayer({ ...newPlayer, image: e.target.files[0] })
-              }
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setNewPlayer({ ...newPlayer, image: file });
+              }}
               required
             />
+
             <ModalInput
               type="number"
               name="basePrice"
@@ -486,45 +596,79 @@ const AddPlayer = () => {
               value={newPlayer.basePrice}
               onChange={handleInputChange}
             />
+            <fieldset style={{ border: 'none', margin: '10px 0' }}>
+              <legend style={{ fontWeight: 'bold' }}>Set</legend>
+              <label style={{ marginRight: '10px' }}>
+                <input
+                  type="radio"
+                  name="set"
+                  value="1"
+                  checked={newPlayer.set === '1'}
+                  onChange={handleInputChange}
+                  style={{ marginRight: '5px' }}
+                />
+                1
+              </label>
+              <label style={{ marginRight: '10px', }}>
+                <input
+                  type="radio"
+                  name="set"
+                  value="2"
+                  checked={newPlayer.set === '2'}
+                  onChange={handleInputChange}
+                  style={{ marginRight: '5px' }}
+                />
+                2
+              </label>
+              <label style={{}}>
+                <input
+                  type="radio"
+                  name="set"
+                  value="3"
+                  checked={newPlayer.set === '3'}
+                  onChange={handleInputChange}
+                  style={{ marginRight: '5px' }}
+                />
+                3
+              </label>
+            </fieldset>
+
+
             <SubmitButton type="submit">Submit</SubmitButton>
           </ModalForm>
         </ModalContent>
       </Modal>
 
-     {
-      playerprofile && (
-        <div
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          // backgroundColor: 'white',
-          // borderRadius: '10px',
-          // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-          // padding: '20px',
-          zIndex: 1000,
-        }}
-      >
-        <button
-          onClick={handleClose}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'transparent',
-            border: 'none',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-          }}
-        >
-          ×
-        </button>
-        <ProfileCard player={singleplayer} />
-      </div>
-      )
-     }
+      {
+        playerprofile && (
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 1000,
+            }}
+          >
+            <button
+              onClick={handleClose}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}
+            >
+              ×
+            </button>
+            <ProfileCard player={singleplayer} />
+          </div>
+        )
+      }
     </GradientCards>
   );
 };

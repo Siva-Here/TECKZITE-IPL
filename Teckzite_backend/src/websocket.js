@@ -28,7 +28,7 @@ const { Server } = require('socket.io');
 const setupWebSocket = (server) => {
   const io = new Server(server, { cors: { origin: '*' } }); // Attach WebSocket to the server
   let currentPlayerImage = ''; // Store the current player's image globally
-
+let bidAmount=''
   io.on('connection', (socket) => {
     console.log('A user (viewer) connected to WebSocket:', socket.id);
 
@@ -36,13 +36,18 @@ const setupWebSocket = (server) => {
     if (currentPlayerImage) {
       socket.emit('updateViewer', currentPlayerImage);
     }
-
+    if(bidAmount){
+      socket.emit('bidAmount',bidAmount);
+    }
     // Admin sends image updates
     socket.on('updateViewer', (image) => {
       currentPlayerImage = image; // Update the global image
       io.emit('updateViewer', image); // Broadcast to all viewers
     });
-
+     socket.on('bidAmount',(bidAmount)=>{
+      bidAmount=bidAmount;
+      io.emit('bidAmount',bidAmount);
+     })
     // Handle disconnects
     socket.on('disconnect', () => {
       console.log('A user disconnected from WebSocket:', socket.id);

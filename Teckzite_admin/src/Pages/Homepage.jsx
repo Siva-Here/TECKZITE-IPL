@@ -246,10 +246,11 @@ const HomePage = () => {
     fetchPlayer();
   }, []);
   const token=localStorage.getItem("Token");
-  const fetchPlayer = (bidplace = null,direction) => {
- 
+  const fetchPlayer = (bidplace = null,direction,set) => {
+ console.log(set)
+ console.log(player)
     const url = bidplace
-      ? `http://localhost:8000/api/playersToBuy?bidplace=${bidplace}&direction=${direction}`
+      ? `http://localhost:8000/api/playersToBuy?bidplace=${bidplace}&set=${set}&direction=${direction}`
       : 'http://localhost:8000/api/playersToBuy';
 
     axios
@@ -271,16 +272,17 @@ const HomePage = () => {
   };
 
   const handleNext = () => {
-    if (player?.bidplace) {
-      fetchPlayer(player.bidplace ,"next"); // Fetch the next player based on current bidPlace
+    alert(player.set)
+    if ( player?.set && player?.bidplace) {
+      fetchPlayer(player.bidplace ,"next",player.set); // Fetch the next player based on current bidPlace
     }else{
       fetchPlayer();
     }
   };
 
   const handlePrev = () => {
-    if (player?.bidplace && player.bidplace > 1) {
-      fetchPlayer(player.bidplace ,"prev"); // Fetch the previous player based on current bidPlace
+    if (player?.bidplace && player.bidplace > 1 && player?.set) {
+      fetchPlayer(player.bidplace ,"prev",player.set); // Fetch the previous player based on current bidPlace
     }
     else{
       fetchPlayer()
@@ -292,6 +294,7 @@ const HomePage = () => {
     if (player) {
       const increment = player.basePrice >= 10000000 ? 1000000 : 10000;
       setBidAmount((prev) => prev + increment);
+      socket.emit('bidAmount',bidAmount+increment);
     }
   };
 
@@ -299,6 +302,7 @@ const HomePage = () => {
     if (player) {
       const decrement = player.basePrice >= 10000000 ? 1000000 : 10000;
       setBidAmount((prev) => Math.max(player.basePrice, prev - decrement));
+       socket.emit('bidAmount',Math.max(player.basePrice,bidAmount-decrement));
     }
   };
   const handleAssignClick = () => {
@@ -314,7 +318,6 @@ if(selectedTeam==""){
     setShowModal(false); // Close the modal
     handleConfirmBid(); // Call the confirm bid handler
   };
- 
   const handleConfirmBid = () => {
     if (player) {
       axios
@@ -334,16 +337,24 @@ if(selectedTeam==""){
         )
         .then(() => {
           alert('Bid confirmed!');
-          fetchPlayer(player.bidplace, "next"); // Automatically fetch the next player
+          fetchPlayer(player.bidplace, "next", player.set); 
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);
-          toast.error("Error while confirming bid");
+
+          if (error.response && error.response.data && error.response.data.error) {
+            // Backend-specific error
+            toast.error(error.response.data.error);
+          } else {
+            // Generic or network error
+            toast.error("An unexpected error occurred while confirming the bid.");
+          }
         });
     } else {
       alert("No player selected to bid.");
     }
   };
+  
   
 
  
@@ -408,7 +419,6 @@ if(selectedTeam==""){
                 Auction Details
               </CardTitle>
                 <CardGrid>
-     
               <CardItem>
                 <CardItemTitle>BasePrice</CardItemTitle>
                 <CardItemValue>{player.basePrice.toLocaleString()}</CardItemValue>

@@ -25,7 +25,7 @@ const teamSchema = new mongoose.Schema({
   },
   initialPurse: {
     type: Number,
-    default: 50000,
+    default: 500000,
   },
   teamID: {
     type: String,
@@ -67,7 +67,7 @@ teamSchema.statics.handleBid = async function (
   biddingAmount
 ) {
   const team = await this.findOne({ teamID: teamName });
-  console.log(team);
+  console.log("team",teamName,"biddingAmount",biddingAmount);
   if (!team) {
     throw new Error("Team not found.");
   }
@@ -79,19 +79,20 @@ teamSchema.statics.handleBid = async function (
   }
   const playerRole = await Player.findOne({ _id: playerId })
   const role=playerRole.role
-  console.log(role)
-  if (role === "batsman" && team.batsmen >= 5) {
-    throw new Error("Maximum batsmen limit reached.");
-  }
-  if (role === "bowler" && team.bowlers >= 5) {
-    throw new Error("Maximum bowlers limit reached.");
-  }
-  if (role === "allrounder" && team.allrounder >= 1) {
-    throw new Error("Maximum allrounder limit reached.");
-  }
-  if (role === "wicketkeeper" && team.wicketkeeper >= 1) {
-    throw new Error("Maximum wicketkeeper limit reached.");
-  }
+  console.log("ROLE",role);
+  // if (role === "batsman" && team.batsmen >= 5) {
+  //   throw new Error("Maximum batsmen limit reached.");
+  // }
+  // if (role === "bowler" && team.bowlers >= 5) {
+  //   throw new Error("Maximum bowlers limit reached.");
+  // }
+  // if (role === "allrounder" && team.allrounder >= 1) {
+  //   throw new Error("Maximum allrounder limit reached.");
+  // }
+  // if (role === "wicketkeeper" && team.wicketkeeper >= 1) {
+  //   throw new Error("Maximum wicketkeeper limit reached.");
+  // }
+ 
   // Update team's data
   team.remainingPurse -= biddingAmount;
   if (team.remainingPurse > 0) {

@@ -69,10 +69,10 @@ const playerSchema = new mongoose.Schema({
 });
 
 playerSchema.pre('save', function(next) {
-    if (this.role === 'batsman') {
-        this.wickets = undefined;
-        this.runs = this.runs || 0; 
-    }
+    // if (this.role === 'batsman') {
+    //     this.wickets = undefined;
+    //     this.runs = this.runs || 0; 
+    // }
     this.soldAmount=this.basePrice
     next();
 });

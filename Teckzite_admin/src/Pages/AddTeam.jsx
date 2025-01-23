@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import  { useState,useEffect } from "react";
 import styled from "styled-components";
 import TeamCard from "../components/TeamCard"
 import {toast} from "react-toastify";
@@ -17,7 +17,7 @@ const AddTeamContainer = styled.div`
   padding: 20px;
   min-height: 100vh;
   position: relative;
-`;
+background-color: rgb(37, 44, 59);`;
 
 const NeonButton = styled.button`
   background: linear-gradient(45deg, #ff00ff, #00ffff);
@@ -398,8 +398,8 @@ const AddTeam = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(teamDataToSubmit),
+        
       });
-  
       if (response.ok) {
         const responseData = await response.json();
         toast.success(responseData.message);
@@ -499,7 +499,7 @@ const AddTeam = () => {
             <ImageContainer>
               <TeamImage
                 src={`${team.teamID}.jpg`}
-                alt="Royal Challengers Bangalore team logo"
+                alt="ipl team"
               />
             </ImageContainer>
             <Table>
@@ -577,7 +577,7 @@ const AddTeam = () => {
                   type="radio"
                   name="teamID"
                   value={team}
-                  checked={team === teamID}
+                  checked={team == teamID}
                   onChange={handleTeamIDChange}
                   required
                   disabled = {isEditing}

@@ -70,6 +70,8 @@
 
 
 import React, { useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './Authcontext';
 import Navbar from './Pages/Navbar';
@@ -80,6 +82,7 @@ import AddTeam from './Pages/AddTeam';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Auction from './Pages/Auction';
+import HomePage from './Pages/Homepage';
 
 const AppLayout = () => {
   return (
@@ -131,7 +134,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/player" element={<AddPlayer />} />
               <Route path="/teams" element={<AddTeam />} />
-              <Route path="/auction" element={<Auction />} />
+              <Route path="/auction" element={<HomePage />} />
             </Route>
           ) : (
             <Route path="*" element={<Navigate to="/login" replace />} />

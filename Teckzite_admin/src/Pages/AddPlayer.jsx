@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import { useState,useEffect } from 'react';
 import styled from 'styled-components';
-import { FaEdit, FaTrashAlt, FaTimes, FaSearch } from 'react-icons/fa'; // Importing React Icons
+import { FaEdit, FaTrashAlt, FaTimes } from 'react-icons/fa'; // Importing React Icons
 import { toast } from 'react-toastify'; // Importing Toast for notifications
 import ProfileCard from '../components/Profilecard';
-
-
-
-
+import SpinningCircles from "react-loading-icons/dist/esm/components/spinning-circles";
 //search styles
 const SearchContainer = styled.div`
   width: 100%;
@@ -220,165 +217,47 @@ const CloseButton = styled.button`
   }
 `;
 
-const players = [
-  {
-    name: 'Virat Kohli',
-    nationality: 'India',
-    age: 34,
-    role: 'Batsman',
-    runs: 12000,
-    wickets: 0,
-    isDebut: true,
-    image: 'https://example.com/virat.jpg',
-    basePrice: 100000,
-    strikeRate: '150.25',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 100000,
-  },
-  {
-    name: 'Rohit Sharma',
-    nationality: 'India',
-    age: 36,
-    role: 'Batsman',
-    runs: 8000,
-    wickets: 0,
-    isDebut: false,
-    image: 'https://example.com/rohit.jpg',
-    basePrice: 80000,
-    strikeRate: '136.50',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 80000,
-  },
-  {
-    name: 'Jasprit Bumrah',
-    nationality: 'India',
-    age: 29,
-    role: 'Bowler',
-    runs: 500,
-    wickets: 250,
-    isDebut: true,
-    image: 'https://example.com/jasprit.jpg',
-    basePrice: 90000,
-    strikeRate: '100.50',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 90000,
-  },
-  {
-    name: 'Ben Stokes',
-    nationality: 'England',
-    age: 33,
-    role: 'Allrounder',
-    runs: 5000,
-    wickets: 150,
-    isDebut: true,
-    image: 'https://example.com/ben_stokes.jpg',
-    basePrice: 120000,
-    strikeRate: '135.00',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 120000,
-  },
-  {
-    name: 'MS Dhoni',
-    nationality: 'India',
-    age: 42,
-    role: 'Wicketkeeper',
-    runs: 10000,
-    wickets: 0,
-    isDebut: true,
-    image: 'https://example.com/ms_dhoni.jpg',
-    basePrice: 150000,
-    strikeRate: '138.90',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 150000,
-  },
-  {
-    name: 'Kane Williamson',
-    nationality: 'New Zealand',
-    age: 33,
-    role: 'Batsman',
-    runs: 7000,
-    wickets: 0,
-    isDebut: false,
-    image: 'https://example.com/kane_williamson.jpg',
-    basePrice: 95000,
-    strikeRate: '130.75',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 95000,
-  },
-  {
-    name: 'David Warner',
-    nationality: 'Australia',
-    age: 37,
-    role: 'Batsman',
-    runs: 8000,
-    wickets: 0,
-    isDebut: false,
-    image: 'https://example.com/david_warner.jpg',
-    basePrice: 110000,
-    strikeRate: '142.00',
-    isSold: false,
-    soldTeam: null,
-    soldAmount: 110000,
-  },
-  {
-    name: 'Rashid Khan',
-    nationality: 'Afghanistan',
-    age: 25,
-    role: 'Bowler',
-    runs: 100,
-    wickets: 300,
-    isDebut: true,
-    image: 'https://example.com/rashid_khan.jpg',
-    basePrice: 85000,
-    strikeRate: '88.75',
-    isSold: true,
-    soldTeam: "RCB",
-    soldAmount: 85000,
-  }
-];
-
-
-
-
 const AddPlayer = () => {
+  const token = localStorage.getItem("Token");
+  const [uploading, setUploading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPlayer, setNewPlayer] = useState({
     name: '',
     nationality: '',
     age: '',
-    role: 'Batsman',
+    role: '',
     runs: '',
     wickets: '',
     strikeRate: '',
-    image: '',
+    image: null,
     basePrice: '',
     isDebut: false,
-    set: "",
+    bidplace:'',
+    set: '',
+  
+
   });
   const [playerprofile, setplayerProfile] = useState(false);
   const [singleplayer, setSingleplayer] = useState({
     name: '',
     nationality: '',
     age: '',
-    role: 'Batsman',
+    role: '',
     runs: '',
     wickets: '',
     strikeRate: '',
-    image: '',
+    image: null,
     basePrice: '',
     isDebut: false,
+    bidplace:'',
     set: '',
+    
   });
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [Players, setPlayers] = useState(players);
-
+  const [Players, setPlayers] = useState([]);
+  const [filterplayers,setFilterPlayers]=useState([]);
+  const [editoption,setEditoption]=useState(false);
   const handleAddPlayer = () => {
     setIsModalOpen(true);
   };
@@ -394,41 +273,139 @@ const AddPlayer = () => {
       [name]: value,
     });
   };
-
+  const fetchPlayers=async()=>{
+    try {
+      const response = await fetch("http://localhost:8000/api/getplayers");
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data)
+        setPlayers(data);
+        setFilterPlayers(data);
+      }
+      else{
+        console.log("error while fetching data");
+        alert("Error while fetching data");
+      }
+    }
+    catch(error){
+       console.log(error);
+    }
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
 
-    if (!newPlayer.image) {
+    // Add all fields to FormData, including the image file
+    Object.keys(newPlayer).forEach((key) => {
+      if (key === 'image' && newPlayer.image) {
+        formData.append(key, newPlayer.image); // Append the file object
+      } else {
+        formData.append(key, newPlayer[key]); // Append other fields
+      }
+    });
+    if 
+      (!editoption ){
+        if(!newPlayer.image)
+    {
       toast.error("Please upload an image.");
       return;
     }
+  }
+
 
     console.log("New player:", newPlayer);
     setNewPlayer({
       name: '',
       nationality: '',
       age: '',
-      role: 'Batsman',
+      role: '',
       runs: '',
       wickets: '',
       strikeRate: '',
-      image: '',
+      image:null,
       basePrice: '',
       isDebut: false,
+      bidplace:'',
       set: '',
+      
     });
+    setIsModalOpen(false);
+    
+    savePlayers(formData);
   };
 
+const savePlayers = async (formData) => {
+  
+
+  if (!token) {
+    toast.error("JWT token is missing, please login again!");
+    return;
+  }
+setUploading(true);
+  try {
+    const url = "http://localhost:8000/api/createplayer"; // Create API endpoint
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+      body: formData, 
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      toast.success(responseData.message);
+      setEditoption(false)
+      setUploading(false)
+      fetchPlayers();
+      handleCloseModal();
+    } else {
+      const errorData = await response.json();
+      setUploading(false)
+      toast.error(errorData.message || "Failed to create or edit team!");
+    }
+  } catch (error) {
+    toast.error("Error submitting team data, please try again!");
+  }
+};
 
 
-  const handleEditPlayer = (playerName) => {
-    alert(`Edit player: ${playerName}`);
-    // Implement the functionality to edit the player
+  const handleEditPlayer = (player) => {
+    console.log("player",player)
+    setEditoption(true);
+    setNewPlayer(player)
+    setIsModalOpen(true)
+    
   };
 
-  const handleDeletePlayer = (playerName) => {
-    alert(`Delete player: ${playerName}`);
-    // Implement the functionality to delete the player
+  const handleDeletePlayer =async(player) => {
+   
+    const id=player._id;
+    
+    try {
+      const response = await fetch("http://localhost:8000/api/deletePlayer", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id }), // Send the ID in the request body
+      });
+      if (response.ok) {
+        // Successfully deleted the player
+        alert(`Player ${player.name} deleted successfully`);
+
+        // Optionally, update the state to remove the player from the list
+       fetchPlayers()
+      } else {
+        toast.error('Failed to delete the player');
+        console.log('Error during player deletion:', response);
+      }
+    } catch (error) {
+      toast.error('Error occurred while deleting the player');
+      console.log(error);
+    }
   };
 
   const handleComponent = (player) => {
@@ -442,20 +419,22 @@ const AddPlayer = () => {
 
 
   const handleSearch = (e) => {
+   
     const query = e.toLowerCase(); // Use a local variable for the query.
     setSearchQuery(query);
 
     if (query === "") {
-      setPlayers(players); // Ensure you have a separate `originalPlayers` to restore.
+      setPlayers(filterplayers); 
     } else {
-      const filteredPlayers = players.filter((player) =>
+      const filteredPlayers = filterplayers.filter((player) =>
         player.name.toLowerCase().includes(query)
       );
       setPlayers(filteredPlayers);
     }
   };
-
-
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
   return (
     <GradientCards>
       <NeonButton onClick={handleAddPlayer}>New player</NeonButton>
@@ -472,8 +451,6 @@ const AddPlayer = () => {
 
         </SearchForm>
       </SearchContainer>
-
-
 <TableContainer>
   <Table>
     <thead>
@@ -484,36 +461,46 @@ const AddPlayer = () => {
         <TableHeader>Wickets</TableHeader>
         <TableHeader>Strike Rate</TableHeader>
         <TableHeader>Base Price</TableHeader>
-        <TableHeader>Actions</TableHeader>
+        <TableHeader>Bid Place</TableHeader>
+        <TableHeader>Status</TableHeader>
       </tr>
     </thead>
     <tbody>
-      {Players.map((player, index) => (
-        <tr key={index} onClick={() => handleComponent(player)}>
-          <TableData>{player.name}</TableData>
-          <TableData>{player.role}</TableData>
-          <TableData>{player.runs}</TableData>
-          <TableData>{player.wickets}</TableData>
-          <TableData>{player.strikeRate}</TableData>
-          <TableData>${player.basePrice}</TableData>
-          <TableData
-            onClick={(e) => {
-              e.stopPropagation(); // Prevent row click event.
-            }}
-          >
-            <ActionButton onClick={() => handleEditPlayer(player.name)}>
-              <FaEdit />
-            </ActionButton>
-            <ActionButton onClick={() => handleDeletePlayer(player.name)}>
-              <FaTrashAlt />
-            </ActionButton>
+      {Players && Players.length > 0 ? (
+        Players.map((player, index) => (
+          <tr key={index} onClick={() => handleComponent(player)}>
+            <TableData>{player.name}</TableData>
+            <TableData>{player.role}</TableData>
+            <TableData>{player.runs}</TableData>
+            <TableData>{player.wickets}</TableData>
+            <TableData>{player.strikeRate}</TableData>
+            <TableData>${player.basePrice}</TableData>
+            <TableData>{player.bidplace}</TableData>
+            <TableData>{player.isSold?"sold":"unsold"}</TableData>
+            <TableData
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent row click event.
+              }}
+            >
+              <ActionButton onClick={() => handleEditPlayer(player)}>
+                <FaEdit />
+              </ActionButton>
+              <ActionButton onClick={() => handleDeletePlayer(player)}>
+                <FaTrashAlt />
+              </ActionButton>
+            </TableData>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <TableData colSpan="8" style={{ textAlign: 'center' }}>
+            No players available
           </TableData>
         </tr>
-      ))}
+      )}
     </tbody>
   </Table>
 </TableContainer>
-
 
       <Modal isOpen={isModalOpen}>
         <ModalContent>
@@ -552,6 +539,7 @@ const AddPlayer = () => {
               onChange={handleInputChange}
               required
             >
+              <option value="">select role</option>
               <option value="batsman">Batsman</option>
               <option value="bowler">Bowler</option>
               <option value="allrounder">All-Rounder</option>
@@ -563,6 +551,7 @@ const AddPlayer = () => {
               placeholder="Runs"
               value={newPlayer.runs}
               onChange={handleInputChange}
+              required
             />
             <ModalInput
               type="number"
@@ -570,6 +559,7 @@ const AddPlayer = () => {
               placeholder="Wickets"
               value={newPlayer.wickets}
               onChange={handleInputChange}
+              required
             />
             <ModalInput
               type="text"
@@ -577,35 +567,48 @@ const AddPlayer = () => {
               placeholder="Strike Rate"
               value={newPlayer.strikeRate}
               onChange={handleInputChange}
+              required
             />
             <ModalInput
               type="file"
               name="image"
+              
               title="Upload player image"
               onChange={(e) => {
                 const file = e.target.files[0];
                 setNewPlayer({ ...newPlayer, image: file });
               }}
-              required
+             
             />
-
             <ModalInput
               type="number"
               name="basePrice"
               placeholder="Base Price"
               value={newPlayer.basePrice}
               onChange={handleInputChange}
+              required
             />
-            <fieldset style={{ border: 'none', margin: '10px 0' }}>
+            <label style={{marginRight:'10px'}}>
+            Bid Place</label>
+            <ModalInput
+              type="number"
+              name="bidplace"
+              placeholder="Bid Place"
+              value={newPlayer.bidplace}
+              onChange={handleInputChange}
+              required
+            />
+            <fieldset style={{ border: 'none', margin: '10px 0' }} >
               <legend style={{ fontWeight: 'bold' }}>Set</legend>
               <label style={{ marginRight: '10px' }}>
                 <input
                   type="radio"
                   name="set"
                   value="1"
-                  checked={newPlayer.set === '1'}
+                  checked={newPlayer.set == '1'}
                   onChange={handleInputChange}
                   style={{ marginRight: '5px' }}
+                  required
                 />
                 1
               </label>
@@ -614,7 +617,7 @@ const AddPlayer = () => {
                   type="radio"
                   name="set"
                   value="2"
-                  checked={newPlayer.set === '2'}
+                  checked={newPlayer.set == '2'}
                   onChange={handleInputChange}
                   style={{ marginRight: '5px' }}
                 />
@@ -625,7 +628,7 @@ const AddPlayer = () => {
                   type="radio"
                   name="set"
                   value="3"
-                  checked={newPlayer.set === '3'}
+                  checked={newPlayer.set == '3'}
                   onChange={handleInputChange}
                   style={{ marginRight: '5px' }}
                 />
@@ -638,7 +641,19 @@ const AddPlayer = () => {
           </ModalForm>
         </ModalContent>
       </Modal>
+      {uploading && (
+        <div style={{ marginTop: "10px" }}>
+        <SpinningCircles
+  stroke="#000"  // Spinner color
+  strokeWidth={4} // Thickness of the spinner
+  speed={5}       // Rotation speed
+  height="40px"   // Height of the spinner
+  width="40px"    // Width of the spinner
+/>
 
+          <p>Uploading data...</p>
+        </div>
+      )}
       {
         playerprofile && (
           <div

@@ -29,102 +29,81 @@ const getplayers = async(req,res)=>{
 const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
-    const { bidplace, direction } = req.query;
-    console.log(bidplace, direction, req.body);
+    const { bidplace, set, direction } = req.query;
+    console.log(bidplace, set, direction, req.body);
 
-    // Parse the bidPlace to an integer
+    // Parse bidplace and set to integers
+    const bidPlaceValue = parseInt(bidplace, 10);
+    const setValue = parseInt(set, 10);
+
     let sortOrder = 1;
     let query = { isSold: { $ne: true } };
-    if (bidplace !== undefined) {
-      const bidPlaceValue = parseInt(bidplace, 10);
 
-      // Modify the query based on the direction
-      if (direction === 'next') {
-        query = { ...query, bidplace: { $gt: bidPlaceValue } };
-      } else if (direction === 'prev') {
-        query = { ...query, bidplace: { $lt: bidPlaceValue } };
-      }
-      sortOrder = direction === 'prev' ? -1 : 1;
+    if (direction === "next") {
+      query = {
+        ...query,
+        $or: [
+          { set: { $gt: setValue } },
+          { set: setValue, bidplace: { $gt: bidPlaceValue } },
+        ],
+      };
+      sortOrder = 1; // Ascending order for "next"
+    } else if (direction === "prev") {
+      query = {
+        ...query,
+        $or: [
+          { set: { $lt: setValue } },
+          { set: setValue, bidplace: { $lt: bidPlaceValue } },
+        ],
+      };
+      sortOrder = -1; // Descending order for "prev"
     }
 
     // Fetch the player based on the query
     let players = await Player.find(query)
-      .sort({set:1, bidplace: sortOrder }) // Sort by bidPlace
-      .limit(1); // Fetch only one player
+      .sort({ set: sortOrder, bidplace: sortOrder })
+      .limit(1);
 
     if (players.length > 0) {
       console.log("Player fetched:", players[0]);
       return res.status(200).send(players[0]); // Send the player data
     }
 
-    // If no player is found, retry with the opposite direction
-    console.log("No players found. Retrying with opposite direction...");
-    if (direction === 'next') {
-      query = { isSold: { $ne: true }, bidplace: { $lt: parseInt(bidplace, 10) } };
-      sortOrder = 1; // Sort descending
-    } else if (direction === 'prev') {
-      query = { isSold: { $ne: true }, bidplace: { $gt: parseInt(bidplace, 10) } };
-      sortOrder = -1; // Sort ascending
+    // If no players are found, wrap around for cyclic behavior
+    console.log("No players found. Wrapping around for cyclic behavior...");
+    if (direction === "next") {
+      query = {
+        isSold: { $ne: true },
+        $or: [
+          { set: { $gte: 0 } }, // Start from the beginning
+        ],
+      };
+      sortOrder = 1; // Ascending order for restart
+    } else if (direction === "prev") {
+      query = {
+        isSold: { $ne: true },
+        $or: [
+          { set: { $lte: Number.MAX_VALUE } }, // Wrap to the end
+        ],
+      };
+      sortOrder = -1; // Descending order for restart
     }
 
     players = await Player.find(query)
-      .sort({set:1, bidplace: sortOrder })
+      .sort({ set: sortOrder, bidplace: sortOrder })
       .limit(1);
 
     if (players.length > 0) {
-      console.log("Player fetched after retry:", players[0]);
+      console.log("Player fetched after wrapping:", players[0]);
       res.status(200).send(players[0]); // Send the player data
     } else {
-      res.status(200).send(`No available players to sell...`);
+      res.status(200).send("No available players to sell...");
     }
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
   }
 };
-
-
-// const playersToBuy = async (req, res) => {
-//     console.log("In playersToBuy function");
-//     try {
-    
-//       const { bidplace, direction } = req.query;
-// console.log(bidplace,direction,req.body)
-// // Parse the bidPlace to an integer
-// let sortOrder=1;
-// let query = { isSold: { $ne: true } };
-// if(bidplace!=undefined){
-// const bidPlaceValue = parseInt(bidplace, 10);
-
-// // Modify the query based on the direction
-// if (direction === 'next') {
-//   // Find players with a bidplace greater than the given bidPlace
-//   query = { ...query, bidplace: { $gt: bidPlaceValue } };
-// } else if (direction === 'prev') {
-//   // Find players with a bidplace less than the given bidPlace
-//   query = { ...query, bidplace: { $lt: bidPlaceValue } };
-
-// }
-// sortOrder = direction === 'prev' ? -1 : 1;
-// }
-  
-//       // Fetch the player based on the query
-//       const players = await Player.find(query)
-//         .sort({ bidplace: sortOrder }) // Sort by bidPlace in ascending order
-//         .limit(1); // Fetch only one player
-  
-//       if (players.length > 0) {
-//         console.log("Player fetched:", players[0]);
-//         res.status(200).send(players[0]); // Send the player data
-//       } else {
-        
-//         res.status(200).send(`No available players to sell...`);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//       res.status(400).send(err);
-//     }
-// };
 
 const soldPlayers = async(req,res)=>{
     try{

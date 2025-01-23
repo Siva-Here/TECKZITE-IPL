@@ -246,10 +246,11 @@ const HomePage = () => {
     fetchPlayer();
   }, []);
   const token=localStorage.getItem("Token");
-  const fetchPlayer = (bidplace = null,direction) => {
- 
+  const fetchPlayer = (bidplace = null,direction,set) => {
+ console.log(set)
+ console.log(player)
     const url = bidplace
-      ? `http://localhost:8000/api/playersToBuy?bidplace=${bidplace}&direction=${direction}`
+      ? `http://localhost:8000/api/playersToBuy?bidplace=${bidplace}&set=${set}&direction=${direction}`
       : 'http://localhost:8000/api/playersToBuy';
 
     axios
@@ -271,16 +272,17 @@ const HomePage = () => {
   };
 
   const handleNext = () => {
-    if (player?.bidplace) {
-      fetchPlayer(player.bidplace ,"next"); // Fetch the next player based on current bidPlace
+    alert(player.set)
+    if ( player?.set && player?.bidplace) {
+      fetchPlayer(player.bidplace ,"next",player.set); // Fetch the next player based on current bidPlace
     }else{
       fetchPlayer();
     }
   };
 
   const handlePrev = () => {
-    if (player?.bidplace && player.bidplace > 1) {
-      fetchPlayer(player.bidplace ,"prev"); // Fetch the previous player based on current bidPlace
+    if (player?.bidplace && player.bidplace > 1 && player?.set) {
+      fetchPlayer(player.bidplace ,"prev",player.set); // Fetch the previous player based on current bidPlace
     }
     else{
       fetchPlayer()
@@ -316,6 +318,7 @@ if(selectedTeam==""){
   };
  
   const handleConfirmBid = () => {
+   
     if (player) {
       axios
         .post(
@@ -334,7 +337,7 @@ if(selectedTeam==""){
         )
         .then(() => {
           alert('Bid confirmed!');
-          fetchPlayer(player.bidplace, "next"); // Automatically fetch the next player
+          fetchPlayer(player.bidplace, "next",player.set); 
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);

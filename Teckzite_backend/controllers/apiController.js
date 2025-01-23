@@ -47,7 +47,10 @@ const playersToBuy = async (req, res) => {
           { set: setValue, bidplace: { $gt: bidPlaceValue } },
         ],
       };
+
+
       sortOrder = 1; 
+
     } else if (direction === "prev") {
       query = {
         ...query,
@@ -75,18 +78,22 @@ const playersToBuy = async (req, res) => {
       query = {
         isSold: { $ne: true },
         $or: [
+
           { set: { $gte: 0 } }, 
         ],
       };
       sortOrder = 1; 
+
     } else if (direction === "prev") {
       query = {
         isSold: { $ne: true },
         $or: [
+
           { set: { $lte: Number.MAX_VALUE } }, 
         ],
       };
       sortOrder = -1; 
+
     }
 
     players = await Player.find(query)
@@ -104,7 +111,6 @@ const playersToBuy = async (req, res) => {
     res.status(400).send(err);
   }
 };
-
 
 
 const soldPlayers = async(req,res)=>{

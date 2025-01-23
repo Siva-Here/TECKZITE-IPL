@@ -372,7 +372,7 @@ setUploading(true);
 
 
   const handleEditPlayer = (player) => {
-    console.log("player",player)
+   
     setEditoption(true);
     setNewPlayer(player)
     setIsModalOpen(true)
@@ -451,6 +451,19 @@ setUploading(true);
 
         </SearchForm>
       </SearchContainer>
+      {uploading && (
+        <div style={{ marginTop: "30px" }}>
+        <SpinningCircles
+  stroke="#000"  // Spinner color
+  strokeWidth={4} // Thickness of the spinner
+  speed={5}       // Rotation speed
+  height="40px"   // Height of the spinner
+  width="40px"    // Width of the spinner
+/>
+
+          <p>Uploading data...</p>
+        </div>
+      )}
 <TableContainer>
   <Table>
     <thead>
@@ -641,19 +654,7 @@ setUploading(true);
           </ModalForm>
         </ModalContent>
       </Modal>
-      {uploading && (
-        <div style={{ marginTop: "10px" }}>
-        <SpinningCircles
-  stroke="#000"  // Spinner color
-  strokeWidth={4} // Thickness of the spinner
-  speed={5}       // Rotation speed
-  height="40px"   // Height of the spinner
-  width="40px"    // Width of the spinner
-/>
-
-          <p>Uploading data...</p>
-        </div>
-      )}
+    
       {
         playerprofile && (
           <div

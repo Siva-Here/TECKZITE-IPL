@@ -267,6 +267,7 @@ const HomePage = () => {
   };
 
   const handleNext = () => {
+
     if ( player?.set && player?.bidplace) {
       fetchPlayer(player.bidplace ,"next",player.set); // Fetch the next player based on current bidPlace
     }else{
@@ -288,6 +289,7 @@ const HomePage = () => {
     if (player) {
       const increment = player.basePrice >= 10000000 ? 1000000 : 10000;
       setBidAmount((prev) => prev + increment);
+      socket.emit('bidAmount',bidAmount+increment);
     }
   };
 
@@ -295,6 +297,7 @@ const HomePage = () => {
     if (player) {
       const decrement = player.basePrice >= 10000000 ? 1000000 : 10000;
       setBidAmount((prev) => Math.max(player.basePrice, prev - decrement));
+       socket.emit('bidAmount',Math.max(player.basePrice,bidAmount-decrement));
     }
   };
   const handleAssignClick = () => {
@@ -310,7 +313,6 @@ if(selectedTeam==""){
     setShowModal(false); // Close the modal
     handleConfirmBid(); // Call the confirm bid handler
   };
- 
   const handleConfirmBid = () => {
    
     if (player) {
@@ -331,16 +333,26 @@ if(selectedTeam==""){
         )
         .then(() => {
           alert('Bid confirmed!');
+
           fetchPlayer(player.bidplace, "next",player.set); 
+
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);
-          toast.error("Error while confirming bid");
+
+          if (error.response && error.response.data && error.response.data.error) {
+            // Backend-specific error
+            toast.error(error.response.data.error);
+          } else {
+            // Generic or network error
+            toast.error("An unexpected error occurred while confirming the bid.");
+          }
         });
     } else {
       alert("No player selected to bid.");
     }
   };
+  
   
 
  
@@ -405,7 +417,6 @@ if(selectedTeam==""){
                 Auction Details
               </CardTitle>
                 <CardGrid>
-     
               <CardItem>
                 <CardItemTitle>BasePrice</CardItemTitle>
                 <CardItemValue>{player.basePrice.toLocaleString()}</CardItemValue>

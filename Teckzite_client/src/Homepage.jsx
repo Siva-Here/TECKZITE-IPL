@@ -192,6 +192,8 @@ const socket = io('http://localhost:8000');
 const HomePage = () => {
   const [player, setPlayer] = useState('');
 
+   const[amount,setAmount]=useState('')
+
   useEffect(() => {
     // Listen for updates from the server
     socket.on('updateViewer', (newImage) => {
@@ -200,10 +202,15 @@ const HomePage = () => {
     
       console.log('Image updated:', newImage);
     });
-
+    socket.on('bidAmount',(bidAmount)=>{
+      console.log(bidAmount)
+      setAmount(bidAmount);
+    })
     return () => {
       socket.off('updateViewer');
+      socket.off('bidAmount');
     };
+   
   }, []);
 
   return (
@@ -283,7 +290,9 @@ const HomePage = () => {
           </CardItem>
           <CardItem>
             <CardItemTitle>Current Bid</CardItemTitle>
+
             <CardItemValue style={{ color: 'green' }}>{bidAmount}</CardItemValue>
+
           </CardItem>
           </CardGrid>
          

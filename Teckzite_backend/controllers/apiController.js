@@ -30,7 +30,10 @@ const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
     const { bidplace, set, direction } = req.query;
-    console.log(bidplace, set, direction, req.body);
+
+    console.log(bidplace, set, direction);
+
+   
 
     // Parse bidplace and set to integers
     const bidPlaceValue = parseInt(bidplace, 10);
@@ -47,7 +50,6 @@ const playersToBuy = async (req, res) => {
           { set: setValue, bidplace: { $gt: bidPlaceValue } },
         ],
       };
-
 
       sortOrder = 1; 
 
@@ -79,20 +81,24 @@ const playersToBuy = async (req, res) => {
         isSold: { $ne: true },
         $or: [
 
+
           { set: { $gte: 0 } }, 
         ],
       };
       sortOrder = 1; 
+
 
     } else if (direction === "prev") {
       query = {
         isSold: { $ne: true },
         $or: [
 
+
           { set: { $lte: Number.MAX_VALUE } }, 
         ],
       };
       sortOrder = -1; 
+
 
     }
 
@@ -111,7 +117,6 @@ const playersToBuy = async (req, res) => {
     res.status(400).send(err);
   }
 };
-
 
 const soldPlayers = async(req,res)=>{
     try{
@@ -167,16 +172,14 @@ const player = async (req, res) => {
     console.log("in uploadimg")
     const uploadImage = await import('../uploadimage.mjs');
     try {
-      // const uploadedImage = await uploadImage.uploadImages(image);
-      // console.log("Result after uploading:", uploadedImage);
+      
       const uploadedImageUrl = await uploadImage.uploadImages(image);
       console.log("Uploaded Image URL:", uploadedImageUrl);
-      
-      // Once the image is uploaded, proceed with the rest of the logic
       image = uploadedImageUrl;
     }
     catch(err){
       console.log("error while uploading photo")
+      return res.status(500).send({ message: 'error while uploaidng photo'});
     }
   }
       const id = req.body._id; 
@@ -187,14 +190,13 @@ const player = async (req, res) => {
        
       if (existingPlayer) {
         console.log("in existingPlayer")
-        // Update the existing player with new details
-        existingPlayer.name = req.body.name;
-        existingPlayer.nationality = req.body.nationality;
-        existingPlayer.age = req.body.age;
-        existingPlayer.role = req.body.role;
-        existingPlayer.runs = req.body.runs;
-        existingPlayer.wickets = req.body.wickets;
-        existingPlayer.strikeRate = req.body.strikeRate;
+        existingPlayer.name = name;
+        existingPlayer.nationality = nationality;
+        existingPlayer.age = age;
+        existingPlayer.role = role;
+        existingPlayer.runs = runs;
+        existingPlayer.wickets = wickets;
+        existingPlayer.strikeRate = strikeRate;
         
         existingPlayer.image = image; 
         // Save Cloudinary URL
@@ -267,22 +269,26 @@ const createTeam = async (req, res) => {
   };
   
 
+
 const bid = async (req, res) => {
-  console.log("in bid fn")
-    const { teamName, playerId, biddingAmount} = req.body;
-    console.log(teamName,playerId,biddingAmount)
-    const player=await Player.findById({_id:playerId})
-    if(player.isSold){
-        return res.status(200).send(`player  already sold...`)
+  console.log("in bid fn");
+  const { teamName, playerId, biddingAmount } = req.body;
+  console.log(teamName, playerId, biddingAmount);
+  
+  try {
+    const player = await Player.findById({ _id: playerId });
+    if (player.isSold) {
+      return res.status(400).json({ error: "Player already sold." });
     }
-    try {
-        const updatedTeam = await Team.handleBid(teamName, playerId, biddingAmount);
-        console.log(updatedTeam)
-        res.status(200).json({ message: 'Bid successful', team: updatedTeam });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+
+    const updatedTeam = await Team.handleBid(teamName, playerId, biddingAmount);
+    console.log(updatedTeam);
+    res.status(200).json({ message: "Bid successful", team: updatedTeam });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const deletePlayer = async (req,res) =>{ 
   const {id }= req.body
   console.log(req.body)

@@ -3,12 +3,6 @@ import styled from "styled-components";
 import TeamCard from "../components/TeamCard"
 import {toast} from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { Bars } from 'react-loading-icons'
-import SpinningCircles from "react-loading-icons/dist/esm/components/spinning-circles";
-import Rings from "react-loading-icons/dist/esm/components/rings";
-import ThreeDots from "react-loading-icons/dist/esm/components/three-dots";
-import Puff from "react-loading-icons/dist/esm/components/puff";
-import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 import Oval from "react-loading-icons/dist/esm/components/oval";
 
 
@@ -45,8 +39,8 @@ const NeonButton = styled.button`
     width: 6rem;
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
-    top: 2px;
-    right: 0;
+     top:7px;
+    right:5px;
   }
 `;
 

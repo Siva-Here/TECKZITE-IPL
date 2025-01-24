@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
-  min-height: 100vh;
+  height: 88vh;
   position: relative;
   // border:30px solid #ff00ff;
 `;
@@ -27,7 +27,7 @@ const Background = styled.div`
 const Content = styled.div`
   position: relative;
   z-index: 10;
-  min-height: 100vh;
+  height: 88vh;
   display: flex;
   align-items: center;
   justify-content: center;

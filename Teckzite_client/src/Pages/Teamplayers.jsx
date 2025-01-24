@@ -194,7 +194,7 @@ const Players = () => {
   return (
     <TeamsContainer>
       <Content>
-        <div className="min-h-screen text-white bg-gray-900">
+        <div className="min-h-screen text-white">
           <Navbar />
           <div className="p-6">
             <div className="flex justify-center mb-8">

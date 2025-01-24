@@ -11,7 +11,7 @@ router.get('/getTeams',apiController.getTeams);
 
 //router.post("/createplayer",apiController.player);
 router.post("/createTeam",authenticateAdmin,apiController.createTeam);
-router.post('/bid',apiController.bid);
+router.post('/bid',authenticateAdmin,apiController.bid);
 router.delete('/deleteTeam',authenticateAdmin,apiController.deleteTeam);
 router.delete('/deletePlayer',authenticateAdmin,apiController.deletePlayer);
 router.post('/createplayer',authenticateAdmin,upload.single('image'), apiController.player);

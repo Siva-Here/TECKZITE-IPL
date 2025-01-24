@@ -1,10 +1,19 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaEdit, FaTrashAlt, FaTimes } from 'react-icons/fa'; // Importing React Icons
 import { toast } from 'react-toastify'; // Importing Toast for notifications
 import ProfileCard from '../components/Profilecard';
 import SpinningCircles from "react-loading-icons/dist/esm/components/spinning-circles";
+import Oval from "react-loading-icons/dist/esm/components/oval";
 //search styles
+
+const CenterSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 10vh;
+  color:#ff00ff;
+`;
 const SearchContainer = styled.div`
   width: 100%;
   max-width: 700px;
@@ -57,6 +66,7 @@ const GradientCards = styled.div`
   min-height: 100vh;
   padding: 20px;
   position: relative;
+  background-color:rgb(37, 44, 59);
 `;
 
 const TableContainer = styled.div`
@@ -65,7 +75,7 @@ const TableContainer = styled.div`
   background: rgb(37, 44, 59);
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
   margin-top: 50px;
   overflow-x: auto;
 `;
@@ -102,7 +112,7 @@ const NeonButton = styled.button`
   width: 10rem;
   transition: background 0.3s ease;
   position: absolute;
-  top: 20px;
+  top: 30px;
   right: 20px;
   &:hover {
     background: linear-gradient(45deg, #00ffff, #ff00ff);
@@ -116,8 +126,8 @@ const NeonButton = styled.button`
     width: 6rem; /* Further decrease width for very small devices */
     padding: 0.375rem 0.75rem; /* Adjust padding */
     font-size: 0.875rem; /* Reduce font size if needed */
-    top:2px;
-    right:0;
+    top:7px;
+    right:5px;
   }
 `;
 
@@ -232,11 +242,12 @@ const AddPlayer = () => {
     image: null,
     basePrice: '',
     isDebut: false,
-    bidplace:'',
+    bidplace: '',
     set: '',
-  
+
 
   });
+  const [loading, setLoading] = useState(true);
   const [playerprofile, setplayerProfile] = useState(false);
   const [singleplayer, setSingleplayer] = useState({
     name: '',
@@ -249,15 +260,15 @@ const AddPlayer = () => {
     image: null,
     basePrice: '',
     isDebut: false,
-    bidplace:'',
+    bidplace: '',
     set: '',
-    
+
   });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [Players, setPlayers] = useState([]);
-  const [filterplayers,setFilterPlayers]=useState([]);
-  const [editoption,setEditoption]=useState(false);
+  const [filterplayers, setFilterPlayers] = useState([]);
+  const [editoption, setEditoption] = useState(false);
   const handleAddPlayer = () => {
     setIsModalOpen(true);
   };
@@ -273,7 +284,7 @@ const AddPlayer = () => {
       [name]: value,
     });
   };
-  const fetchPlayers=async()=>{
+  const fetchPlayers = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/getplayers");
       const data = await response.json();
@@ -281,14 +292,15 @@ const AddPlayer = () => {
         console.log(data)
         setPlayers(data);
         setFilterPlayers(data);
+        setLoading(false);
       }
-      else{
+      else {
         console.log("error while fetching data");
         alert("Error while fetching data");
       }
     }
-    catch(error){
-       console.log(error);
+    catch (error) {
+      console.log(error);
     }
   }
   const handleSubmit = async (e) => {
@@ -303,14 +315,13 @@ const AddPlayer = () => {
         formData.append(key, newPlayer[key]); // Append other fields
       }
     });
-    if 
-      (!editoption ){
-        if(!newPlayer.image)
-    {
-      toast.error("Please upload an image.");
-      return;
+    if
+      (!editoption) {
+      if (!newPlayer.image) {
+        toast.error("Please upload an image.");
+        return;
+      }
     }
-  }
 
 
     console.log("New player:", newPlayer);
@@ -322,67 +333,67 @@ const AddPlayer = () => {
       runs: '',
       wickets: '',
       strikeRate: '',
-      image:null,
+      image: null,
       basePrice: '',
       isDebut: false,
-      bidplace:'',
+      bidplace: '',
       set: '',
-      
+
     });
     setIsModalOpen(false);
-    
+
     savePlayers(formData);
   };
 
-const savePlayers = async (formData) => {
-  
+  const savePlayers = async (formData) => {
 
-  if (!token) {
-    toast.error("JWT token is missing, please login again!");
-    return;
-  }
-setUploading(true);
-  try {
-    const url = "http://localhost:8000/api/createplayer"; // Create API endpoint
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-      body: formData, 
-    });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      toast.success(responseData.message);
-      setEditoption(false)
-      setUploading(false)
-      fetchPlayers();
-      handleCloseModal();
-    } else {
-      const errorData = await response.json();
-      setUploading(false)
-      toast.error(errorData.message || "Failed to create or edit team!");
+    if (!token) {
+      toast.error("JWT token is missing, please login again!");
+      return;
     }
-  } catch (error) {
-    toast.error("Error submitting team data, please try again!");
-  }
-};
+    setUploading(true);
+    try {
+      const url = "http://localhost:8000/api/createplayer"; // Create API endpoint
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        toast.success(responseData.message);
+        setEditoption(false)
+        setUploading(false)
+        fetchPlayers();
+        handleCloseModal();
+      } else {
+        const errorData = await response.json();
+        setUploading(false)
+        toast.error(errorData.message || "Failed to create or edit team!");
+      }
+    } catch (error) {
+      toast.error("Error submitting team data, please try again!");
+    }
+  };
 
 
   const handleEditPlayer = (player) => {
-   
+
     setEditoption(true);
     setNewPlayer(player)
     setIsModalOpen(true)
-    
+
   };
 
-  const handleDeletePlayer =async(player) => {
-   
-    const id=player._id;
-    
+  const handleDeletePlayer = async (player) => {
+
+    const id = player._id;
+
     try {
       const response = await fetch("http://localhost:8000/api/deletePlayer", {
         method: "DELETE",
@@ -397,7 +408,7 @@ setUploading(true);
         alert(`Player ${player.name} deleted successfully`);
 
         // Optionally, update the state to remove the player from the list
-       fetchPlayers()
+        fetchPlayers()
       } else {
         toast.error('Failed to delete the player');
         console.log('Error during player deletion:', response);
@@ -419,12 +430,12 @@ setUploading(true);
 
 
   const handleSearch = (e) => {
-   
+
     const query = e.toLowerCase(); // Use a local variable for the query.
     setSearchQuery(query);
 
     if (query === "") {
-      setPlayers(filterplayers); 
+      setPlayers(filterplayers);
     } else {
       const filteredPlayers = filterplayers.filter((player) =>
         player.name.toLowerCase().includes(query)
@@ -453,67 +464,71 @@ setUploading(true);
       </SearchContainer>
       {uploading && (
         <div style={{ marginTop: "30px" }}>
-        <SpinningCircles
-  stroke="#000"  // Spinner color
-  strokeWidth={4} // Thickness of the spinner
-  speed={5}       // Rotation speed
-  height="40px"   // Height of the spinner
-  width="40px"    // Width of the spinner
-/>
+          <SpinningCircles
+            stroke="#000"  // Spinner color
+            strokeWidth={4} // Thickness of the spinner
+            speed={5}       // Rotation speed
+            height="40px"   // Height of the spinner
+            width="40px"    // Width of the spinner
+          />
 
           <p>Uploading data...</p>
         </div>
       )}
-<TableContainer>
-  <Table>
-    <thead>
-      <tr>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Role</TableHeader>
-        <TableHeader>Runs</TableHeader>
-        <TableHeader>Wickets</TableHeader>
-        <TableHeader>Strike Rate</TableHeader>
-        <TableHeader>Base Price</TableHeader>
-        <TableHeader>Bid Place</TableHeader>
-        <TableHeader>Status</TableHeader>
-      </tr>
-    </thead>
-    <tbody>
-      {Players && Players.length > 0 ? (
-        Players.map((player, index) => (
-          <tr key={index} onClick={() => handleComponent(player)}>
-            <TableData>{player.name}</TableData>
-            <TableData>{player.role}</TableData>
-            <TableData>{player.runs}</TableData>
-            <TableData>{player.wickets}</TableData>
-            <TableData>{player.strikeRate}</TableData>
-            <TableData>${player.basePrice}</TableData>
-            <TableData>{player.bidplace}</TableData>
-            <TableData>{player.isSold?"sold":"unsold"}</TableData>
-            <TableData
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent row click event.
-              }}
-            >
-              <ActionButton onClick={() => handleEditPlayer(player)}>
-                <FaEdit />
-              </ActionButton>
-              <ActionButton onClick={() => handleDeletePlayer(player)}>
-                <FaTrashAlt />
-              </ActionButton>
-            </TableData>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <TableData colSpan="8" style={{ textAlign: 'center' }}>
-            No players available
-          </TableData>
-        </tr>
-      )}
-    </tbody>
-  </Table>
-</TableContainer>
+      <TableContainer>
+        {
+          !loading ? <Table>
+            <thead>
+              <tr>
+                <TableHeader>Name</TableHeader>
+                <TableHeader>Role</TableHeader>
+                <TableHeader>Runs</TableHeader>
+                <TableHeader>Wickets</TableHeader>
+                <TableHeader>Strike Rate</TableHeader>
+                <TableHeader>Base Price</TableHeader>
+                <TableHeader>Bid Place</TableHeader>
+                <TableHeader>Status</TableHeader>
+              </tr>
+            </thead>
+            <tbody>
+              {Players && Players.length > 0 ? (
+                Players.map((player, index) => (
+                  <tr key={index} onClick={() => handleComponent(player)}>
+                    <TableData>{player.name}</TableData>
+                    <TableData>{player.role}</TableData>
+                    <TableData>{player.runs}</TableData>
+                    <TableData>{player.wickets}</TableData>
+                    <TableData>{player.strikeRate}</TableData>
+                    <TableData>${player.basePrice}</TableData>
+                    <TableData>{player.bidplace}</TableData>
+                    <TableData>{player.isSold ? "sold" : "unsold"}</TableData>
+                    <TableData
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent row click event.
+                      }}
+                    >
+                      <ActionButton onClick={() => handleEditPlayer(player)}>
+                        <FaEdit />
+                      </ActionButton>
+                      <ActionButton onClick={() => handleDeletePlayer(player)}>
+                        <FaTrashAlt />
+                      </ActionButton>
+                    </TableData>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <TableData colSpan="8" style={{ textAlign: 'center' }}>
+                    No players available
+                  </TableData>
+                </tr>
+              )}
+            </tbody>
+          </Table> : <CenterSpinner>
+            <Oval stroke="#ff00ff" />
+          </CenterSpinner>
+        }
+      </TableContainer>
 
       <Modal isOpen={isModalOpen}>
         <ModalContent>
@@ -585,13 +600,13 @@ setUploading(true);
             <ModalInput
               type="file"
               name="image"
-              
+
               title="Upload player image"
               onChange={(e) => {
                 const file = e.target.files[0];
                 setNewPlayer({ ...newPlayer, image: file });
               }}
-             
+
             />
             <ModalInput
               type="number"
@@ -601,8 +616,8 @@ setUploading(true);
               onChange={handleInputChange}
               required
             />
-            <label style={{marginRight:'10px'}}>
-            Bid Place</label>
+            <label style={{ marginRight: '10px' }}>
+              Bid Place</label>
             <ModalInput
               type="number"
               name="bidplace"
@@ -654,7 +669,7 @@ setUploading(true);
           </ModalForm>
         </ModalContent>
       </Modal>
-    
+
       {
         playerprofile && (
           <div

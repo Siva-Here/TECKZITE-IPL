@@ -30,7 +30,10 @@ const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
     const { bidplace, set, direction } = req.query;
+
     console.log(bidplace, set, direction);
+
+   
 
     // Parse bidplace and set to integers
     const bidPlaceValue = parseInt(bidplace, 10);
@@ -47,7 +50,9 @@ const playersToBuy = async (req, res) => {
           { set: setValue, bidplace: { $gt: bidPlaceValue } },
         ],
       };
-      sortOrder = 1; // Ascending order for "next"
+
+      sortOrder = 1; 
+
     } else if (direction === "prev") {
       query = {
         ...query,
@@ -59,33 +64,42 @@ const playersToBuy = async (req, res) => {
       sortOrder = -1; // Descending order for "prev"
     }
 
-    // Fetch the player based on the query
+    
     let players = await Player.find(query)
       .sort({ set: sortOrder, bidplace: sortOrder })
       .limit(1);
 
     if (players.length > 0) {
       console.log("Player fetched:", players[0]);
-      return res.status(200).send(players[0]); // Send the player data
+      return res.status(200).send(players[0]); 
     }
+
     // If no players are found, wrap around for cyclic behavior
     console.log("No players found. Wrapping around for cyclic behavior...");
     if (direction === "next") {
       query = {
         isSold: { $ne: true },
         $or: [
-          { set: { $gte: 0 } }, // Start from the beginning
+
+
+          { set: { $gte: 0 } }, 
         ],
       };
-      sortOrder = 1; // Ascending order for restart
+      sortOrder = 1; 
+
+
     } else if (direction === "prev") {
       query = {
         isSold: { $ne: true },
         $or: [
-          { set: { $lte: Number.MAX_VALUE } }, // Wrap to the end
+
+
+          { set: { $lte: Number.MAX_VALUE } }, 
         ],
       };
-      sortOrder = -1; // Descending order for restart
+      sortOrder = -1; 
+
+
     }
 
     players = await Player.find(query)

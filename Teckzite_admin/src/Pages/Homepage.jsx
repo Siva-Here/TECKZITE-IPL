@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 
 const Container = styled.div`
-  min-height: 100vh;
+  height: 88vh;
   background: linear-gradient(to bottom right, #1f1f1f, #000);
   color: white;
   font-family: 'Roboto', sans-serif;
@@ -21,7 +21,7 @@ const Container = styled.div`
   flex-direction: column;
 
   @media (min-width: 1024px) {
-    min-height: 100vh;
+    height: 88vh;
   }
 `;
 
@@ -38,17 +38,17 @@ const HeroSection = styled.div`
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 50vh;
+  height: 88vh;
 
   @media (min-width: 768px) {
-    height: auto;
+    height: 88vh;
     width: 50%;
   }
 `;
 
 const Image = styled.img`
   width: 100%;
-  height: 100%;
+  height: 88vh;
   object-fit: cover;
   object-position: top;
 `;
@@ -110,52 +110,50 @@ const HeroSubText = styled.div`
 const MainContent = styled.div`
   width: 100%;
   padding: 1rem;
+  height:88vh;
 
   @media (min-width: 768px) {
     width: 50%;
-    padding: 2rem;
+    padding: 1rem;
   }
 
   @media (min-width: 1024px) {
-    padding: 3rem;
+    padding: 1rem;
   }
 `;
 
 const Card = styled.div`
   background: rgba(31, 31, 31, 0.8);
   backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  padding: 1rem;
-  margin-bottom: 2rem;
+  padding: 0px;
+  margin-bottom: 1rem;
   transition: all 0.3s ease-in-out;
+  height:32vh;
 
   &:hover {
     background: rgba(31, 31, 31, 0.9);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     transform: scale(1.03);
   }
-
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
 `;
 
 const CardTitle = styled.h2`
-  font-size: 1.5rem;
+  font-size: 0rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-top: 2rem;
   display: flex;
   align-items: center;
 
   @media (min-width: 768px) {
-    font-size: 2rem;
+    font-size: 0.8rem;
+    padding:10px
   }
 `;
 
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 0.5rem;
 
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
@@ -165,16 +163,17 @@ const CardGrid = styled.div`
 const CardItem = styled.div`
   background: rgba(90, 65, 91, 0.7);
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.4rem;
+  height:auto;
 
   @media (min-width: 768px) {
-    padding: 1.5rem;
+    padding: 0.4rem;
   }
 `;
 
 const CardItemTitle = styled.div`
   color: #d1d1d1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 `;
 
 const CardItemValue = styled.div`
@@ -182,7 +181,7 @@ const CardItemValue = styled.div`
   font-weight: bold;
 
   @media (min-width: 768px) {
-    font-size: 2rem;
+    font-size: 1rem;
   }
 `;
 
@@ -211,7 +210,7 @@ const Button = styled.button`
 
   &:hover {
     background: #d600d6;
-    transform: scale(1.05);
+    transform: scale(1);
   }
 
   @media (min-width: 768px) {
@@ -222,12 +221,8 @@ const Button = styled.button`
 
 const AssignButton = styled(Button)`
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 
-  &:hover {
-    background: #ff0099;
-    transform: scale(1.05);
-  }
 `;
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -272,7 +267,7 @@ const HomePage = () => {
   };
 
   const handleNext = () => {
-    alert(player.set)
+
     if ( player?.set && player?.bidplace) {
       fetchPlayer(player.bidplace ,"next",player.set); // Fetch the next player based on current bidPlace
     }else{
@@ -319,6 +314,7 @@ if(selectedTeam==""){
     handleConfirmBid(); // Call the confirm bid handler
   };
   const handleConfirmBid = () => {
+   
     if (player) {
       axios
         .post(
@@ -337,7 +333,9 @@ if(selectedTeam==""){
         )
         .then(() => {
           alert('Bid confirmed!');
-          fetchPlayer(player.bidplace, "next", player.set); 
+
+          fetchPlayer(player.bidplace, "next",player.set); 
+
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);
@@ -390,7 +388,7 @@ if(selectedTeam==""){
                <MainContent>
                 <Card>
                   <CardTitle>
-                     <FaChartLine className="w-5 h-5 mr-3 text-[#ff00ff]" />
+                     <FaChartLine className=" mr-1  text-[#ff00ff]" />
                                   Career Statistics
                                 </CardTitle>
                                 <CardGrid>
@@ -415,7 +413,7 @@ if(selectedTeam==""){
               </Card>
               <Card>
               <CardTitle>
-   <FaDollarSign className="w-6 h-6 mr-3 text-[#ff00ff]" />
+   <FaDollarSign className="mr-1 text-[#ff00ff]" />
                 Auction Details
               </CardTitle>
                 <CardGrid>
@@ -434,6 +432,9 @@ if(selectedTeam==""){
                             </Button>
                             <Button onClick={handleIncreaseBid}>
                               <FaPlus />
+                            </Button>
+                            <Button onClick={handleNext}>
+                              Unsold
                             </Button>
                             <Button onClick={handlePrev}>
                               <FaArrowLeft />
@@ -479,12 +480,12 @@ if(selectedTeam==""){
             ) : <ButtonGroup>
               <Card><p>No palyers available</p></Card>
            
-            <Button onClick={handlePrev}>
+            {/* <Button onClick={handlePrev}>
               <FaArrowLeft />
             </Button>
             <Button onClick={handleNext}>
               <FaArrowRight />
-            </Button>
+            </Button> */}
           </ButtonGroup > }
         </HeroSection>
       </Container>

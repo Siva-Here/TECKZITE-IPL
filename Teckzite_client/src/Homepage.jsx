@@ -191,7 +191,9 @@ const socket = io('http://localhost:8000');
 
 const HomePage = () => {
   const [player, setPlayer] = useState('');
+
    const[amount,setAmount]=useState('')
+
   useEffect(() => {
     // Listen for updates from the server
     socket.on('updateViewer', (newImage) => {
@@ -288,7 +290,9 @@ const HomePage = () => {
           </CardItem>
           <CardItem>
             <CardItemTitle>Current Bid</CardItemTitle>
-            <CardItemValue style={{ color: 'green' }}>{amount}</CardItemValue>
+
+            <CardItemValue style={{ color: 'green' }}>{bidAmount}</CardItemValue>
+
           </CardItem>
           </CardGrid>
          

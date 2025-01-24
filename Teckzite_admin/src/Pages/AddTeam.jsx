@@ -4,6 +4,7 @@ import TeamCard from "../components/TeamCard"
 import {toast} from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Oval from "react-loading-icons/dist/esm/components/oval";
+import {useNavigate} from "react-router-dom";
 
 
 const AddTeamContainer = styled.div`
@@ -290,6 +291,9 @@ const AddTeam = () => {
   const [remainingteams,setremainingteams] = useState([]);
   const [loading,setLoading] = useState(true);
 
+
+  const navigate = useNavigate();
+
   const handleOpenModal = (team = null) => {
     console.log("isEditing:",isEditing);
     
@@ -540,7 +544,7 @@ const AddTeam = () => {
                   <FaTrash size={12} />
                 </IconButton>
               </div>
-              <ViewButton>View Players</ViewButton>
+              <ViewButton onClick={() => navigate(`/teams/${team._id}`)}>View Players</ViewButton>
             </ButtonContainer>
           </CardContainer>
         )):<div

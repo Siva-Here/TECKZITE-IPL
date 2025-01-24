@@ -7,7 +7,6 @@ import {
   FaCalendarAlt,
   FaChartLine,
   FaDollarSign,
-  
 } from 'react-icons/fa';
 
 const Container = styled.div`

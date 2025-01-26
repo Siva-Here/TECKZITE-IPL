@@ -4,7 +4,7 @@ import { FaHome, FaUsers, FaUserCircle, FaRegPlayCircle } from 'react-icons/fa';
 import Home from './Pages/Home';
 import Teams from './Pages/Teams';
 import Players from './Pages/Players';
-import Auction from './Pages/Auction';
+import HomePage from './Homepage'
 import Teamplayers from './Pages/Teamplayers'
 
 
@@ -76,7 +76,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="teams" element={<Teams />} />
           <Route path="players" element={<Players />} />
-          <Route path="auction" element={<Auction />} />
+          <Route path="auction" element={<HomePage />} />
           <Route path='teams/:id' element={<Teamplayers />} />
         </Route>
       </Routes>

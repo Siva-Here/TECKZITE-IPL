@@ -8,6 +8,7 @@ router.get('/getplayers',apiController.getplayers);
 router.get('/playersToBuy',apiController.playersToBuy);
 router.get('/soldPlayers',apiController.soldPlayers);
 router.get('/getTeams',apiController.getTeams);
+router.get('/getteamplayers/:id',apiController.getteamplayers);
 
 //router.post("/createplayer",apiController.player);
 router.post("/createTeam",authenticateAdmin,apiController.createTeam);

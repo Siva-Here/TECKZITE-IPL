@@ -290,7 +290,7 @@ const HomePage = () => {
           <CardItem>
             <CardItemTitle>Current Bid</CardItemTitle>
 
-            <CardItemValue style={{ color: 'green' }}>{bidAmount}</CardItemValue>
+            <CardItemValue style={{ color: 'green' }}>{amount}</CardItemValue>
 
           </CardItem>
           </CardGrid>

@@ -256,15 +256,6 @@ const HomePage = () => {
   }, []);
 
   return (
-    // <div className="container mt-5 text-center">
-    //   {image.image ? (
-    //    <div> <img src={image.image} alt="Current Player" className="img-fluid" />
-    //    <p>{image.name}</p>
-    //       </div>
-    //   ) : (
-    //     <p>Waiting for admin to start auction...</p>
-    //   )}
-    // </div>
     <Container>
     <HeroSection>
       

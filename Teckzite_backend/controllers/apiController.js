@@ -18,7 +18,7 @@ const getplayers = async(req,res)=>{
             res.status(200).send(players)
         }
         else{
-            res.status(200).send(`No players are available to show...`)
+            res.status(200).send({message:"No players found"})
         }
     }
     catch(err){
@@ -319,8 +319,34 @@ const deleteTeam = async (req,res) =>{
     }
 }
 
+const getteamplayers = async (req, res) => {
+  try {
+    console.log("getteamplayers function: Team ID:", req.params.id);
+
+    // Step 1: Find the Team document by its ID and retrieve the players array (IDs of players)
+    const team = await Team.findById(req.params.id);
+
+    if (!team) {
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    const playerIds = team.players; // Extract the array of player IDs from the team document
+
+    // Step 2: Find the player documents using the array of player IDs
+    const players = await Player.find({ _id: { $in: playerIds } });
+
+    // Step 3: Send the players as a JSON response
+    res.json(players);
+  } catch (err) {
+    // Handle any errors
+    console.error("Error in getteamplayers function:", err);
+    res.status(400).json({ error: err.message });
+  }
+};
 
 
 
 
-module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer};
+
+
+module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers};

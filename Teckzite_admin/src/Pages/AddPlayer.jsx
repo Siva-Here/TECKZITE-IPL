@@ -467,7 +467,7 @@ const AddPlayer = () => {
           <SpinningCircles
             stroke="#000"  // Spinner color
             strokeWidth={4} // Thickness of the spinner
-            speed={5}       // Rotation speed
+            speed={2}       // Rotation speed
             height="40px"   // Height of the spinner
             width="40px"    // Width of the spinner
           />
@@ -491,7 +491,7 @@ const AddPlayer = () => {
               </tr>
             </thead>
             <tbody>
-              {Players && Players.length > 0 ? (
+              {Players.length > 0 ? (
                 Players.map((player, index) => (
                   <tr key={index} onClick={() => handleComponent(player)}>
                     <TableData>{player.name}</TableData>

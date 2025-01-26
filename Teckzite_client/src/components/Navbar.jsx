@@ -12,12 +12,6 @@ const neonGlow = keyframes`
   }
 `;
 
-const swingAnimation = keyframes`
-  0% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(-10deg); }
-`;
-
 const Letter = styled.div`
   position: relative;
   font-size: 3rem;
@@ -25,6 +19,7 @@ const Letter = styled.div`
   text-align: center;
   animation: ${neonGlow} 3s infinite;
   animation-delay: ${({ delay }) => delay}s;
+
 
   &:before {
     content: "";

@@ -285,6 +285,7 @@ const HomePage = () => {
     axios
       .get(url)
       .then((response) => {
+        socket.emit('adminConnected');
         if (response.data && typeof response.data === 'object') {
           setPlayer(response.data);
 
@@ -472,7 +473,7 @@ fetchPlayer(role);
                   <Button onClick={handleIncreaseBid}>
                     <FaPlus />
                   </Button>
-                  <Button onClick={handleNext}>
+                  <Button >
                     Unsold
                   </Button>
                   <Button onClick={handlePrev}>

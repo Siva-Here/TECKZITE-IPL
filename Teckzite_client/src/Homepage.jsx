@@ -188,30 +188,58 @@ const CardItemValue = styled.div`
 
 const socket = io('http://localhost:8000');
 
+// const HomePage = () => {
+//   const [player, setPlayer] = useState('');
+
+//    const[amount,setAmount]=useState('')
+
+//   useEffect(() => {
+//     // Listen for updates from the server
+//     socket.on('updateViewer', (newImage) => {
+//      console.log(newImage)
+//       setPlayer(newImage);
+    
+//       console.log('Image updated:', newImage);
+//     });
+//     socket.on('bidAmount',(bidAmount)=>{
+//       console.log(bidAmount)
+//       setAmount(bidAmount);
+//     })
+//     return () => {
+//       socket.off('updateViewer');
+//       socket.off('bidAmount');
+//     };
+   
+//   },[]);
 const HomePage = () => {
   const [player, setPlayer] = useState('');
-
-   const[amount,setAmount]=useState('')
+  const [amount, setAmount] = useState('');
 
   useEffect(() => {
     // Listen for updates from the server
-    socket.on('updateViewer', (newImage) => {
-     console.log(newImage)
-      setPlayer(newImage);
-    
-      console.log('Image updated:', newImage);
-    });
-    socket.on('bidAmount',(bidAmount)=>{
-      console.log(bidAmount)
-      setAmount(bidAmount);
-    })
-    return () => {
-      socket.off('updateViewer');
-      socket.off('bidAmount');
+    const handleUpdateViewer = (newImage) => {
+      console.log('Image received:', newImage);
+      setPlayer(newImage); // Update player state
+      setAmount(newImage.basePrice.toLocaleString())
     };
-   
-  },[]);
 
+    const handleBidAmount = (bidAmount) => {
+      console.log('Bid amount received:', bidAmount);
+      setAmount(bidAmount); // Update amount state
+    };
+
+    // Attach socket listeners
+    socket.on('updateViewer', handleUpdateViewer);
+    socket.on('bidAmount', handleBidAmount);
+   
+    socket.emit('requestData');
+    // Cleanup listeners on component unmount
+    return () => {
+      socket.off('updateViewer', handleUpdateViewer);
+      socket.off('bidAmount', handleBidAmount);
+      
+    };
+  }, []);
   return (
     // <div className="container mt-5 text-center">
     //   {image.image ? (
@@ -223,8 +251,9 @@ const HomePage = () => {
     //   )}
     // </div>
     <Container>
-    <HeroSection>
       
+    <HeroSection>
+   
         {player ? (
           <>
           <ImageContainer>
@@ -304,6 +333,7 @@ const HomePage = () => {
   )
 }
 </HeroSection>
+
 </Container>
   )
 };

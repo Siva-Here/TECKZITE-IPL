@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const { trusted } = require('mongoose');
 const Player = require('../model/Players');
 const Team = require('../model/Teams');
 const multer = require('multer');
@@ -29,9 +30,9 @@ const getplayers = async(req,res)=>{
 const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
-    const { bidplace, set, direction } = req.query;
+    const { role,bidplace, set, direction } = req.query;
 
-    console.log(bidplace, set, direction);
+    console.log("Role:",bidplace);
 
    
 
@@ -40,7 +41,7 @@ const playersToBuy = async (req, res) => {
     const setValue = parseInt(set, 10);
 
     let sortOrder = 1;
-    let query = { isSold: { $ne: true } };
+    let query = { isSold: { $ne: true },role:role};
 
     if (direction === "next") {
       query = {

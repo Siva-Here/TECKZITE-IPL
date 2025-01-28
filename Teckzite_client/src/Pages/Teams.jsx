@@ -2,6 +2,11 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import styled from 'styled-components';
 import { FiUsers } from "react-icons/fi";
+import {useNavigate} from "react-router-dom";
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
+
 
 const teams = ["RCB", "MI", "CSK", "KKR", "DC", "GT", "LSG", "KXIP", "RR", "SRH"];
 
@@ -50,15 +55,39 @@ const GridWrapper = styled.div`
 
 
 const Teams = () => {
+  const [teamData,setTeamData] = useState([]);
+  const navigate = useNavigate();
+
+  const handleclick = (id) =>{
+    navigate(`/teams/${id}`);
+  }
+
+
+   const fetchTeams = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/getTeams");
+        const data = await response.json();
+        if (response.ok) {
+          setTeamData(data);
+        } else {
+          toast.error("Failed to fetch team data.");
+        }
+      } catch (err) {
+        toast.error("Error fetching team data.");
+        console.error(err);
+      }
+    };
+    
+  
+    useEffect(() => {
+      fetchTeams();
+    }, []);
   return (
     <TeamsContainer>
       <Content>
         <Navbar />
-        {/* <h1 className="text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-400 animate-gradient">
-            NEXUS
-          </h1> */}
         <GridWrapper>
-          {teams.map((teamName, index) => (
+          {teamData.map((team, index) => (
             <div
               className="relative w-[300px]"
               key={index}
@@ -77,8 +106,8 @@ const Teams = () => {
                       <div className="relative h-full border-2 border-cyan-500/50 rounded-lg overflow-hidden">
                         <div className="absolute inset-0  z-10"></div>
                         <img
-                          src={`${teamName}.jpg`}
-                          alt={teamName}
+                          src={`${team.teamID}.jpg`}
+                          alt={team.teamID}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -86,11 +115,11 @@ const Teams = () => {
 
                     {/* Team Name with Neon Effect */}
                     <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-[#00ffff] text-center tracking-wider">
-                      {teamName}
+                      {team.teamID}
                     </h2>
 
                     {/* View Players Button */}
-                    <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#161929] to-cyan-500 hover:from-cyan-600 hover:to-[#161929] backdrop-blur-sm border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                    <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#161929] to-cyan-500 hover:from-cyan-600 hover:to-[#161929] backdrop-blur-sm border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded" onClick={()=>{handleclick(team._id)}}>
                       {/* Button Content */}
                       <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
                         <span className="w-4 h-4"><FiUsers /></span>

@@ -210,7 +210,7 @@ const HomePage = () => {
       socket.off('bidAmount');
     };
    
-  }, []);
+  },[]);
 
   return (
     // <div className="container mt-5 text-center">

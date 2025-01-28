@@ -28,7 +28,7 @@ app.use('/api', apirouter);
 const server = http.createServer(app);
 
 // Initialize WebSocket on the same server
-setupWebSocket(server);
+
 
 // Start the server
 const start = async () => {
@@ -43,3 +43,5 @@ const start = async () => {
 };
 
 start();
+
+setupWebSocket(server);

@@ -9,6 +9,10 @@ let bidAmount=''
 
     if (currentPlayerImage) {
       socket.emit('updateViewer', currentPlayerImage);
+      console.log("After refreshing:",currentPlayerImage);
+    }
+    else{
+      console.log("No image to send");
     }
     if(bidAmount){
       socket.emit('bidAmount',bidAmount);

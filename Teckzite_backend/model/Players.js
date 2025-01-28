@@ -14,7 +14,7 @@ const playerSchema = new mongoose.Schema({
         required: true
     },
     "role": {
-        type: String,
+        type: String, 
         required: true,
         enum:{
             values:["batsman","bowler","wicketkeeper","allrounder"],
@@ -69,14 +69,10 @@ const playerSchema = new mongoose.Schema({
 });
 
 playerSchema.pre('save', function(next) {
-    // if (this.role === 'batsman') {
-    //     this.wickets = undefined;
-    //     this.runs = this.runs || 0; 
-    // }
     this.soldAmount=this.basePrice
     next();
 });
 
 
 const Player = mongoose.model('Player', playerSchema);
-module.exports =Player
+module.exports = Player

@@ -109,7 +109,7 @@ const NeonButton = styled.button`
   padding: 0.625rem 1.25rem;
   border-radius: 0.3125rem;
   cursor: pointer;
-  width: 10rem;
+  width: 5rem;
   transition: background 0.3s ease;
   position: absolute;
   top: 30px;
@@ -123,11 +123,39 @@ const NeonButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    width: 6rem; /* Further decrease width for very small devices */
+    width: 4rem; /* Further decrease width for very small devices */
     padding: 0.375rem 0.75rem; /* Adjust padding */
     font-size: 0.875rem; /* Reduce font size if needed */
     top:7px;
     right:5px;
+  }
+`;
+const NeonButton1 = styled.button`
+  background: linear-gradient(45deg, #ff00ff, #00ffff);
+  color: #fff;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+  width: 5rem;
+  transition: background 0.3s ease;
+  position: absolute;
+  top: 30px;
+  right: 110px;
+  &:hover {
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+  }
+     @media (max-width: 768px) {
+    width: 8rem; /* Decrease the width */
+    padding: 0.5rem 1rem; /* Adjust padding */
+  }
+
+  @media (max-width: 480px) {
+    width: 4rem; /* Further decrease width for very small devices */
+    padding: 0.375rem 0.75rem; /* Adjust padding */
+    font-size: 0.875rem; /* Reduce font size if needed */
+    top:7px;
+    right:80px;
   }
 `;
 
@@ -231,6 +259,12 @@ const AddPlayer = () => {
   const token = localStorage.getItem("Token");
   const [uploading, setUploading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [setData, setSetData] = useState({
+    setname: "",
+    setno: "",
+    excel: null,
+  });
   const [newPlayer, setNewPlayer] = useState({
     name: '',
     nationality: '',
@@ -401,7 +435,7 @@ const AddPlayer = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id }), // Send the ID in the request body
+        body: JSON.stringify({ id }), 
       });
       if (response.ok) {
         // Successfully deleted the player
@@ -446,9 +480,89 @@ const AddPlayer = () => {
   useEffect(() => {
     fetchPlayers();
   }, []);
+
+  const handleAddset = () => {
+    setIsModalOpen1(true);
+  }
+  const handleCloseset = () => {
+    setIsModalOpen1(false);
+  }
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setSetData((prevData) => ({
+      ...prevData,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
+
+  const handlesetdataSubmit = async (e) => {
+    e.preventDefault();
+  
+    // Get the uploaded file
+    const file = setData.excel;
+  
+    if (!file) {
+      toast.error("Please upload a file.");
+      return;
+    }
+  
+    // Validate the file's extension
+    const validExtensions = [".xlsx", ".xls"];
+    const fileExtension = file.name.slice(file.name.lastIndexOf("."));
+    if (!validExtensions.includes(fileExtension)) {
+      toast.error("Please upload a valid Excel file (.xlsx or .xls).");
+      return;
+    }
+  
+    // Create FormData for sending to the backend
+    const formData = new FormData();
+    formData.append("setname", setData.setname);
+    formData.append("setno", setData.setno);
+    formData.append("excel", file);
+  
+    try {
+      // Get the JWT token from local storage
+      const token = localStorage.getItem("Token");
+      if (!token) {
+        toast.error("JWT token not found. Please log in again.");
+        return;
+      }
+  
+      // Make the POST request to the backend using fetch
+      const response = await fetch("http://localhost:8000/api/addset", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach the JWT token
+        },
+        body: formData, // FormData includes the file and other fields
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to upload data");
+      }
+  
+      // Handle success
+      const responseData = await response.json();
+      console.log("Upload successful:", responseData);
+      toast.success("Data uploaded successfully!");
+      setSetData({
+        setname: "",
+        setno: "",
+        excel: null,
+      });
+      setIsModalOpen1(false);
+    } catch (error) {
+      console.error("Error uploading data:", error.message);
+      toast.error("Failed to upload data. Please try again.");
+    }
+  };
   return (
     <GradientCards>
       <NeonButton onClick={handleAddPlayer}>New player</NeonButton>
+      <br />
+      <NeonButton1 onClick={handleAddset}>Add set</NeonButton1>
+
 
       {/* search field */}
       <SearchContainer>
@@ -670,6 +784,8 @@ const AddPlayer = () => {
         </ModalContent>
       </Modal>
 
+
+
       {
         playerprofile && (
           <div
@@ -700,6 +816,41 @@ const AddPlayer = () => {
           </div>
         )
       }
+
+      <Modal isOpen={isModalOpen1}>
+        <ModalContent>
+          <CloseButton onClick={handleCloseset}>
+            <FaTimes />
+          </CloseButton>
+          <ModalHeader>Enter Player Information</ModalHeader>
+          <ModalForm onSubmit={handlesetdataSubmit}>
+            <ModalInput
+              type="text"
+              name="setname"
+              placeholder="Enter setname"
+              required
+              value={setData.setname}
+              onChange={handleChange}
+            />
+            <ModalInput
+              type="number"
+              name="setno"
+              placeholder="Enter set number:"
+              required
+              value={setData.setno}
+              onChange={handleChange}
+            />
+            <ModalInput
+              type="file"
+              name="excel"
+              title="Upload Excel file:"
+              accept=".xlsx, .xls" // Allows only Excel files
+              onChange={handleChange}
+            />
+            <SubmitButton type="submit">Submit</SubmitButton>
+          </ModalForm>
+        </ModalContent>
+      </Modal>
     </GradientCards>
   );
 };

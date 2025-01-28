@@ -389,11 +389,14 @@ const HomePage = () => {
     }
   };
 
-const chooseRole=(role)=>{
-console.log("role",role)
-setSelectedRole(role)
-fetchPlayer(role);
-}
+  const chooseRole = (role) => {
+    console.log("role", role)
+    setSelectedRole(role)
+    fetchPlayer(role);
+  }
+  const handleunsold = () => {
+    console.log("Handle unsold function");
+  }
 
 
   return (
@@ -473,7 +476,7 @@ fetchPlayer(role);
                   <Button onClick={handleIncreaseBid}>
                     <FaPlus />
                   </Button>
-                  <Button >
+                  <Button  onClick={handleunsold}>
                     Unsold
                   </Button>
                   <Button onClick={handlePrev}>

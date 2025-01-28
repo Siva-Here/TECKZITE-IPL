@@ -1,4 +1,5 @@
 require('dotenv').config();
+const ExcelJS = require("exceljs");
 
 const { trusted } = require('mongoose');
 const Player = require('../model/Players');
@@ -346,8 +347,89 @@ const getteamplayers = async (req, res) => {
 };
 
 
+const addset = async (req, res) => {
+  try {
+    console.log("add set function");
+
+    const { setname, setno } = req.body;
+    console.log("Set Name:", setname);
+    console.log("Set Number:", setno);
+
+    if (!req.file) {
+      console.log("No file uploaded");
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    if (!req.file.mimetype.toLowerCase().includes('excel')) {
+      return res.status(400).json({ message: "Uploaded file is not an Excel file" });
+    }
+    
+
+    // console.log("path:", req.file.path);
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.read(req.file.buffer); // Use buffer if you're using memoryStorage
+    const worksheet = workbook.worksheets[0];
+    const players = [];
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return; // Skip the header row
+
+      const playerData = {
+        name: row.getCell(1).value,
+        nationality: row.getCell(2).value,
+        age: parseInt(row.getCell(3).value, 10),
+        role: row.getCell(4).value ? row.getCell(4).value.toLowerCase() : "",
+        runs: row.getCell(5).value ? parseInt(row.getCell(5).value, 10) : undefined,
+        wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
+        set: parseInt(setno, 10), // Using set number from the request
+        isDebut: row.getCell(7).value === "true",
+        basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
+        strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
+        bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
+      };
+
+      // Validate that required fields are present
+      if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
+        console.log(`Skipping row ${rowNumber} due to missing critical data`);
+        return; // Skip this row if any required field is missing
+      }
+
+      // Validate the role field
+      const validRoles = ["batsman", "bowler", "wicketkeeper", "allrounder"];
+      if (!validRoles.includes(playerData.role)) {
+        console.log(`Invalid role for row ${rowNumber}:`, playerData.role);
+        return; // Skip this row if role is invalid
+      }
+
+      players.push(playerData);
+    });
+
+    if (players.length > 0) {
+      await Players.insertMany(players);
+      console.log(`${players.length} players inserted into the database.`);
+    }
+
+    res.status(200).json({
+      message: "Data received successfully and inserted into the database",
+      data: {
+        setname,
+        setno,
+        file: req.file.originalname,
+      },
+    });
+  } catch (error) {
+    console.error("Error in add set function:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 
 
 
-module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers};
+
+
+
+
+
+module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset};

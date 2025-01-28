@@ -16,4 +16,5 @@ router.post('/bid',authenticateAdmin,apiController.bid);
 router.delete('/deleteTeam',authenticateAdmin,apiController.deleteTeam);
 router.delete('/deletePlayer',authenticateAdmin,apiController.deletePlayer);
 router.post('/createplayer',authenticateAdmin,upload.single('image'), apiController.player);
+router.post("/addset", authenticateAdmin, upload.single('excel'),apiController.addset);
 module.exports = router;

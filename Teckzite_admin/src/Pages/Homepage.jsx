@@ -266,17 +266,21 @@ const HomePage = () => {
   const [selectedTeam, setSelectedTeam] = useState(''); // Selected team for the bid
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(true);
+  const [selectedRole,setSelectedRole]=useState('')
   // Fetch the current player on component load
   // useEffect(() => {
   //   fetchPlayer();
   // }, []);
   const token = localStorage.getItem("Token");
-  const fetchPlayer = (bidplace = null, direction, set) => {
+  const fetchPlayer = (role,bidplace = null, direction, set) => {
     console.log(set)
     console.log(player)
+    setShowModal2(false)
+    console.log("Role in fetch players:",role);
     const url = bidplace
-      ? `http://localhost:8000/api/playersToBuy?bidplace=${bidplace}&set=${set}&direction=${direction}`
-      : 'http://localhost:8000/api/playersToBuy';
+      ? `http://localhost:8000/api/playersToBuy?role=${role}&bidplace=${bidplace}&set=${set}&direction=${direction}`
+      : `http://localhost:8000/api/playersToBuy?role=${role}`;
+    
 
     axios
       .get(url)
@@ -300,18 +304,18 @@ const HomePage = () => {
   const handleNext = () => {
 
     if (player?.set && player?.bidplace) {
-      fetchPlayer(player.bidplace, "next", player.set);
+      fetchPlayer(selectedRole,player.bidplace, "next", player.set);
     } else {
-      fetchPlayer();
+      fetchPlayer(selectedRole);
     }
   };
 
   const handlePrev = () => {
     if (player?.bidplace && player.bidplace > 1 && player?.set) {
-      fetchPlayer(player.bidplace, "prev", player.set);
+      fetchPlayer(selectedRole,player.bidplace, "prev", player.set);
     }
     else {
-      fetchPlayer()
+      fetchPlayer(selectedRole)
     }
   };
 
@@ -365,8 +369,8 @@ const HomePage = () => {
         .then(() => {
           alert('Bid confirmed!');
 
-          fetchPlayer(player.bidplace, "next", player.set);
-
+         // fetchPlayer(player.bidplace, "next", player.set);
+           setShowModal2(true);
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);
@@ -384,7 +388,11 @@ const HomePage = () => {
     }
   };
 
-
+const chooseRole=(role)=>{
+console.log("role",role)
+setSelectedRole(role)
+fetchPlayer(role);
+}
 
 
   return (
@@ -538,7 +546,7 @@ const HomePage = () => {
               maxWidth: "500px",
             }}
           >
-            {["Batsman", "Bowler", "Allrounder", "Wicketkeeper"].map((role, index) => (
+            {["batsman", "bowler", "Allrounder", "Wicketkeeper"].map((role, index) => (
               <div
                 key={index}
                 style={{
@@ -548,7 +556,7 @@ const HomePage = () => {
                   width: "100%", // Make buttons full width on mobile
                 }}
               >
-                <NeonButton>{role}</NeonButton>
+                <NeonButton onClick={()=>chooseRole(role)}>{role}</NeonButton>
               </div>
             ))}
           </div>

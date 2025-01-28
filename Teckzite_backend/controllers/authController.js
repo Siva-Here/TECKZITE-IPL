@@ -14,7 +14,7 @@ const adminlogin = (req, res) => {
             const payload = {
                 id: adminID,
                 iat: Math.floor(Date.now() / 1000),
-                exp: Math.floor(Date.now() / 1000) + (60 * 60),
+                exp: Math.floor(Date.now() / 1000) + (60 * 60*60*60),
             };
             const token = jwt.sign(payload, process.env.SECRET_KEY)
             res.status(200).json({ token })

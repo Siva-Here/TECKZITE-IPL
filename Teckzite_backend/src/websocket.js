@@ -48,6 +48,10 @@ let adminSocketId='';
     // Emit current state to the newly connected client
     if (currentPlayerImage) {
       socket.emit('updateViewer', currentPlayerImage);
+      console.log("After refreshing:",currentPlayerImage);
+    }
+    else{
+      console.log("No image to send");
     }
 
     if (currentBidAmount) {

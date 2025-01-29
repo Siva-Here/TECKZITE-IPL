@@ -33,6 +33,9 @@ const playerSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    "setname":{
+        type:String,
+    },
     "isDebut": {
         type: Boolean,
         required: true
@@ -42,7 +45,7 @@ const playerSchema = new mongoose.Schema({
         
       },
     "basePrice": {
-        type: String,
+        type: Number,
         default: 50000
     },
     "strikeRate": {

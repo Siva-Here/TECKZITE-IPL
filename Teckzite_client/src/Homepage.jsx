@@ -214,7 +214,7 @@ const socket = io('http://localhost:8000');
 const HomePage = () => {
   const [player, setPlayer] = useState('');
   const [amount, setAmount] = useState('');
-
+const[auctionstatus,setAuctionStatus]=useState(false);
   useEffect(() => {
     // Listen for updates from the server
     const handleUpdateViewer = (newImage) => {
@@ -227,17 +227,21 @@ const HomePage = () => {
       console.log('Bid amount received:', bidAmount);
       setAmount(bidAmount); // Update amount state
     };
-
+  const handlepause=(status)=>{
+  
+  setAuctionStatus(status)
+  }
+ 
     // Attach socket listeners
     socket.on('updateViewer', handleUpdateViewer);
     socket.on('bidAmount', handleBidAmount);
-   
+    socket.on('pauseAuction',handlepause);
     socket.emit('requestData');
     // Cleanup listeners on component unmount
     return () => {
       socket.off('updateViewer', handleUpdateViewer);
       socket.off('bidAmount', handleBidAmount);
-      
+      socket.off('pauseAuction',handlepause);
     };
   }, []);
   return (
@@ -253,7 +257,11 @@ const HomePage = () => {
     <Container>
       
     <HeroSection>
-   
+   {auctionstatus ?
+(<p>Auction is Paused</p>)
+:
+   ( 
+    <>
         {player ? (
           <>
           <ImageContainer>
@@ -329,8 +337,13 @@ const HomePage = () => {
    </>
 
   ):(
-    <p>No players available</p>
+    <p>Auction Not Yet Started/Completed</p>
   )
+}
+</>
+   )
+   
+
 }
 </HeroSection>
 

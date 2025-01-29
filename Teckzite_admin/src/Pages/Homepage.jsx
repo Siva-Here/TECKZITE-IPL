@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
+import { getBidIncrement } from './BidConfig';
 import {
   FaFlag,
   FaBaseballBall,
@@ -254,7 +255,7 @@ const NeonButton = styled.button`
 
 
 
-import { useState, useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { Modal } from "react-bootstrap";
@@ -265,21 +266,52 @@ const HomePage = () => {
   const [bidAmount, setBidAmount] = useState(0); // Current bid amount
   const [selectedTeam, setSelectedTeam] = useState(''); // Selected team for the bid
   const [showModal, setShowModal] = useState(false);
-  const [showModal2, setShowModal2] = useState(true);
-  const [selectedRole,setSelectedRole]=useState('')
+  const [showModal2, setShowModal2] = useState(false);
+  const [selectedSet,setSelectedSet]=useState('');
+  const [continueauction,setContinue]=useState(false);
+  const [setnames,setSetnames]=useState({ 
+    setname:[],
+    set:[]
+  }
+  ) 
   // Fetch the current player on component load
-  // useEffect(() => {
-  //   fetchPlayer();
-  // }, []);
+  useEffect(() => {
+    fetchTeams();
+  }, []);
   const token = localStorage.getItem("Token");
-  const fetchPlayer = (role,bidplace = null, direction, set) => {
+  const fetchTeams=async()=>{
+    console.log("fetching sets")
+    try {
+      const response = await fetch("http://localhost:8000/api/getsets");
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data)
+        setSetnames({
+          setname: data.setname || [],  // Ensure empty array if undefined
+          set: data.set || []
+        });
+       
+      setShowModal2(true)
+      }
+      else {
+        console.log("error while fetching data");
+        alert("Error while fetching data");
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+    
+  }
+  
+  const fetchPlayer = (set,bidplace = null, direction) => {
     console.log(set)
     console.log(player)
     setShowModal2(false)
-    console.log("Role in fetch players:",role);
+  
     const url = bidplace
-      ? `http://localhost:8000/api/playersToBuy?role=${role}&bidplace=${bidplace}&set=${set}&direction=${direction}`
-      : `http://localhost:8000/api/playersToBuy?role=${role}`;
+      ? `http://localhost:8000/api/playersToBuy?set=${set}&bidplace=${bidplace}&direction=${direction}`
+      : `http://localhost:8000/api/playersToBuy?set=${set}`;
     
 
     axios
@@ -295,6 +327,7 @@ const HomePage = () => {
         } else {
           setPlayer(null);
           socket.emit('updateViewer', null)
+          setShowModal2(true)
         }
       })
       .catch((err) => {
@@ -305,33 +338,33 @@ const HomePage = () => {
   const handleNext = () => {
 
     if (player?.set && player?.bidplace) {
-      fetchPlayer(selectedRole,player.bidplace, "next", player.set);
+      fetchPlayer(selectedSet,player.bidplace, "next");
     } else {
-      fetchPlayer(selectedRole);
+      fetchPlayer(selectedSet);
     }
   };
 
   const handlePrev = () => {
     if (player?.bidplace && player.bidplace > 1 && player?.set) {
-      fetchPlayer(selectedRole,player.bidplace, "prev", player.set);
+      fetchPlayer(selectedSet,player.bidplace, "prev");
     }
     else {
-      fetchPlayer(selectedRole)
+      fetchPlayer(selectedSet)
     }
   };
 
   const handleIncreaseBid = () => {
-
     if (player) {
-      const increment = player.basePrice >= 10000000 ? 1000000 : 10000;
+      const increment = getBidIncrement(player.basePrice)
       setBidAmount((prev) => prev + increment);
+      console.log(bidAmount)
       socket.emit('bidAmount', bidAmount + increment);
     }
   };
 
   const handleDecreaseBid = () => {
     if (player) {
-      const decrement = player.basePrice >= 10000000 ? 1000000 : 10000;
+      const decrement = getBidIncrement(player.basePrice)
       setBidAmount((prev) => Math.max(player.basePrice, prev - decrement));
       socket.emit('bidAmount', Math.max(player.basePrice, bidAmount - decrement));
     }
@@ -370,8 +403,8 @@ const HomePage = () => {
         .then(() => {
           alert('Bid confirmed!');
 
-         // fetchPlayer(player.bidplace, "next", player.set);
-           setShowModal2(true);
+         fetchPlayer( player.set,player.bidplace, "next");
+           
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);
@@ -389,15 +422,48 @@ const HomePage = () => {
     }
   };
 
-  const chooseRole = (role) => {
-    console.log("role", role)
-    setSelectedRole(role)
-    fetchPlayer(role);
+  const chooseset = (set) => {
+    
+    setSelectedSet(set)
+    fetchPlayer(set);
   }
-  const handleunsold = () => {
-    console.log("Handle unsold function");
+  const handleunsold = async(id) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/unsold", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }), // Sending the id in the body
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success:", data);
+      } else {
+        console.log("Error:", response.status);
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+    }
+    fetchPlayer(player.set,player.bidplace, "next")
   }
-
+  const pauseAuction=()=>{
+   
+    setContinue((prev) => {
+      const newState = !prev; // Toggle state
+  
+      if (newState) {
+       
+        socket.emit("pauseAuction",false);
+      } else {
+        
+        socket.emit("pauseAuction", true);
+      }
+  
+      return newState; 
+    });
+  }
 
   return (
     <Container>
@@ -476,7 +542,7 @@ const HomePage = () => {
                   <Button onClick={handleIncreaseBid}>
                     <FaPlus />
                   </Button>
-                  <Button  onClick={handleunsold}>
+                  <Button  onClick={()=>handleunsold(player._id)}>
                     Unsold
                   </Button>
                   <Button onClick={handlePrev}>
@@ -549,8 +615,9 @@ const HomePage = () => {
               gap: "20px",
               maxWidth: "500px",
             }}
-          >
-            {["batsman", "bowler", "allrounder", "wicketkeeper"].map((role, index) => (
+          > 
+          
+          {/* setnames.setname.map((setno, index) => (
               <div
                 key={index}
                 style={{
@@ -560,20 +627,43 @@ const HomePage = () => {
                   width: "100%", // Make buttons full width on mobile
                 }}
               >
-                <NeonButton onClick={()=>chooseRole(role)}>{role}</NeonButton>
+               
+                <NeonButton onClick={()=>chooseset(setno)}>{setno}</NeonButton>
               </div>
-            ))}
+            ))  */}
+           {setnames.setname.length > 0 ? (
+        setnames.setname.map((setno, index) => (
+          <div
+            key={index}
+            style={{
+              margin: "10px",
+              display: "flex",
+              justifyContent: "center",
+              width: "100%", // Make buttons full width on mobile
+            }}
+          >
+             <NeonButton onClick={() => chooseset(setnames.set[index])}>
+        {setno} {/* Display setname, but send set value */}
+      </NeonButton>
           </div>
-        </div>
+        ))
       ) : (
-        ""
+        <p>Loading sets...</p>
       )}
 
 
+          </div>
+        </div> 
+      ) : (
+        <p>hiii</p>
+      )}
+
+<NeonButton onClick={()=>pauseAuction()}>{continueauction?"resume":"pause"}</NeonButton>
     </Container>
 
   );
 }
+
 export default HomePage;
 
 

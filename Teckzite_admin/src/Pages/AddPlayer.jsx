@@ -278,7 +278,7 @@ const AddPlayer = () => {
     isDebut: false,
     bidplace: '',
     set: '',
-
+    setname:''
 
   });
   const [loading, setLoading] = useState(true);
@@ -296,12 +296,15 @@ const AddPlayer = () => {
     isDebut: false,
     bidplace: '',
     set: '',
-
+    setname:''
   });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [Players, setPlayers] = useState([]);
   const [filterplayers, setFilterPlayers] = useState([]);
+  const [setnames, setSetNames] = useState(["set0"]);
+
+
   const [editoption, setEditoption] = useState(false);
   const handleAddPlayer = () => {
     setIsModalOpen(true);
@@ -327,6 +330,9 @@ const AddPlayer = () => {
         setPlayers(data);
         setFilterPlayers(data);
         setLoading(false);
+        const extractedSetNames = data.map(player => player.setname);
+          setSetNames(extractedSetNames);
+      
       }
       else {
         console.log("error while fetching data");
@@ -372,7 +378,7 @@ const AddPlayer = () => {
       isDebut: false,
       bidplace: '',
       set: '',
-
+      setname:''
     });
     setIsModalOpen(false);
 
@@ -477,6 +483,8 @@ const AddPlayer = () => {
       setPlayers(filteredPlayers);
     }
   };
+
+  
   useEffect(() => {
     fetchPlayers();
   }, []);
@@ -778,13 +786,32 @@ const AddPlayer = () => {
                 3
               </label>
             </fieldset>
+            {setnames &&setnames.length > 0 ? (
+  <>
+    { setnames.map((player, index) => (
+      <label key={index}>
+        <input
+          type="radio"
+          name="setname"
+          value={player}
+          checked={newPlayer.setname === player}
+          onChange={handleInputChange}
+          required
+        />
+       {player}
+      </label>
+    ))}
+  </>
+) : (
+  <p>No sets to add</p>
+)}
 
 
             <SubmitButton type="submit">Submit</SubmitButton>
           </ModalForm>
         </ModalContent>
       </Modal>
-
+    
 
 
       {

@@ -8,7 +8,7 @@ const multer = require('multer');
 
 
 const storage = multer.memoryStorage();
-// const upload = multer({ storage });
+const upload = multer({ storage });
 
 
 const getplayers = async(req,res)=>{
@@ -31,22 +31,21 @@ const getplayers = async(req,res)=>{
 const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
-    const { role,bidplace, set, direction } = req.query;
-
-    console.log("Role:",role);
+    const {  set,bidplace, direction } = req.query;
+console.log(set)
+   
     const bidPlaceValue = parseInt(bidplace, 10);
     const setValue = parseInt(set, 10);
 
     let sortOrder = 1;
-    let query = { isSold: { $ne: true },role:role,inAuction:{$ne:true}};
+    let query = { isSold: { $ne: true },inAuction:{$ne:true},set:setValue};
 
     if (direction === "next") {
       query = {
         ...query,
-        $or: [
-          { set: { $gt: setValue } },
-          { set: setValue, bidplace: { $gt: bidPlaceValue } },
-        ],
+         
+          set: setValue, bidplace: { $gt: bidPlaceValue } ,
+        
       };
 
       sortOrder = 1; 
@@ -54,17 +53,16 @@ const playersToBuy = async (req, res) => {
     } else if (direction === "prev") {
       query = {
         ...query,
-        $or: [
-          { set: { $lt: setValue } },
-          { set: setValue, bidplace: { $lt: bidPlaceValue } },
-        ],
+        
+        set: setValue, bidplace: { $lt: bidPlaceValue } ,
+        
       };
       sortOrder = -1; // Descending order for "prev"
     }
 
     
     let players = await Player.find(query)
-      .sort({ set: sortOrder, bidplace: sortOrder })
+      .sort({  bidplace: sortOrder })
       .limit(1);
 
     if (players.length > 0) {
@@ -77,11 +75,9 @@ const playersToBuy = async (req, res) => {
     if (direction === "next") {
       query = {
         isSold: { $ne: true },
-        $or: [
-
-
-          { set: { $gte: 0 } }, 
-        ],
+         inAuction:{$ne:true},
+         
+         set: setValue, bidplace: { $lte: bidPlaceValue } 
       };
       sortOrder = 1; 
 
@@ -89,23 +85,19 @@ const playersToBuy = async (req, res) => {
     } else if (direction === "prev") {
       query = {
         isSold: { $ne: true },
-        $or: [
-
-
-          { set: { $lte: Number.MAX_VALUE } }, 
-        ],
+       inAuction:{$ne:true},
+       set: setValue, bidplace: { $gte: bidPlaceValue } 
       };
       sortOrder = -1; 
-
-
     }
 
     players = await Player.find(query)
-      .sort({ set: sortOrder, bidplace: sortOrder })
+      .sort({  bidplace: sortOrder })
       .limit(1);
 
     if (players.length > 0) {
       console.log("Player fetched after wrapping:", players[0]);
+     
       res.status(200).send(players[0]); // Send the player data
     } else {
       res.status(200).send("No available players to sell...");
@@ -126,7 +118,17 @@ const soldPlayers = async(req,res)=>{
         res.status(400).send(err)
     }
 }
-
+const unsold=async(req,res)=>{
+  console.log("unsold")
+  const id=req.body.id;
+    const player = await Player.findById(id);
+    if (!player) {
+      return res.status(404).send({ message: "Player not found" });
+    }else{ 
+  player.inAuction=true;
+  await player.save();
+    }
+}
 const getTeams = async(req,res)=>{
     try{
         const teams=await Team.find()
@@ -208,7 +210,6 @@ const player = async (req, res) => {
         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });
       }
      } else {
-        // Create a new player with the uploaded image URL
         const newPlayer = new Player({
           name,
           nationality,
@@ -278,7 +279,6 @@ const bid = async (req, res) => {
     if (player.isSold) {
       return res.status(400).json({ error: "Player already sold." });
     }
-
     const updatedTeam = await Team.handleBid(teamName, playerId, biddingAmount);
     console.log(updatedTeam);
     res.status(200).json({ message: "Bid successful", team: updatedTeam });
@@ -287,6 +287,38 @@ const bid = async (req, res) => {
   }
 };
 
+  const fetchsets = async (req, res) => {
+    console.log("in fetchsets")
+    try {
+      // const sets = await Player.aggregate([
+      //   { $group: { _id: null, setname: { $addToSet: "$setname" }, set: { $addToSet: "$set" } } }
+      // ]);
+      const sets = await Player.aggregate([
+        { $match: { isSold: false } }, // Filter players who are NOT sold
+        { 
+          $group: { 
+            _id: null, 
+            setname: { $addToSet: "$setname" }, 
+            set: { $addToSet: "$set" } 
+          } 
+        }
+      ]);
+      
+      // Extract unique setnames and setnos from the result
+      const setname = sets[0]?.setname || [];
+      const set = sets[0]?.set || [];
+      
+      res.status(200).json({
+        setname,
+        set
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to fetch sets" });
+    }
+  };
+  
+
 
 const deletePlayer = async (req, res) => { 
   const { id } = req.body;
@@ -294,13 +326,13 @@ const deletePlayer = async (req, res) => {
   console.log("id:", id);
 
   try {
-    // Find and delete the player by id
+   
     const player = await Player.findByIdAndDelete(id);
     if (!player) {
       return res.status(404).send({ message: "Player not found" });
     }
 
-    // If the player was sold, update the respective team's purse and player array
+    // If the player was sold, update the respective team's purse
     if (player.isSold) {
       const teamName = player.soldTeam;
       const soldAmount = player.soldAmount;
@@ -312,14 +344,8 @@ const deletePlayer = async (req, res) => {
 
       // Add the player's sold amount back to the team's purse
       team.remainingPurse += soldAmount;
-      const role = player.role;
-      team[role] = team[role] - 1;
-
-      // Remove the player ID from the team's players array
-      team.players = team.players.filter(playerID => playerID.toString() !== id);
-
       await team.save();
-      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}, and removed player ID`);
+      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
     }
 
     console.log("Deleted player details", player);
@@ -329,7 +355,6 @@ const deletePlayer = async (req, res) => {
     res.status(400).send({ message: "Error deleting player", error: err });
   }
 };
-
 
 const deleteTeam = async (req,res) =>{
     const {id} = req.body
@@ -358,12 +383,8 @@ const getteamplayers = async (req, res) => {
 
     const playerIds = team.players; // Extract the array of player IDs from the team document
 
-    console.log("PlayerIds :", playerIds);
-
     // Step 2: Find the player documents using the array of player IDs
     const players = await Player.find({ _id: { $in: playerIds } });
-
-    console.log("Players:",players);
 
     // Step 3: Send the players as a JSON response
     res.json(players);
@@ -383,14 +404,27 @@ const addset = async (req, res) => {
     console.log(req.body);
     console.log("Set Name:", setname);
     console.log("Set Number:", setno);
-    // console.log("file",req.file.buffer);
+ 
+    // if (!req.file) {
+    //   console.log("No file uploaded");
+    //   return res.status(400).json({ message: "No file uploaded" });
+    // }
 
+    // if (!req.file.mimetype.toLowerCase().includes('excel')) {
+    //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
+    // }
+    
+
+    // console.log("path:", req.file.path);
+console.log("file",req.file.buffer)
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer); 
+     console.log("processing");// Use buffer if you're using memoryStorage
     const worksheet = workbook.worksheets[0];
     const players = [];
 
     worksheet.eachRow((row, rowNumber) => {
+      console.log("in map")
       if (rowNumber === 1) return; // Skip the header row
 
       const playerData = {
@@ -402,9 +436,10 @@ const addset = async (req, res) => {
         wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
         set: parseInt(setno, 10), // Using set number from the request
         isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
-        basePrice: row.getCell(8).value ? Number(parseInt(row.getCell(8).value, 10)) : 50000,
+        basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
         strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
         bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
+        setname:setname,
       };
    
       // Validate that required fields are present
@@ -450,4 +485,4 @@ const addset = async (req, res) => {
 
 
 
-module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset};
+module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset,fetchsets,unsold};

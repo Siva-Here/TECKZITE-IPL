@@ -321,6 +321,7 @@ const AddPlayer = () => {
       [name]: value,
     });
   };
+  
   const fetchPlayers = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/getplayers");

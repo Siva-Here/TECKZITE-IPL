@@ -331,19 +331,57 @@ const deletePlayer = async (req, res) => {
 };
 
 
-const deleteTeam = async (req,res) =>{
-    const {id} = req.body
-    console.log("id:",id);
-    try{
-        const team = await Team.findByIdAndDelete(id)
-        if(!team){
-            return res.status(404).send({message: "Team not found"})
-        }
-        res.status(200).send({message: "Team deleted successfully"})
-    }catch(err){
-        res.status(400).send({message: "Error deleting team", error: err})
-    }
-}
+// const deleteTeam = async (req,res) =>{
+//     const {id} = req.body
+//     console.log("id:",id);
+//     try{
+//         const team = await Team.findByIdAndDelete(id)
+//         if(!team){
+//             return res.status(404).send({message: "Team not found"})
+//         }
+//         res.status(200).send({message: "Team deleted successfully"})
+//     }catch(err){
+//         res.status(400).send({message: "Error deleting team", error: err})
+//     }
+// }
+
+const deleteTeam = async (req, res) => {
+  const { id } = req.body;
+  console.log("Team ID to delete:", id);
+  
+  try {
+      // Find the team by ID
+      const team = await Team.findById(id);
+      if (!team) {
+          return res.status(404).send({ message: "Team not found" });
+      }
+      
+      // Extract player IDs from the team
+      const playerIds = team.players;
+      console.log("Players to reset:", playerIds);
+      
+      // Update all players to reset their state
+      await Player.updateMany(
+          { _id: { $in: playerIds } },
+          { 
+              $set: { 
+                  isSold: false, 
+                  soldTeam: null, 
+                  soldAmount: Player.baseprice // Reset soldAmount to basePrice
+              } 
+          }
+      );
+      
+      // Delete the team
+      await Team.findByIdAndDelete(id);
+      
+      res.status(200).send({ message: "Team and associated player details updated successfully" });
+  } catch (err) {
+      console.error("Error deleting team:", err);
+      res.status(400).send({ message: "Error deleting team", error: err });
+  }
+};
+
 
 const getteamplayers = async (req, res) => {
   try {

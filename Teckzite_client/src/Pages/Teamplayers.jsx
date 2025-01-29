@@ -93,7 +93,6 @@ const Players = () => {
     <TeamsContainer>
       <Content>
         <div className="min-h-screen text-white">
-          <Navbar />
           <div className="p-6">
             <div className="flex justify-center mb-8">
               <input
@@ -113,7 +112,7 @@ const Players = () => {
                 grabCursor={true}
                 centeredSlides={true}
                 loop={true}
-                slidesPerView="1"
+                slidesPerView="3"
                 coverflowEffect={{
                   rotate: 0,
                   stretch: 0,

@@ -8,7 +8,7 @@ const multer = require('multer');
 
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
 
 const getplayers = async(req,res)=>{
@@ -33,7 +33,7 @@ const playersToBuy = async (req, res) => {
   try {
     const { role,bidplace, set, direction } = req.query;
 
-    console.log("Role:",bidplace);
+    console.log("Role:",role);
     const bidPlaceValue = parseInt(bidplace, 10);
     const setValue = parseInt(set, 10);
 
@@ -287,22 +287,7 @@ const bid = async (req, res) => {
   }
 };
 
-// const deletePlayer = async (req,res) =>{ 
-//   const {id }= req.body
-//   console.log(req.body)
-//   console.log("id:",id);
-//   try{
-//       const player = await Player.findByIdAndDelete(id)
-//       if(!player){
-//           return res.status(404).send({message: "Player not found"})
-//       }
-//       console.log("deleted player details",player);
-//       res.status(200).send({message: "Player deleted successfully"})
-//   }catch(err){
-//     console.log(err)
-//       res.status(400).send({message: "Error deleting player", error: err})
-//   }
-// }
+
 const deletePlayer = async (req, res) => { 
   const { id } = req.body;
   console.log(req.body);
@@ -315,7 +300,7 @@ const deletePlayer = async (req, res) => {
       return res.status(404).send({ message: "Player not found" });
     }
 
-    // If the player was sold, update the respective team's purse
+    // If the player was sold, update the respective team's purse and player array
     if (player.isSold) {
       const teamName = player.soldTeam;
       const soldAmount = player.soldAmount;
@@ -327,8 +312,14 @@ const deletePlayer = async (req, res) => {
 
       // Add the player's sold amount back to the team's purse
       team.remainingPurse += soldAmount;
+      const role = player.role;
+      team[role] = team[role] - 1;
+
+      // Remove the player ID from the team's players array
+      team.players = team.players.filter(playerID => playerID.toString() !== id);
+
       await team.save();
-      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
+      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}, and removed player ID`);
     }
 
     console.log("Deleted player details", player);
@@ -338,6 +329,7 @@ const deletePlayer = async (req, res) => {
     res.status(400).send({ message: "Error deleting player", error: err });
   }
 };
+
 
 const deleteTeam = async (req,res) =>{
     const {id} = req.body
@@ -366,8 +358,12 @@ const getteamplayers = async (req, res) => {
 
     const playerIds = team.players; // Extract the array of player IDs from the team document
 
+    console.log("PlayerIds :", playerIds);
+
     // Step 2: Find the player documents using the array of player IDs
     const players = await Player.find({ _id: { $in: playerIds } });
+
+    console.log("Players:",players);
 
     // Step 3: Send the players as a JSON response
     res.json(players);
@@ -387,27 +383,14 @@ const addset = async (req, res) => {
     console.log(req.body);
     console.log("Set Name:", setname);
     console.log("Set Number:", setno);
- 
-    // if (!req.file) {
-    //   console.log("No file uploaded");
-    //   return res.status(400).json({ message: "No file uploaded" });
-    // }
+    // console.log("file",req.file.buffer);
 
-    // if (!req.file.mimetype.toLowerCase().includes('excel')) {
-    //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
-    // }
-    
-
-    // console.log("path:", req.file.path);
-console.log("file",req.file.buffer)
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(req.file.buffer); 
-     console.log("processing");// Use buffer if you're using memoryStorage
     const worksheet = workbook.worksheets[0];
     const players = [];
 
     worksheet.eachRow((row, rowNumber) => {
-      console.log("in map")
       if (rowNumber === 1) return; // Skip the header row
 
       const playerData = {
@@ -419,7 +402,7 @@ console.log("file",req.file.buffer)
         wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
         set: parseInt(setno, 10), // Using set number from the request
         isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
-        basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
+        basePrice: row.getCell(8).value ? Number(parseInt(row.getCell(8).value, 10)) : 50000,
         strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
         bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
       };

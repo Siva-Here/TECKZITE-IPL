@@ -552,6 +552,7 @@ const AddPlayer = () => {
         excel: null,
       });
       setIsModalOpen1(false);
+      fetchPlayers();
     } catch (error) {
       console.error("Error uploading data:", error.message);
       toast.error("Failed to upload data. Please try again.");

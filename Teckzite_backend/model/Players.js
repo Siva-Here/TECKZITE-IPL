@@ -42,7 +42,7 @@ const playerSchema = new mongoose.Schema({
         
       },
     "basePrice": {
-        type: Number,
+        type: String,
         default: 50000
     },
     "strikeRate": {

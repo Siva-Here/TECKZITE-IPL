@@ -550,7 +550,7 @@ const HomePage = () => {
               maxWidth: "500px",
             }}
           >
-            {["batsman", "bowler", "Allrounder", "Wicketkeeper"].map((role, index) => (
+            {["batsman", "bowler", "allrounder", "wicketkeeper"].map((role, index) => (
               <div
                 key={index}
                 style={{

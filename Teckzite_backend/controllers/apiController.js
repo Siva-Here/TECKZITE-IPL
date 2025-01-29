@@ -34,15 +34,11 @@ const playersToBuy = async (req, res) => {
     const { role,bidplace, set, direction } = req.query;
 
     console.log("Role:",bidplace);
-
-   
-
-    // Parse bidplace and set to integers
     const bidPlaceValue = parseInt(bidplace, 10);
     const setValue = parseInt(set, 10);
 
     let sortOrder = 1;
-    let query = { isSold: { $ne: true },role:role};
+    let query = { isSold: { $ne: true },role:role,inAuction:{$ne:true}};
 
     if (direction === "next") {
       query = {
@@ -291,21 +287,57 @@ const bid = async (req, res) => {
   }
 };
 
-const deletePlayer = async (req,res) =>{ 
-  const {id }= req.body
-  console.log(req.body)
-  console.log("id:",id);
-  try{
-      const team = await Player.findByIdAndDelete(id)
-      if(!Player){
-          return res.status(404).send({message: "Player not found"})
+// const deletePlayer = async (req,res) =>{ 
+//   const {id }= req.body
+//   console.log(req.body)
+//   console.log("id:",id);
+//   try{
+//       const player = await Player.findByIdAndDelete(id)
+//       if(!player){
+//           return res.status(404).send({message: "Player not found"})
+//       }
+//       console.log("deleted player details",player);
+//       res.status(200).send({message: "Player deleted successfully"})
+//   }catch(err){
+//     console.log(err)
+//       res.status(400).send({message: "Error deleting player", error: err})
+//   }
+// }
+const deletePlayer = async (req, res) => { 
+  const { id } = req.body;
+  console.log(req.body);
+  console.log("id:", id);
+
+  try {
+    // Find and delete the player by id
+    const player = await Player.findByIdAndDelete(id);
+    if (!player) {
+      return res.status(404).send({ message: "Player not found" });
+    }
+
+    // If the player was sold, update the respective team's purse
+    if (player.isSold) {
+      const teamName = player.soldTeam;
+      const soldAmount = player.soldAmount;
+
+      const team = await Team.findOne({ teamID: teamName });
+      if (!team) {
+        return res.status(404).send({ message: "Team not found" });
       }
-      res.status(200).send({message: "Player deleted successfully"})
-  }catch(err){
-    console.log(err)
-      res.status(400).send({message: "Error deleting player", error: err})
+
+      // Add the player's sold amount back to the team's purse
+      team.remainingPurse += soldAmount;
+      await team.save();
+      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
+    }
+
+    console.log("Deleted player details", player);
+    res.status(200).send({ message: "Player deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: "Error deleting player", error: err });
   }
-}
+};
 
 const deleteTeam = async (req,res) =>{
     const {id} = req.body
@@ -349,30 +381,33 @@ const getteamplayers = async (req, res) => {
 
 const addset = async (req, res) => {
   try {
-    console.log("add set function");
+    console.log("add set function;");
 
     const { setname, setno } = req.body;
+    console.log(req.body);
     console.log("Set Name:", setname);
     console.log("Set Number:", setno);
+ 
+    // if (!req.file) {
+    //   console.log("No file uploaded");
+    //   return res.status(400).json({ message: "No file uploaded" });
+    // }
 
-    if (!req.file) {
-      console.log("No file uploaded");
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    if (!req.file.mimetype.toLowerCase().includes('excel')) {
-      return res.status(400).json({ message: "Uploaded file is not an Excel file" });
-    }
+    // if (!req.file.mimetype.toLowerCase().includes('excel')) {
+    //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
+    // }
     
 
     // console.log("path:", req.file.path);
-
+console.log("file",req.file.buffer)
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.read(req.file.buffer); // Use buffer if you're using memoryStorage
+    await workbook.xlsx.load(req.file.buffer); 
+     console.log("processing");// Use buffer if you're using memoryStorage
     const worksheet = workbook.worksheets[0];
     const players = [];
 
     worksheet.eachRow((row, rowNumber) => {
+      console.log("in map")
       if (rowNumber === 1) return; // Skip the header row
 
       const playerData = {
@@ -383,12 +418,12 @@ const addset = async (req, res) => {
         runs: row.getCell(5).value ? parseInt(row.getCell(5).value, 10) : undefined,
         wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
         set: parseInt(setno, 10), // Using set number from the request
-        isDebut: row.getCell(7).value === "true",
+        isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
         basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
         strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
         bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
       };
-
+   
       // Validate that required fields are present
       if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
         console.log(`Skipping row ${rowNumber} due to missing critical data`);
@@ -404,9 +439,9 @@ const addset = async (req, res) => {
 
       players.push(playerData);
     });
-
+     console.log("out from map",players)
     if (players.length > 0) {
-      await Players.insertMany(players);
+      await Player.insertMany(players);
       console.log(`${players.length} players inserted into the database.`);
     }
 

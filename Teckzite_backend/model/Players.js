@@ -39,7 +39,7 @@ const playerSchema = new mongoose.Schema({
     },
     "image": {
         type: String,  // Storing the file itself as binary data
-        required: true
+        
       },
     "basePrice": {
         type: Number,
@@ -53,10 +53,15 @@ const playerSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    "inAuction":{
+        type:Boolean,
+        default:false,
+    },
     "soldTeam":{
         type:String,
         default:null
     },
+
     "soldAmount":{
         type:Number,
         default:function(){

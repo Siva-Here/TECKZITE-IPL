@@ -85,7 +85,6 @@ const Teams = () => {
   return (
     <TeamsContainer>
       <Content>
-        <Navbar />
         <GridWrapper>
           {teamData.map((team, index) => (
             <div

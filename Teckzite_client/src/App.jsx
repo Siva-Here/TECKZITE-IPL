@@ -26,7 +26,7 @@ function Layout() {
           <Outlet />
         </main>
         <nav
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-full 
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-10 md:px-12 py-4 rounded-full 
   backdrop-blur-md bg-black/30 border border-cyan-500/30 shadow-md shadow-cyan-500/20"
         >
           <ul className="flex space-x-8">
@@ -38,7 +38,7 @@ function Layout() {
                   className="flex flex-col items-center"
                 >
                   <div
-                    className={`mb-1 transform transition-all duration-300 ${selectedIcon === id ? 'translate-y-[-6px]' : ''
+                    className={`mb-1 transform transition-all duration-300 translate-y-[-6px] ${selectedIcon === id ? 'translate-y-[-12px]' : ''
                       }`}
                   >
                     <Icon
@@ -49,9 +49,9 @@ function Layout() {
                     />
                   </div>
                   <span
-                    className={`absolute bottom-[-8px] text-xs text-center transition-all duration-300 ${selectedIcon === id
+                    className={`absolute bottom-[-8px] text-xs text-center transition-all duration-300 mt-[5px] ${selectedIcon === id
                       ? 'opacity-100 visible text-cyan-400'
-                      : 'opacity-0 hidden'
+                      : 'opacity-30 visible text-gray-400'
                       }`}
                   >
                     {label}

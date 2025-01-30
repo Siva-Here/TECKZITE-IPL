@@ -141,7 +141,7 @@ const Home = () => {
           </Letter>
         ))}
       </TitleContainer> */}
-      <Navbar />
+      {/* <Navbar /> */}
     </Container>
   );
 };

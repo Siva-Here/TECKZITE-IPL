@@ -80,18 +80,6 @@ teamSchema.statics.handleBid = async function (
   const playerRole = await Player.findOne({ _id: playerId })
   const role=playerRole.role
   console.log("ROLE",role);
-  // if (role === "batsman" && team.batsmen >= 5) {
-  //   throw new Error("Maximum batsmen limit reached.");
-  // }
-  // if (role === "bowler" && team.bowlers >= 5) {
-  //   throw new Error("Maximum bowlers limit reached.");
-  // }
-  // if (role === "allrounder" && team.allrounder >= 1) {
-  //   throw new Error("Maximum allrounder limit reached.");
-  // }
-  // if (role === "wicketkeeper" && team.wicketkeeper >= 1) {
-  //   throw new Error("Maximum wicketkeeper limit reached.");
-  // }
  
   // Update team's data
   team.remainingPurse -= biddingAmount;

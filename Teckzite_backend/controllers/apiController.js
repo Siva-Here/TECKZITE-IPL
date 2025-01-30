@@ -318,67 +318,54 @@ const bid = async (req, res) => {
       res.status(500).json({ message: "Failed to fetch sets" });
     }
   };
+// const deleteTeam = async (req,res) =>{
+//     const {id} = req.body
+//     console.log("id:",id);
+//     try{
+//         const team = await Team.findByIdAndDelete(id)
+//         if(!team){
+//             return res.status(404).send({message: "Team not found"})
+//         }
+//         res.status(200).send({message: "Team deleted successfully"})
+//     }catch(err){
+//         res.status(400).send({message: "Error deleting team", error: err})
+//     }
+// }
+const deleteTeam = async (req, res) => {
+  const { id } = req.body;
+  console.log("id:", id);
   
+  try {
+      const team = await Team.findById(id);
+      if (!team) {
+          return res.status(404).send({ message: "Team not found" });
+      }
 
+      // Get all player IDs from the team's players array
+      const playerIds = team.players;
 
-// const deletePlayer = async (req, res) => { 
-//   const { id } = req.body;
-//   console.log(req.body);
-//   console.log("id:", id);
+      // Find all players associated with the team
+      const players = await Player.find({ _id: { $in: playerIds } });
 
-//   try {
-   
-//     const player = await Player.findByIdAndDelete(id);
-//     if (!player) {
-//       return res.status(404).send({ message: "Player not found" });
-//     }
+      // Update each player individually to reset their auction status
+      for (const player of players) {
+          player.isSold = false;
+          player.inAuction = false;
+          player.soldTeam = null;
+          player.soldAmount = player.basePrice; // Reset soldAmount to basePrice
+          await player.save();
+      }
 
-//     // If the player was sold, update the respective team's purse
-//     if (player.isSold) {
-//       const teamName = player.soldTeam;
-//       const soldAmount = player.soldAmount;
-//       const role=player.role;
-      
-//       const team = await Team.findOne({ teamID: teamName });
-//       if (!team) {
-//         return res.status(404).send({ message: "Team not found" });
-//       }
+      // Delete the team
+      await Team.findByIdAndDelete(id);
 
-//       team.remainingPurse += soldAmount;
-//       if(role=="batsman"){
-//         team.batsmen=team.batsmen-1;
-//       }else if(role=="bowler"){
-//         team.bowlers=team.bowlers-1;
-//       }else if(role=="allrounder"){
-//         team.allrounder=team.allrounder-1;
-//       }else if(role=="wicketkeeper"){
-//         team.wicketkeeper=team.wicketkeeper-1;
-//       }
-//       await team.save();
-//       console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
-//     }
+      res.status(200).send({ message: "Team deleted successfully, players updated." });
+  } catch (err) {
+      console.log(err);
+      res.status(400).send({ message: "Error deleting team", error: err });
+  }
+};
 
-//     console.log("Deleted player details", player);
-//     res.status(200).send({ message: "Player deleted successfully" });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(400).send({ message: "Error deleting player", error: err });
-//   }
-// };
-
-const deleteTeam = async (req,res) =>{
-    const {id} = req.body
-    console.log("id:",id);
-    try{
-        const team = await Team.findByIdAndDelete(id)
-        if(!team){
-            return res.status(404).send({message: "Team not found"})
-        }
-        res.status(200).send({message: "Team deleted successfully"})
-    }catch(err){
-        res.status(400).send({message: "Error deleting team", error: err})
-    }
-}
 
 const getteamplayers = async (req, res) => {
   try {

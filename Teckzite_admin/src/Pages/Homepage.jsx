@@ -268,7 +268,7 @@ const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [selectedSet,setSelectedSet]=useState('');
-  const [continueauction,setContinue]=useState(false);
+  const [continueauction,setContinue]=useState(true);
   const [setnames,setSetnames]=useState({ 
     setname:[],
     set:[]
@@ -659,7 +659,7 @@ const HomePage = () => {
         <p>hiii</p>
       )}
 
-<NeonButton onClick={()=>pauseAuction()}>{continueauction?"resume":"pause"}</NeonButton>
+<NeonButton onClick={()=>pauseAuction()}>{continueauction?"pause":"resume"}</NeonButton>
     </Container>
 
   );

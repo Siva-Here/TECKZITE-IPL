@@ -302,7 +302,10 @@ const AddPlayer = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [Players, setPlayers] = useState([]);
   const [filterplayers, setFilterPlayers] = useState([]);
-  const [setnames, setSetNames] = useState(["set0"]);
+  const [setnames, setSetNames] = useState({
+    setname:"",
+    setno:""
+  });
 
 
   const [editoption, setEditoption] = useState(false);
@@ -314,12 +317,30 @@ const AddPlayer = () => {
     setIsModalOpen(false);
   };
 
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setNewPlayer({
+  //     ...newPlayer,
+  //     [name]: value,
+  //   });
+  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewPlayer({
-      ...newPlayer,
-      [name]: value,
-    });
+  
+    // Check if the input is a radio button for setname
+    if (name === "setname") {
+      const [setname, set] = value.split('-'); // Split values
+      setNewPlayer({
+        ...newPlayer,
+        setname,
+        set,  // Store setno separately
+      });
+    } else {
+      setNewPlayer({
+        ...newPlayer,
+        [name]: value,
+      });
+    }
   };
   
   const fetchPlayers = async () => {
@@ -331,13 +352,23 @@ const AddPlayer = () => {
         setPlayers(data);
         setFilterPlayers(data);
         setLoading(false);
-        const extractedSetNames = data.map(player => player.setname);
-          setSetNames(extractedSetNames);
-      
-      }
+       
+        const uniqueSetNamesAndNos = [
+          ...new Set(data.map(player => `${player.setname}-${player.set}`))
+        ];
+    
+      //   // Now, extract the unique combinations back to an object array
+        const extractedSetNames = uniqueSetNamesAndNos.map(pair => {
+          const [setname, setno] = pair.split('-');
+          return { setname, setno };
+        });
+    
+        setSetNames(extractedSetNames);
+       }
       else {
         console.log("error while fetching data");
-        alert("Error while fetching data");
+        toast.error("Error while fetching data");
+        setLoading(false)
       }
     }
     catch (error) {
@@ -506,10 +537,35 @@ const AddPlayer = () => {
 
   const handlesetdataSubmit = async (e) => {
     e.preventDefault();
-  
+    
+
+    const { setname, setno } = setData;
+    
+    const matchedSet = setnames.find(
+      (item) => item.setname === setname || item.setno === setno
+    );
+    
+    if (matchedSet) {
+      // If setname in setData matches setname in setnames
+      if (matchedSet.setname === setname) {
+        // Ensure setno matches too
+        if (matchedSet.setno !== setno) {
+          // handle case where setno doesn't match
+          toast.error("Setno does not match");
+        }
+      }
+    
+      // If setno in setData matches setno in setnames
+      if (matchedSet.setno === setno) {
+        // Ensure setname matches too
+        if (matchedSet.setname !== setname) {
+          // handle case where setname doesn't match
+          toast.error("Setname does not match");
+        }
+      }
+    }
     // Get the uploaded file
     const file = setData.excel;
-  
     if (!file) {
       toast.error("Please upload a file.");
       return;
@@ -750,7 +806,7 @@ const AddPlayer = () => {
               onChange={handleInputChange}
               required
             />
-            <fieldset style={{ border: 'none', margin: '10px 0' }} >
+            {/* <fieldset style={{ border: 'none', margin: '10px 0' }} >
               <legend style={{ fontWeight: 'bold' }}>Set</legend>
               <label style={{ marginRight: '10px' }}>
                 <input
@@ -786,8 +842,8 @@ const AddPlayer = () => {
                 />
                 3
               </label>
-            </fieldset>
-            {setnames &&setnames.length > 0 ? (
+            </fieldset> */}
+            {/* {setnames &&setnames.length > 0 ? (
   <>
     { setnames.map((player, index) => (
       <label key={index}>
@@ -803,6 +859,32 @@ const AddPlayer = () => {
       </label>
     ))}
   </>
+) : (
+  <p>No sets to add</p>
+)} */}
+{Array.isArray(setnames) ? (
+  setnames.map((player, index) => (
+    <label key={index}>
+      {/* <input
+        type="radio"
+        name="setname"
+        value={player.setname}
+        checked={newPlayer.setname === player.setname}
+        onChange={handleInputChange}
+        required
+      /> */}
+      <input
+  type="radio"
+  name="setname"
+  value={`${player.setname}-${player.setno}`}  // Combine values
+  checked={newPlayer.setname === player.setname}
+  onChange={handleInputChange}
+  required
+/>
+
+      {player.setname}
+    </label>
+  ))
 ) : (
   <p>No sets to add</p>
 )}

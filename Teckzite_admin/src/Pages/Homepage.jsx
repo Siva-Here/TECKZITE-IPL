@@ -252,9 +252,6 @@ const NeonButton = styled.button`
     right: 0;
   }
 `;
-
-
-
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';

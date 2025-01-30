@@ -506,10 +506,27 @@ const AddPlayer = () => {
 
   const handlesetdataSubmit = async (e) => {
     e.preventDefault();
+    
+
+    const { setname, setno } = setData;
   
+  // Regex to check 'set<number>' pattern
+  const setnamePattern = /^set(\d+)$/i ;
+  const match = setname.match(setnamePattern);
+  
+  if (!match) {
+   toast.error("Invalid setname format. It should be like 'set1', 'Set2', 'SET10'.")
+   return;
+  }
+  
+  const expectedSetNumber = Number(match[1]); // Extract number from setname
+ 
+  if (isNaN(setno) || setno != expectedSetNumber) {
+   toast.error(`Invalid set value. It should be exactly ${expectedSetNumber}.` );
+   return;
+  }
     // Get the uploaded file
     const file = setData.excel;
-  
     if (!file) {
       toast.error("Please upload a file.");
       return;

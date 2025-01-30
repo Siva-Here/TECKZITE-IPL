@@ -493,6 +493,7 @@ const HomePage = () => {
               </HeroContent>
             </ImageContainer>
             <MainContent>
+            <NeonButton onClick={()=>pauseAuction()}>{continueauction?"pause":"resume"}</NeonButton>
               <Card>
                 <CardTitle>
                   <FaChartLine className=" mr-1  text-[#ff00ff]" />
@@ -656,7 +657,6 @@ const HomePage = () => {
         <p>hiii</p>
       )}
 
-<NeonButton onClick={()=>pauseAuction()}>{continueauction?"pause":"resume"}</NeonButton>
     </Container>
 
   );

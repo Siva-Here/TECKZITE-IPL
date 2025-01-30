@@ -35,6 +35,7 @@ const playerSchema = new mongoose.Schema({
     },
     "setname":{
         type:String,
+        required:true
     },
     "isDebut": {
         type: Boolean,

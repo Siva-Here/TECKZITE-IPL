@@ -127,6 +127,7 @@ const unsold=async(req,res)=>{
     }else{ 
   player.inAuction=true;
   await player.save();
+  return res.status(200).send({message:"unsold"})
     }
 }
 const getTeams = async(req,res)=>{
@@ -320,41 +321,50 @@ const bid = async (req, res) => {
   
 
 
-const deletePlayer = async (req, res) => { 
-  const { id } = req.body;
-  console.log(req.body);
-  console.log("id:", id);
+// const deletePlayer = async (req, res) => { 
+//   const { id } = req.body;
+//   console.log(req.body);
+//   console.log("id:", id);
 
-  try {
+//   try {
    
-    const player = await Player.findByIdAndDelete(id);
-    if (!player) {
-      return res.status(404).send({ message: "Player not found" });
-    }
+//     const player = await Player.findByIdAndDelete(id);
+//     if (!player) {
+//       return res.status(404).send({ message: "Player not found" });
+//     }
 
-    // If the player was sold, update the respective team's purse
-    if (player.isSold) {
-      const teamName = player.soldTeam;
-      const soldAmount = player.soldAmount;
+//     // If the player was sold, update the respective team's purse
+//     if (player.isSold) {
+//       const teamName = player.soldTeam;
+//       const soldAmount = player.soldAmount;
+//       const role=player.role;
+      
+//       const team = await Team.findOne({ teamID: teamName });
+//       if (!team) {
+//         return res.status(404).send({ message: "Team not found" });
+//       }
 
-      const team = await Team.findOne({ teamID: teamName });
-      if (!team) {
-        return res.status(404).send({ message: "Team not found" });
-      }
+//       team.remainingPurse += soldAmount;
+//       if(role=="batsman"){
+//         team.batsmen=team.batsmen-1;
+//       }else if(role=="bowler"){
+//         team.bowlers=team.bowlers-1;
+//       }else if(role=="allrounder"){
+//         team.allrounder=team.allrounder-1;
+//       }else if(role=="wicketkeeper"){
+//         team.wicketkeeper=team.wicketkeeper-1;
+//       }
+//       await team.save();
+//       console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
+//     }
 
-      // Add the player's sold amount back to the team's purse
-      team.remainingPurse += soldAmount;
-      await team.save();
-      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
-    }
-
-    console.log("Deleted player details", player);
-    res.status(200).send({ message: "Player deleted successfully" });
-  } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: "Error deleting player", error: err });
-  }
-};
+//     console.log("Deleted player details", player);
+//     res.status(200).send({ message: "Player deleted successfully" });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(400).send({ message: "Error deleting player", error: err });
+//   }
+// };
 
 const deleteTeam = async (req,res) =>{
     const {id} = req.body
@@ -392,6 +402,55 @@ const getteamplayers = async (req, res) => {
     // Handle any errors
     console.error("Error in getteamplayers function:", err);
     res.status(400).json({ error: err.message });
+  }
+};
+const deletePlayer = async (req, res) => { 
+  const { id } = req.body;
+  console.log(req.body);
+  console.log("id:", id);
+
+  try {
+    const player = await Player.findByIdAndDelete(id);
+    if (!player) {
+      return res.status(404).send({ message: "Player not found" });
+    }
+
+    // If the player was sold, update the respective team's purse and remove the player from the team
+    if (player.isSold) {
+      const teamName = player.soldTeam;
+      const soldAmount = player.soldAmount;
+      const role = player.role;
+      
+      const team = await Team.findOne({ teamID: teamName });
+      if (!team) {
+        return res.status(404).send({ message: "Team not found" });
+      }
+
+      // Remove player _id from team's players array
+      await Team.updateOne({ teamID: teamName }, { $pull: { players: id } });
+
+      // Update team purse and player count based on role
+      team.remainingPurse += soldAmount;
+      if (role === "batsman") {
+        console.log("batsman")
+        team.batsmen -= 1;
+      } else if (role === "bowler") {
+        team.bowlers -= 1;
+      } else if (role === "allrounder") {
+        team.allrounder -= 1;
+      } else if (role === "wicketkeeper") {
+        team.wicketkeeper -= 1;
+      }
+
+      await team.save();
+      console.log(`Updated team purse for ${teamName}, added back ${soldAmount}`);
+    }
+
+    console.log("Deleted player details", player);
+    res.status(200).send({ message: "Player deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: "Error deleting player", error: err });
   }
 };
 

@@ -434,7 +434,7 @@ const HomePage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }), // Sending the id in the body
+        body: JSON.stringify({ id }), 
       });
   
       if (response.ok) {
@@ -446,6 +446,7 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error sending request:", error);
     }
+    console.log("out")
     fetchPlayer(player.set,player.bidplace, "next")
   }
   const pauseAuction=()=>{

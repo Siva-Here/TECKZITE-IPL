@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+.slider {
+    display: flex;
+    perspective: 1000px;
+    animation: slide 30s infinite linear;
+}
+
+/* Increase speed on smaller screens */
+@media (max-width: 768px) { 
+    .slider {
+        animation: slide 5s infinite linear; /* Faster on mobile */
+    }
+}
+.slider:hover {
+    animation-play-state: paused; /* Ensures animation continues */
+}
+.slider > span {
+    flex: none;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+}
+@keyframes slide {
+    0% { transform: translateX(50%); }
+    100% { transform: translateX(-100%); }
+}

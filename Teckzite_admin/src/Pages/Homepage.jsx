@@ -616,21 +616,6 @@ const HomePage = () => {
               maxWidth: "500px",
             }}
           > 
-          
-          {/* setnames.setname.map((setno, index) => (
-              <div
-                key={index}
-                style={{
-                  margin: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  width: "100%", // Make buttons full width on mobile
-                }}
-              >
-               
-                <NeonButton onClick={()=>chooseset(setno)}>{setno}</NeonButton>
-              </div>
-            ))  */}
            {setnames.setname.length > 0 ? (
         setnames.setname.map((setno, index) => (
           <div
@@ -648,7 +633,7 @@ const HomePage = () => {
           </div>
         ))
       ) : (
-        <p>Loading sets...</p>
+        <p>No sets available</p>
       )}
 
 

@@ -316,14 +316,6 @@ const AddPlayer = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setNewPlayer({
-  //     ...newPlayer,
-  //     [name]: value,
-  //   });
-  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
   

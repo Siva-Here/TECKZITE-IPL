@@ -408,7 +408,7 @@ const HomePage = () => {
           console.error('Error confirming bid:', error);
 
           if (error.response && error.response.data && error.response.data.error) {
-            // Backend-specific error
+           
             toast.error(error.response.data.error);
           } else {
             // Generic or network error

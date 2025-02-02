@@ -1,9 +1,8 @@
 import { Canvas } from "@react-three/fiber";
-import  { useState, useEffect, Suspense } from "react";
-import styled, { keyframes } from "styled-components";
+import { Suspense } from "react";
+import styled from "styled-components";
 import ParticleField from "../components/ParticleField";
 import { OrbitControls } from "@react-three/drei";
-import Navbar from "../components/Navbar";
 
 const Container = styled.div`
   position: relative;
@@ -26,183 +25,37 @@ const BackgroundVideo = styled.video`
   opacity: 0.3;
 `;
 
-const TitleContainer = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: flex-end;
-  width: 100%;
-  height: 15%; /* Adjusted title container height */
-  z-index: 1;
-  transition: top 0.3s ease;
-
-  @media (max-width: 600px) {
-    height: 20%; /* Adjust height for mobile screens */
-    top: 5%; /* Move title closer to the top */
-  }
-`;
-
-const neonGlow = keyframes`
-  0%, 100% {
-    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff, 0 0 80px #0ff;
-    color: #000;
-  }
-  25%,50%{
-    text-shadow: 0 0 20px rgb(20, 76, 100), 0 0 40px rgb(20, 76, 100), 0 0 80px rgb(20, 76, 100) 0 0 100px rgb(20, 76, 100);
-    color: rgb(20, 76, 100);
-  }
-`;
-
-const swingAnimation = keyframes`
-  0% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(-10deg); }
-`;
-
-const Letter = styled.div`
-  position: relative;
-  font-size: 3rem;
-  font-weight: bold;
-  text-align: center;
- animation: ${neonGlow} 2s infinite, ${swingAnimation} 7s infinite ease-in-out;
-  animation-delay: ${({ delay }) => delay}s;
-
-  &:before {
-    content: "";
-    position: absolute;
-    top: -50px; /* Reduced thread height */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 50px; /* Reduced thread height */
-    background: linear-gradient(to bottom, #0ff, transparent);
-  }
-
-  @media (max-width: 600px) {
-    font-size: 2rem; /* Smaller font size for mobile */
-
-    &:before {
-      height: 30px; /* Smaller thread height for mobile */
-      top: -30px; /* Adjust top position of thread */
-    }
-  }
-`;
 
 const Home = () => {
-  const fullTitle = "TeckZiteiplAuction";
-  const shortTitle = "TziplAuction";
-
-  const [title, setTitle] = useState(fullTitle);
-  const [topPosition, setTopPosition] = useState('0%');
-
-  const handleResize = () => {
-    const isMobile = window.innerWidth <= 600;
-    setTitle(isMobile ? shortTitle : fullTitle);
-    setTopPosition(isMobile ? '-9%' : '0%');
-  };
-  useEffect(() => {
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
   return (
     <Container>
 
       <div className="absolute inset-0 bg-repeat">
-            <Canvas camera={{ position: [0, 2, 5], fov: 75 }}>
-              <Suspense fallback={null}>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} intensity={1.5} />
-                <spotLight
-                  position={[-5, 5, 0]}
-                  angle={0.3}
-                  penumbra={1}
-                  intensity={1}
-                  castShadow
-                />
-                <ParticleField isDarkMode={true} />
-                <OrbitControls enableZoom={false} />
-              </Suspense>
-            </Canvas>
-          </div>
+        <Canvas camera={{ position: [0, 2, 5], fov: 75 }}>
+          <Suspense fallback={null}>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1.5} />
+            <spotLight
+              position={[-5, 5, 0]}
+              angle={0.3}
+              penumbra={1}
+              intensity={1}
+              castShadow
+            />
+            <ParticleField isDarkMode={true} />
+            <OrbitControls enableZoom={false} />
+          </Suspense>
+        </Canvas>
+      </div>
 
       <BackgroundVideo autoPlay loop muted>
         <source src="promo.webm" type="video/mp4" />
         Your browser does not support the video tag.
       </BackgroundVideo>
 
-
-      
-      {/* <img src="log0.png" alt="" style={{ width: '500px', height: '150px', marginRight:'13px' }} />
-
-      <div className="bg-gray-1200 text-white flex flex-col items-center justify-center min-h-[600px] md:min-h-[500px]">
-      <style>
-        {`
-          .static-border {
-            position: relative;
-            border: 2px solid rgba(59, 130, 246, 0.5);
-            border-radius: 0.5rem;
-            background: transparent;
-            transition: all 0.3s ease;
-          }
-
-          .static-border:hover {
-            border-color: rgba(59, 130, 246, 1);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            transform: translateY(-5px);
-          }
-
-          .static-border > div {
-            position: relative;
-            z-index: 1;
-            background: transparent;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-          }
-        `}
-      </style>
-
-      <div className="grid grid-cols-1 gap-8 w-full max-w-4xl px-4">
-
-        <div className="static-border">
-          <div className="backdrop-blur-md rounded-lg p-4 text-center">
-            <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
-            <p className="text-2xl font-bold text-cyan-300">150</p>
-          </div>
-        </div>
-
-
-        <div className="grid grid-cols-2 gap-8">
-          <div className="static-border">
-            <div className="backdrop-blur-md rounded-lg p-6 text-center">
-              <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
-              <p className="text-2xl font-bold text-cyan-300">90</p>
-            </div>
-          </div>
-          <div className="static-border">
-            <div className="backdrop-blur-md rounded-lg p-6 text-center">
-              <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
-              <p className="text-2xl font-bold text-cyan-300">60</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div className="mt-8 static-border">
-        <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
-          Live Auction
-        </button>
-      </div>
-    </div> */}
-
-<div className="bg-gray-1200 text-white flex flex-col items-center min-h-[80vh]">
-  <style>
-    {`
+      <div className="bg-gray-1200 text-white flex flex-col items-center min-h-[80vh]">
+        <style>
+          {`
       .static-border {
         position: relative;
         border: 2px solid rgba(59, 130, 246, 0.5);
@@ -225,49 +78,49 @@ const Home = () => {
         padding: 1.5rem;
       }
     `}
-  </style>
+        </style>
 
-  {/* Logo Positioned at the Top Center */}
-  <div className="w-full flex justify-center py-4">
-    <img src="log0.png" alt="" style={{ width: "500px", height: "150px",marginRight:"15px" }} />
-  </div>
+        {/* Logo Positioned at the Top Center */}
+        <div className="w-full flex justify-center py-4">
+          <img src="log0.png" alt="" style={{ width: "500px", height: "150px", marginRight: "15px" }} />
+        </div>
 
-  {/* Content Centered in 80vh */}
-  <div className="flex flex-col items-center justify-center flex-grow w-full max-w-4xl px-4">
-    {/* Total Players Card */}
-    <div className="static-border w-full slide-in-top">
-      <div className="backdrop-blur-md rounded-lg p-4 text-center">
-        <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
-        <p className="text-2xl font-bold text-cyan-300">150</p>
-      </div>
-    </div>
+        {/* Content Centered in 80vh */}
+        <div className="flex flex-col items-center justify-center flex-grow w-full max-w-4xl px-4">
+          {/* Total Players Card */}
+          <div className="static-border w-full slide-in-top">
+            <div className="backdrop-blur-md rounded-lg p-4 text-center">
+              <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
+              <p className="text-2xl font-bold text-cyan-300">150</p>
+            </div>
+          </div>
 
-    {/* Sold and Unsold Players Cards */}
-    <div className="grid grid-cols-2 gap-8 mt-6">
-      <div className="static-border slide-in-left">
-        <div className="backdrop-blur-md rounded-lg p-6 text-center">
-          <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
-          <p className="text-2xl font-bold text-cyan-300">90</p>
+          {/* Sold and Unsold Players Cards */}
+          <div className="grid grid-cols-2 gap-8 mt-6">
+            <div className="static-border slide-in-left">
+              <div className="backdrop-blur-md rounded-lg p-6 text-center">
+                <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
+                <p className="text-2xl font-bold text-cyan-300">90</p>
+              </div>
+            </div>
+            <div className="static-border slide-in-right">
+              <div className="backdrop-blur-md rounded-lg p-6 text-center">
+                <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
+                <p className="text-2xl font-bold text-cyan-300">60</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Auction Button */}
+          <div className="mt-8 static-border">
+            <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
+              Live Auction
+            </button>
+          </div>
         </div>
       </div>
-      <div className="static-border slide-in-right">
-        <div className="backdrop-blur-md rounded-lg p-6 text-center">
-          <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
-          <p className="text-2xl font-bold text-cyan-300">60</p>
-        </div>
-      </div>
-    </div>
 
-    {/* Live Auction Button */}
-    <div className="mt-8 static-border">
-      <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
-        Live Auction
-      </button>
-    </div>
-  </div>
-</div>
-
-          </Container>
+    </Container>
   );
 };
 

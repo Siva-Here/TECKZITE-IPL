@@ -157,7 +157,8 @@ const player = async (req, res) => {
       basePrice,
       isDebut,
       bidplace,
-      set
+      set,
+      setname
     } = req.body;
     let image;
     if(req.file==undefined){
@@ -205,7 +206,7 @@ const player = async (req, res) => {
         existingPlayer.isDebut=req.body.isDebut;
         existingPlayer.bidplace = req.body.bidplace;
         existingPlayer.set = req.body.set;
-
+existingPlayer.setname=req.body.setname;
         const updatedPlayer = await existingPlayer.save();
         console.log("in updateplayer")
         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });
@@ -224,6 +225,7 @@ const player = async (req, res) => {
           isDebut,
           bidplace,
           set,
+          setname,
         });
 
         const result = await newPlayer.save();

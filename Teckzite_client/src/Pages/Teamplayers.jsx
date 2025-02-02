@@ -173,7 +173,7 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { FaFlag, FaUser } from 'react-icons/fa';
 import { PiCricketBold } from 'react-icons/pi';
 import Navbar from '../components/Navbar';
@@ -181,6 +181,14 @@ import styled from 'styled-components';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import './SliderCss.css'
+import { EffectCoverflow, Pagination, Navigation } from 'swiper';
 
 const TeamsContainer = styled.div`
   position: relative;
@@ -232,7 +240,7 @@ const SliderContainer = styled.div`
 
 const PlayerCard = styled.div`
   flex: none;
-  width: 350px;
+  width: 300px;
   margin-right: 20px;
   background: transparent;
   border: 1px solid rgba(0, 255, 255, 0.3);
@@ -263,6 +271,7 @@ const Players = () => {
       const data = await response.json();
       if (response.ok) {
         setPlayersData(data);
+       
         setFilteredPlayers(data); // Initial data for filtered players
         setLoading(false);
       } else {
@@ -324,14 +333,37 @@ const Players = () => {
             {loading ? (
               <div className="text-center text-cyan-400">Loading...</div>
             ) : (
-              <SliderContainer shouldSlide={shouldSlide()}>
-                {[...filteredPlayers, ...filteredPlayers].map((player, index) => (
+              // <SliderContainer shouldSlide={shouldSlide()}>
+              <>
+                <Swiper
+        effect={'coverflow'}
+        grabCursor={true}
+        centeredSlides={true}
+        loop={true}
+        slidesPerView={'auto'}
+        coverflowEffect={{
+          rotate: 0,
+          stretch: 0,
+          depth: 100,
+          modifier: 2.5,
+        }}
+        pagination={{ el: '.swiper-pagination', clickable: true }}
+        navigation={{
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+          clickable: true,
+        }}
+        modules={[EffectCoverflow, Pagination, Navigation]}
+        className="swiper_container"
+      >
+                {[ ...filteredPlayers].map((player, index) => (
+                  <SwiperSlide key={`${player._id}-${index}`}>
                   <PlayerCard key={`${player._id}-${index}`}>
-                    <div className="flex justify-center img" style={{ minWidth: '350px', minHeight: '300px' }}>
-                      <div className="bg-transparent border rounded-lg overflow-hidden hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out border-cyan-100">
+                    <div className="flex justify-center img" style={{ minWidth: '200px', minHeight: '300px' }}>
+                      <div className="bg-transparent  rounded-lg overflow-hidden  cursor-pointer transition-colors duration-300 ease-in-out border-cyan-100 w-[200px]">
                         <div className="relative rounded-lg">
                           <div className="relative">
-                            <div className="w-24 h-24 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
+                            <div className="w-48 h-48 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
                               <img
                                 alt={`Image of ${player.name}`}
                                 className="w-full h-full object-cover"
@@ -343,9 +375,9 @@ const Players = () => {
                               <span className="text-xs text-white">{player.nationality}</span>
                             </div>
                           </div>
-                          <div className="p-4 space-y-3">
+                          <div className="p-4 space-y-6">
                             <div className="text-center">
-                              <h2 className="text-lg font-bold text-cyan-400">{player.name}</h2>
+                              <h2 className="text-xlg font-bold text-cyan-400">{player.name}</h2>
                               <div className="flex justify-center space-x-2 text-gray-400 text-xs">
                                 <div className="flex items-center">
                                   <FaUser className="text-cyan-500 w-3 h-3" />
@@ -386,11 +418,24 @@ const Players = () => {
                       </div>
                     </div>
                   </PlayerCard>
+                  </SwiperSlide>
                 ))}
-              </SliderContainer>
+                  <div className="slider-controler">
+          <div className="swiper-button-prev slider-arrow">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </div>
+          <div className="swiper-button-next slider-arrow">
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </div>
+          <div className="swiper-pagination"></div>
+        </div>
+      </Swiper>
+                </>
+              
             )}
           </div>
         </div>
+        
       </Content>
     </TeamsContainer>
   );

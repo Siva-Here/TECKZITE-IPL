@@ -6,6 +6,7 @@ import Teams from './Pages/Teams';
 import Players from './Pages/Players';
 import HomePage from './Homepage'
 import Teamplayers from './Pages/Teamplayers'
+import AppSlider from './Pages/swiperslide';
 
 
 function Layout() {
@@ -81,6 +82,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    // <AppSlider />
   );
 }
 

@@ -51,7 +51,7 @@
 //       const data = await response.json();
 //       if (response.ok) {
 //         setPlayersData(data);
-//         setFilteredPlayers(data);
+//         setFilteredPlayers(data); // Initial data for filtered players
 //         setLoading(false);
 //       } else {
 //         toast.error('Error fetching players data');
@@ -66,7 +66,7 @@
 
 //   useEffect(() => {
 //     fetchPlayers();
-//   }, []);
+//   }, [id]);
 
 //   const handleChange = (e) => {
 //     const query = e.target.value.toLowerCase();
@@ -84,82 +84,88 @@
 
 //   return (
 //     <TeamsContainer>
-//     <Content>
-//       <div className="min-h-screen text-white">
-//         <div className="p-6">
-//           <div className="flex justify-center mb-8">
-//             <input 
-//               className="bg-[#161929] text-cyan-400 px-4 py-2 rounded-lg w-full md:w-1/2 outline-none shadow-[0_0_10px_rgba(0,255,255,0.5)] focus:shadow-[0_0_10px_rgba(0,255,255,0.8)]" 
-//               placeholder="Search for players..." 
-//               type="text"
-//             />
-//           </div>
-//           <div className="text-center text-cyan-400">
-//             Loading...
-//           </div>
-//           <div className="slider">
-//             <span style={{ "--i": 1 }}>
-//               <div className="flex justify-center img" style={{ minWidth: "350px", minHeight: "300px" }}>
-//                 <div className="bg-[#161929] border rounded-lg overflow-hidden hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out border-cyan-100">
-//                   <div className="relative rounded-lg">
-//                     <div className="relative">
-//                       <div className="w-24 h-24 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
-//                         <img alt="Image of player 1" className="w-full h-full object-cover" src="https://placehold.co/100x100"/>
-//                       </div>
-//                       <div className="absolute top-3 right-3 bg-gray-900/70 px-2 py-1 rounded-full flex items-center space-x-1">
-//                         <FaFlag className="text-cyan-500 w-3 h-3" />
-//                         <span className="text-xs text-white">Nationality</span>
+//       <Content>
+//         <div className="min-h-screen text-white">
+//           <div className="p-6">
+//             <div className="flex justify-center mb-8">
+//               <input
+//                 className="bg-[#161929] text-cyan-400 px-4 py-2 rounded-lg w-full md:w-1/2 outline-none shadow-[0_0_10px_rgba(0,255,255,0.5)] focus:shadow-[0_0_10px_rgba(0,255,255,0.8)]"
+//                 placeholder="Search for players..."
+//                 type="text"
+//                 value={searchQuery}
+//                 onChange={handleChange}
+//               />
+//             </div>
+
+//             {loading ? (
+//               <div className="text-center text-cyan-400">Loading...</div>
+//             ) : (
+//               <div className="slider md:mt-[70px]">
+//                 {filteredPlayers.map((player, index) => (
+//                   <span key={player._id} style={{ "--i": index + 1 }}>
+//                     <div className="flex justify-center img" style={{ minWidth: '350px', minHeight: '300px' }}>
+//                       <div className="bg-transparent border rounded-lg overflow-hidden hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out border-cyan-100">
+//                         <div className="relative rounded-lg">
+//                           <div className="relative">
+//                             <div className="w-24 h-24 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
+//                               <img alt={`Image of ${player.name}`} className="w-full h-full object-cover" src={player.image || "https://placehold.co/100x100"} />
+//                             </div>
+//                             <div className="absolute top-3 right-3 bg-gray-900/70 px-2 py-1 rounded-full flex items-center space-x-1">
+//                               <FaFlag className="text-cyan-500 w-3 h-3" />
+//                               <span className="text-xs text-white">{player.nationality}</span>
+//                             </div>
+//                           </div>
+//                           <div className="p-4 space-y-3">
+//                             <div className="text-center">
+//                               <h2 className="text-lg font-bold text-cyan-400">{player.name}</h2>
+//                               <div className="flex justify-center space-x-2 text-gray-400 text-xs">
+//                                 <div className="flex items-center">
+//                                   <FaUser className="text-cyan-500 w-3 h-3" />
+//                                   <span className="ml-1">{player.age} years</span>
+//                                 </div>
+//                                 <div className="flex items-center">
+//                                   <PiCricketBold className="text-cyan-500 w-3 h-3" />
+//                                   <span className="ml-1">{player.role}</span>
+//                                 </div>
+//                               </div>
+//                             </div>
+//                             <div className="grid grid-cols-3 gap-2">
+//                               <div className="bg-[#232533] p-2 rounded-lg">
+//                                 <p className="text-gray-400 text-xs">Runs</p>
+//                                 <p className="text-sm font-bold text-cyan-400">{player.runs}</p>
+//                               </div>
+//                               <div className="bg-[#232533] p-2 rounded-lg">
+//                                 <p className="text-gray-400 text-xs">Wickets</p>
+//                                 <p className="text-sm font-bold text-cyan-400">{player.wickets}</p>
+//                               </div>
+//                               <div className="bg-[#232533] p-2 rounded-lg">
+//                                 <p className="text-gray-400 text-xs">Strike Rate</p>
+//                                 <p className="text-sm font-bold text-cyan-400">{player.strikeRate}</p>
+//                               </div>
+//                             </div>
+//                             <div className="bg-[#232533] p-2 rounded-lg">
+//                               <div className="flex items-center justify-between">
+//                                 <span className="text-sm font-medium text-white">Auction Status</span>
+//                                 <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">SOLD</span>
+//                               </div>
+//                               <div className="mt-1 text-xs flex justify-between text-gray-400">
+//                                 <span>Sold Team</span>
+//                                 <span className="text-cyan-400 font-bold">Sold Amount</span>
+//                               </div>
+//                             </div>
+//                           </div>
+//                         </div>
 //                       </div>
 //                     </div>
-//                     <div className="p-4 space-y-3">
-//                       <div className="text-center">
-//                         <h2 className="text-lg font-bold text-cyan-400">Player Name 1</h2>
-//                         <div className="flex justify-center space-x-2 text-gray-400 text-xs">
-//                           <div className="flex items-center">
-//                             <FaUser className="text-cyan-500 w-3 h-3" />
-//                             <span className="ml-1">Age years</span>
-//                           </div>
-//                           <div className="flex items-center">
-//                             <PiCricketBold className="text-cyan-500 w-3 h-3" />
-//                             <span className="ml-1">Role</span>
-//                           </div>
-//                         </div>
-//                       </div>
-//                       <div className="grid grid-cols-3 gap-2">
-//                         <div className="bg-[#232533] p-2 rounded-lg">
-//                           <p className="text-gray-400 text-xs">Runs</p>
-//                           <p className="text-sm font-bold text-cyan-400">Runs</p>
-//                         </div>
-//                         <div className="bg-[#232533] p-2 rounded-lg">
-//                           <p className="text-gray-400 text-xs">Wickets</p>
-//                           <p className="text-sm font-bold text-cyan-400">Wickets</p>
-//                         </div>
-//                         <div className="bg-[#232533] p-2 rounded-lg">
-//                           <p className="text-gray-400 text-xs">Strike Rate</p>
-//                           <p className="text-sm font-bold text-cyan-400">Strike Rate</p>
-//                         </div>
-//                       </div>
-//                       <div className="bg-[#232533] p-2 rounded-lg">
-//                         <div className="flex items-center justify-between">
-//                           <span className="text-sm font-medium text-white">Auction Status</span>
-//                           <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">SOLD</span>
-//                         </div>
-//                         <div className="mt-1 text-xs flex justify-between text-gray-400">
-//                           <span>Sold Team</span>
-//                           <span className="text-cyan-400 font-bold">Sold Amount</span>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
+//                   </span>
+//                 ))}
 //               </div>
-//             </span>
+
+//             )}
 //           </div>
 //         </div>
-//       </div>
-//     </Content>
-//   </TeamsContainer>
-  
+//       </Content>
+//     </TeamsContainer>
 //   );
 // };
 
@@ -205,14 +211,51 @@ const Content = styled.div`
   padding: 20px;
 `;
 
+const SliderContainer = styled.div`
+  display: flex;
+  width: max-content;
+  animation: ${({ shouldSlide }) => (shouldSlide ? 'slide 20s infinite linear' : 'none')};
+
+  @keyframes slide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  &:hover {
+    animation-play-state: ${({ shouldSlide }) => (shouldSlide ? 'paused' : 'running')};
+  }
+`;
+
+const PlayerCard = styled.div`
+  flex: none;
+  width: 350px;
+  margin-right: 20px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    width: 300px;
+  }
+`;
+
 const Players = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [playersData, setPlayersData] = useState([]);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-
-  const formatCurrency = (amount) => `$${amount.toLocaleString()}`;
 
   const fetchPlayers = async () => {
     try {
@@ -251,6 +294,18 @@ const Players = () => {
     }
   };
 
+  // Determine if sliding should be enabled
+  const shouldSlide = () => {
+    const slideCount = filteredPlayers.length;
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      return slideCount > 1; // Enable sliding on mobile if more than 1 slide
+    } else {
+      return slideCount > 4; // Enable sliding on desktop if more than 4 slides
+    }
+  };
+
   return (
     <TeamsContainer>
       <Content>
@@ -269,15 +324,19 @@ const Players = () => {
             {loading ? (
               <div className="text-center text-cyan-400">Loading...</div>
             ) : (
-              <div className="slider md:mt-[70px]">
-                {filteredPlayers.map((player, index) => (
-                  <span key={player._id} style={{ "--i": index + 1 }}>
+              <SliderContainer shouldSlide={shouldSlide()}>
+                {[...filteredPlayers, ...filteredPlayers].map((player, index) => (
+                  <PlayerCard key={`${player._id}-${index}`}>
                     <div className="flex justify-center img" style={{ minWidth: '350px', minHeight: '300px' }}>
                       <div className="bg-transparent border rounded-lg overflow-hidden hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out border-cyan-100">
                         <div className="relative rounded-lg">
                           <div className="relative">
                             <div className="w-24 h-24 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
-                              <img alt={`Image of ${player.name}`} className="w-full h-full object-cover" src={player.image || "https://placehold.co/100x100"} />
+                              <img
+                                alt={`Image of ${player.name}`}
+                                className="w-full h-full object-cover"
+                                src={player.image || 'https://placehold.co/100x100'}
+                              />
                             </div>
                             <div className="absolute top-3 right-3 bg-gray-900/70 px-2 py-1 rounded-full flex items-center space-x-1">
                               <FaFlag className="text-cyan-500 w-3 h-3" />
@@ -326,9 +385,9 @@ const Players = () => {
                         </div>
                       </div>
                     </div>
-                  </span>
+                  </PlayerCard>
                 ))}
-              </div>
+              </SliderContainer>
             )}
           </div>
         </div>

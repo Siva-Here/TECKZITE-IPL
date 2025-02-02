@@ -142,7 +142,8 @@ const Home = () => {
         ))}
       </TitleContainer> */}
       {/* <Navbar /> */}
-    </Container>
+      <img src="log0.png" alt="" style={{ width: '500px', height: '150px' }} />
+          </Container>
   );
 };
 

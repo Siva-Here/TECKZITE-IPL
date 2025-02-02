@@ -1,0 +1,35 @@
+body {
+  font-size: 1.8rem;
+  font-family: sans-serif;
+  background: #E0DFDB;
+  background-image: repeating-linear-gradient(45deg, rgba(#FFF, .1), rgba(#FFF, .1) 30px, transparent 0, transparent 60px);
+  padding: 1rem;
+}
+
+.content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-transform: uppercase;
+  opacity: 0.3;
+  font-size: 20vmin;
+  color: #999;
+}
+
+button {
+  border-radius: 30px;
+  background-color: #777;
+  opacity: 0.3;
+  font-size: 70%;
+  color: #efefef;
+  padding: 1rem 3rem;
+  border: none;
+}
+button:hover, button:active {
+  opacity: 0.8;
+}

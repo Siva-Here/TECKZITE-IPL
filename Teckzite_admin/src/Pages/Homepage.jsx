@@ -271,6 +271,7 @@ const HomePage = () => {
     set:[]
   }
   ) 
+  const [teamnames,setTeamNames]=useState([]);
   // Fetch the current player on component load
   useEffect(() => {
     fetchTeams();
@@ -287,7 +288,7 @@ const HomePage = () => {
           setname: data.setname || [],  // Ensure empty array if undefined
           set: data.set || []
         });
-       
+        setTeamNames(data.teamnames);
       setShowModal2(true)
       }
       else {
@@ -562,7 +563,7 @@ const HomePage = () => {
 
                     >
                       <option value="">Select Team</option>
-                      {["RCB", "MI", "CSK", "KKR", "DC", "GT", "LSG", "KXIP", "RR", "SRH"].map((team, i) => (
+                      {teamnames.map((team, i) => (
                         <option key={i} value={`${team}`}>
                           {team}
                         </option>

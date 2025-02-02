@@ -308,29 +308,19 @@ const bid = async (req, res) => {
       // Extract unique setnames and setnos from the result
       const setname = sets[0]?.setname || [];
       const set = sets[0]?.set || [];
-      
+      const teams = await Team.find({}, 'teamID'); 
+        const teamnames = teams.map(team => team.teamID);
       res.status(200).json({
         setname,
-        set
+        set,
+        teamnames
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Failed to fetch sets" });
     }
   };
-// const deleteTeam = async (req,res) =>{
-//     const {id} = req.body
-//     console.log("id:",id);
-//     try{
-//         const team = await Team.findByIdAndDelete(id)
-//         if(!team){
-//             return res.status(404).send({message: "Team not found"})
-//         }
-//         res.status(200).send({message: "Team deleted successfully"})
-//     }catch(err){
-//         res.status(400).send({message: "Error deleting team", error: err})
-//     }
-// }
+
 const deleteTeam = async (req, res) => {
   const { id } = req.body;
   console.log("id:", id);

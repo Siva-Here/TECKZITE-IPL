@@ -532,7 +532,7 @@ const AddPlayer = () => {
     
 
     const { setname, setno } = setData;
-    
+    console.log("setnames:",setnames);
     const matchedSet = setnames.find(
       (item) => item.setname === setname || item.setno === setno
     );

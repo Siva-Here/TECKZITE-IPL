@@ -134,17 +134,143 @@ const Home = () => {
         <source src="promo.webm" type="video/mp4" />
         Your browser does not support the video tag.
       </BackgroundVideo>
-      {/* <TitleContainer style={{ top: topPosition }}>
-        {title.split("").map((char, index) => (
-          <Letter key={index} delay={index * 0.2}>
-            {char}
-          </Letter>
-        ))}
-      </TitleContainer> */}
-      {/* <Navbar /> */}
-      <img src="log0.png" alt="" style={{ width: '500px', height: '150px' }} />
+
+
+      
+      {/* <img src="log0.png" alt="" style={{ width: '500px', height: '150px', marginRight:'13px' }} />
+
+      <div className="bg-gray-1200 text-white flex flex-col items-center justify-center min-h-[600px] md:min-h-[500px]">
+      <style>
+        {`
+          .static-border {
+            position: relative;
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 0.5rem;
+            background: transparent;
+            transition: all 0.3s ease;
+          }
+
+          .static-border:hover {
+            border-color: rgba(59, 130, 246, 1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: translateY(-5px);
+          }
+
+          .static-border > div {
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+          }
+        `}
+      </style>
+
+      <div className="grid grid-cols-1 gap-8 w-full max-w-4xl px-4">
+
+        <div className="static-border">
+          <div className="backdrop-blur-md rounded-lg p-4 text-center">
+            <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
+            <p className="text-2xl font-bold text-cyan-300">150</p>
+          </div>
+        </div>
+
+
+        <div className="grid grid-cols-2 gap-8">
+          <div className="static-border">
+            <div className="backdrop-blur-md rounded-lg p-6 text-center">
+              <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
+              <p className="text-2xl font-bold text-cyan-300">90</p>
+            </div>
+          </div>
+          <div className="static-border">
+            <div className="backdrop-blur-md rounded-lg p-6 text-center">
+              <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
+              <p className="text-2xl font-bold text-cyan-300">60</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="mt-8 static-border">
+        <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
+          Live Auction
+        </button>
+      </div>
+    </div> */}
+
+<div className="bg-gray-1200 text-white flex flex-col items-center min-h-[80vh]">
+  <style>
+    {`
+      .static-border {
+        position: relative;
+        border: 2px solid rgba(59, 130, 246, 0.5);
+        border-radius: 0.5rem;
+        background: transparent;
+        transition: all 0.3s ease;
+      }
+
+      .static-border:hover {
+        border-color: rgba(59, 130, 246, 1);
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        transform: translateY(-5px);
+      }
+
+      .static-border > div {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+      }
+    `}
+  </style>
+
+  {/* Logo Positioned at the Top Center */}
+  <div className="w-full flex justify-center py-4">
+    <img src="log0.png" alt="" style={{ width: "500px", height: "150px",marginRight:"15px" }} />
+  </div>
+
+  {/* Content Centered in 80vh */}
+  <div className="flex flex-col items-center justify-center flex-grow w-full max-w-4xl px-4">
+    {/* Total Players Card */}
+    <div className="static-border w-full slide-in-top">
+      <div className="backdrop-blur-md rounded-lg p-4 text-center">
+        <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
+        <p className="text-2xl font-bold text-cyan-300">150</p>
+      </div>
+    </div>
+
+    {/* Sold and Unsold Players Cards */}
+    <div className="grid grid-cols-2 gap-8 mt-6">
+      <div className="static-border slide-in-left">
+        <div className="backdrop-blur-md rounded-lg p-6 text-center">
+          <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
+          <p className="text-2xl font-bold text-cyan-300">90</p>
+        </div>
+      </div>
+      <div className="static-border slide-in-right">
+        <div className="backdrop-blur-md rounded-lg p-6 text-center">
+          <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
+          <p className="text-2xl font-bold text-cyan-300">60</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Live Auction Button */}
+    <div className="mt-8 static-border">
+      <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
+        Live Auction
+      </button>
+    </div>
+  </div>
+</div>
+
           </Container>
   );
 };
 
 export default Home;
+
+

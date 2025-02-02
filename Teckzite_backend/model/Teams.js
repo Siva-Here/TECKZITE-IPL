@@ -90,7 +90,7 @@ teamSchema.statics.handleBid = async function (
       team.batsmen = team.batsmen + 1;
     } else if (role === "bowler") {
       team.bowlers = team.bowlers + 1;
-    } else if (role === "all-rounder") {
+    } else if (role === "allrounder") {
       team.allrounder = team.allrounder + 1;
     } else if (role === "wicketkeeper") {
       team.wicketkeeper = team.wicketkeeper + 1;

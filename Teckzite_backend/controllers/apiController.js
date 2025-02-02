@@ -206,7 +206,7 @@ const player = async (req, res) => {
         existingPlayer.isDebut=req.body.isDebut;
         existingPlayer.bidplace = req.body.bidplace;
         existingPlayer.set = req.body.set;
-existingPlayer.setname=req.body.setname;
+        existingPlayer.setname=req.body.setname;
         const updatedPlayer = await existingPlayer.save();
         console.log("in updateplayer")
         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });

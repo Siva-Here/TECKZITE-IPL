@@ -441,6 +441,7 @@ const AddPlayer = () => {
         toast.error(errorData.message || "Failed to create or edit team!");
       }
     } catch (error) {
+      setUploading(false)
       toast.error("Error submitting team data, please try again!");
     }
   };
@@ -533,9 +534,13 @@ const AddPlayer = () => {
 
     const { setname, setno } = setData;
     
-    const matchedSet = setnames.find(
-      (item) => item.setname === setname || item.setno === setno
-    );
+    // const matchedSet = setnames.find(
+    //   (item) => item.setname === setname || item.setno === setno
+    // );
+    const matchedSet = Array.isArray(setnames)
+  ? setnames.find((item) => item.setname === setname || item.setno === setno)
+  : null;
+
     
     if (matchedSet) {
       // If setname in setData matches setname in setnames

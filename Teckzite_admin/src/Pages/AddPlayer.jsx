@@ -533,12 +533,6 @@ const AddPlayer = () => {
     
 
     const { setname, setno } = setData;
-<<<<<<< HEAD
-    console.log("setnames:",setnames);
-    const matchedSet = setnames.find(
-      (item) => item.setname === setname || item.setno === setno
-    );
-=======
     
     // const matchedSet = setnames.find(
     //   (item) => item.setname === setname || item.setno === setno
@@ -546,8 +540,6 @@ const AddPlayer = () => {
     const matchedSet = Array.isArray(setnames)
   ? setnames.find((item) => item.setname === setname || item.setno === setno)
   : null;
-
->>>>>>> a5990b9d1b9400f1d3e51403433d0371cc654d35
     
     if (matchedSet) {
       // If setname in setData matches setname in setnames

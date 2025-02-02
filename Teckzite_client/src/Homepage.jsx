@@ -7,188 +7,49 @@ import {
   FaCalendarAlt,
   FaChartLine,
   FaDollarSign,
+  FaPauseCircle,
+  FaHourglassStart,
 } from 'react-icons/fa';
 
-const Container = styled.div`
-  min-height: 100vh;
-  background: linear-gradient(to bottom right, #1f1f1f, #000);
-  color: white;
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: 1024px) {
-    min-height: 100vh;
-  }
-`;
-
-const HeroSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-`;
-
-const ImageContainer = styled.div`
+const TeamsContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: 50vh;
-
-  @media (min-width: 768px) {
-    height: auto;
-    width: 50%;
-  }
-`;
-
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-`;
-
-const GradientOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, #1f1f1f, rgba(31, 31, 31, 0.5), transparent);
-`;
-
-const HeroContent = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 3rem;
-  }
-`;
-
-const HeroText = styled.div`
-  max-width: 1120px;
-  margin: 0 auto;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-
-  @media (min-width: 768px) {
-    font-size: clamp(2rem, 4vw, 4rem);
-  }
-
-  @media (min-width: 1024px) {
-    font-size: clamp(2.5rem, 3vw, 5rem);
-  }
-`;
-
-const HeroSubText = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-size: clamp(0.8rem, 2vw, 1rem);
-  color: #d1d1d1;
-
-  @media (min-width: 768px) {
-    gap: 1rem;
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-  }
-`;
-
-const MainContent = styled.div`
-  width: 100%;
-  padding: 1rem;
-
-  @media (min-width: 768px) {
-    width: 50%;
-    padding: 2rem;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 3rem;
-  }
-`;
-
-const Card = styled.div`
-  background: rgba(31, 31, 31, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    background: rgba(31, 31, 31, 0.9);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    transform: scale(1.03);
-  }
-
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-`;
-
-const CardTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  display: flex;
+  min-height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Enable scrolling */
+   display: flex;
+  justify-content: center;
   align-items: center;
 
-  @media (min-width: 768px) {
-    font-size: 2rem;
+  &::before {
+    content: '';
+    position: fixed; /* Fixed position for background */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Full viewport height */
+    background-image: url('/bg.jpg'); /* Update the path if needed */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1; /* Place the background behind content */
+    opacity: 0.2; /* Semi-transparent background */
   }
 `;
 
-const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-  }
+const Message = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+  gap: 10px;
+  font-size: 2rem;
+  // text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); // Glowing text effect
+  color:white;
 `;
-
-const CardItem = styled.div`
-  background: rgba(90, 65, 91, 0.7);
-  border-radius: 0.75rem;
-  padding: 1rem;
-
-  @media (min-width: 768px) {
-    padding: 1.5rem;
-  }
-`;
-
-const CardItemTitle = styled.div`
-  color: #d1d1d1;
-  margin-bottom: 0.5rem;
-`;
-
-const CardItemValue = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-
-  @media (min-width: 768px) {
-    font-size: 2rem;
-  }
-`;
-
-
 
 
 const socket = io('http://localhost:8000');
 const HomePage = () => {
-  const [player, setPlayer] = useState('');
+  const [player, setPlayer] = useState({});
   const [amount, setAmount] = useState('');
 const[auctionstatus,setAuctionStatus]=useState(false);
   useEffect(() => {
@@ -223,113 +84,190 @@ const[auctionstatus,setAuctionStatus]=useState(false);
     };
   }, []);
   return (
-    // <div className="container mt-5 text-center">
-    //   {image.image ? (
-    //    <div> <img src={image.image} alt="Current Player" className="img-fluid" />
-    //    <p>{image.name}</p>
-    //       </div>
-    //   ) : (
-    //     <p>Waiting for admin to start auction...</p>
-    //   )}
-    // </div>
-    <Container>
-      
-    <HeroSection>
-   {/* {auctionstatus ?
-(<p>Auction is Paused</p>)
-:
-   ( 
-    <> */}
-        {player ? (
-          <>
-          <ImageContainer>
-            <Image src={player.image} alt={player.name} />
-            <GradientOverlay />
-            <HeroContent>
-              <HeroText>
-                <div className="flex items-center space-x-3 text-gray-200 mb-2">
-                  <FaFlag className="w-5 h-5 text-[#ff00ff]" />
-                  <span className="text-lg">Team India</span>
-                </div>
-                <HeroTitle>{player.name}</HeroTitle>
-                <HeroSubText>
-                  <div className="flex items-center">
-                    <FaBaseballBall className="w-5 h-5 mr-2 text-[#ff00ff]" />
-                    <span>{player.role}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <FaCalendarAlt className="w-5 h-5 mr-2 text-[#ff00ff]" />
-                    <span>{player.age}</span>
-                  </div>
-                </HeroSubText>
-              </HeroText>
-            </HeroContent>
-           </ImageContainer>
-           <MainContent>
-            <Card>
-              <CardTitle>
-                 <FaChartLine className="w-5 h-5 mr-3 text-[#ff00ff]" />
-                              Career Statistics
-                            </CardTitle>
-                            <CardGrid>
-          <CardItem>
-            <CardItemTitle>Runs</CardItemTitle>
-            <CardItemValue>{player.runs}</CardItemValue>
-          </CardItem>
-          <CardItem>
-            <CardItemTitle>Wickets</CardItemTitle>
-            <CardItemValue>{player.wickets}</CardItemValue>
-            </CardItem>
-            <CardItem>
-            <CardItemTitle>Strike Rate</CardItemTitle>
-            <CardItemValue>{player.strikeRate}</CardItemValue>
-          </CardItem>
-          <CardItem>
-            <CardItemTitle>Debut</CardItemTitle>
-            <CardItemValue>{player.
-            isDebut}</CardItemValue>
-          </CardItem>
-          </CardGrid>
-          </Card>
-          <Card>
-          <CardTitle>
-<FaDollarSign className="w-6 h-6 mr-3 text-[#ff00ff]" />
-            Auction Details
-          </CardTitle>
-            <CardGrid>
- 
-          <CardItem>
-            <CardItemTitle>BasePrice</CardItemTitle>
-            <CardItemValue>{player.basePrice.toLocaleString()}</CardItemValue>
-          </CardItem>
-          <CardItem>
-            <CardItemTitle>Current Bid</CardItemTitle>
-
-            <CardItemValue style={{ color: 'green' }}>{amount}</CardItemValue>
-
-          </CardItem>
-          </CardGrid>
-         
-   </Card>
-   </MainContent>
-   </>
-
-  ):(
     <>
-    {auctionstatus?<p>Auction paused</p>:
-    <p>Auction Not Yet Started/Completed</p>
-}
+    {
+      player?
+      (
+        <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
+      <div className="flex flex-col md:flex-row flex-1 h-screen">
+        <div className="relative w-full h-1/2 md:h-full md:w-1/2">
+          <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center space-x-3 text-gray-200 mb-2">
+                <i className="fas fa-flag w-5 h-5 text-cyan-500">
+                </i>
+                <FaFlag className="w-5 h-5 text-cyan-300" />
+                <span className="text-lg">
+                  {player.nationality}
+                </span>
+              </div>
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2">
+                {player.name}
+              </h1>
+              <div className="flex flex-wrap gap-2 text-sm md:text-base">
+                <div className="flex items-center">
+                <FaBaseballBall className="w-5 h-5 mr-2 text-cyan-300" />
+
+                  <span className='text-[#fff]'>
+                    {player.role}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                <FaCalendarAlt className="w-5 h-5 mr-2 text-cyan-300" />
+                  <span className='text-[#fff]'>
+                    {player.age}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 p-4 md:p-8 lg:p-12 ">
+          <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 mb-8 transition-transform transform">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
+              <i className="fas fa-dollar-sign w-6 h-6 mr-3 text-cyan-500">
+              </i>
+              <FaDollarSign className="w-6 h-6 mr-3 text-cyan-300" />
+              Auction Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+            {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Baseprice
+                </span>
+                <div className="text-2xl md:text-3xl font-bold">
+                  {player.basePrice}
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Current bid
+                </span>
+                <div className="text-green-400 md:text-3xl font-bold">
+                  {amount}
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+            </div>
+          </div>
+          <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 transition-transform transform">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
+              <i className="fas fa-chart-line w-5 h-5 mr-3 text-cyan-500">
+              </i>
+              <FaChartLine className="w-5 h-5 mr-3 text-cyan-300" />
+              Career Statistics
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Runs
+                </span>
+                <div className="text-2xl md:text-3xl font-bold">
+                  5,000
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Runs
+                </span>
+                <div className="text-2xl md:text-3xl font-bold">
+                  5,000
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Runs
+                </span>
+                <div className="text-2xl md:text-3xl font-bold">
+                  5,000
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                {/* Button Content */}
+                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                  Runs
+                </span>
+                <div className="text-2xl md:text-3xl font-bold">
+                  5,000
+                </div>
+
+                {/* Geometric Accents */}
+                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      ) :
+      (
+        <TeamsContainer>
+        <Message className='text-center'>
+          {auctionstatus ? (
+            <>
+              <span className='text-cyan-300'>
+                <FaPauseCircle /> {/* Icon for paused state */}
+              </span>
+              Oops.... Auction Paused
+            </>
+          ) : (
+            <>
+              <span className='text-cyan-300'>
+                <FaHourglassStart /> {/* Icon for not started/completed state */}
+              </span>
+              Oops !! Auction Not Yet Started/Completed
+            </>
+          )}
+        </Message>
+      </TeamsContainer>
+      )
+
+    }
     </>
-  )
-}
-{/* </> */}
-   {/* )
-   
-
-} */}
-</HeroSection>
-
-</Container>
   )
 };
 

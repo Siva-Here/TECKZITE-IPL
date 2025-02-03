@@ -1,14 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
 import styled from 'styled-components';
 import { FiUsers } from "react-icons/fi";
 import {useNavigate} from "react-router-dom";
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
-
-
-const teams = ["RCB", "MI", "CSK", "KKR", "DC", "GT", "LSG", "KXIP", "RR", "SRH"];
 
 const TeamsContainer = styled.div`
   position: relative;

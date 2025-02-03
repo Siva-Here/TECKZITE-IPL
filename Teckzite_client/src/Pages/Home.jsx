@@ -82,7 +82,7 @@ const Home = () => {
 
         {/* Logo Positioned at the Top Center */}
         <div className="w-full flex justify-center py-4">
-          <img src="log0.png" alt="" style={{ width: "500px", height: "150px", marginRight: "15px" }} />
+          <img src="log0.png" alt="" style={{ width: "700px", height: "150px", marginRight: "15px" }} />
         </div>
 
         {/* Content Centered in 80vh */}

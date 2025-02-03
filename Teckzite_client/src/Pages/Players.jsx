@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaFlag, FaUser } from 'react-icons/fa';
 import { PiCricketBold } from 'react-icons/pi';
-import Navbar from '../components/Navbar';
 import styled from 'styled-components';
 
 const TeamsContainer = styled.div`

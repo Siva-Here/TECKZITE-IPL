@@ -45,6 +45,11 @@ const Message = styled.div`
   // text-shadow: 0 0 10px rgba(0, 255, 204, 0.8); // Glowing text effect
   color:white;
 `;
+const GradientOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #1f1f1f, rgba(31, 31, 31, 0.5), transparent);
+`;
 
 
 const socket = io('http://localhost:8000');
@@ -92,9 +97,10 @@ const[auctionstatus,setAuctionStatus]=useState(false);
       <div className="flex flex-col md:flex-row flex-1 h-screen">
         <div className="relative w-full h-1/2 md:h-full md:w-1/2">
           <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
+          <GradientOverlay />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
             <div className="max-w-4xl mx-auto">
-              <div className="flex items-center space-x-3 text-gray-200 mb-2">
+              <div className="flex items-center space-x-3 text-gray-200">
                 <i className="fas fa-flag w-5 h-5 text-cyan-500">
                 </i>
                 <FaFlag className="w-5 h-5 text-cyan-300" />

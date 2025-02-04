@@ -95,7 +95,7 @@ const[auctionstatus,setAuctionStatus]=useState(false);
       (
         <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
       <div className="flex flex-col md:flex-row flex-1 h-screen">
-        <div className="relative w-full h-1/2 md:h-full md:w-1/2">
+        <div className="relative  w-full h-1/2 md:h-full md:w-1/2">
           <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
           <GradientOverlay />
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">

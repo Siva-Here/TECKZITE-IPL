@@ -142,6 +142,105 @@ const getTeams = async(req,res)=>{
 }
 
 
+// const player = async (req, res) => {
+//   try {
+//     console.log("Player function:", req.body);
+
+//     const {
+//       name,
+//       nationality,
+//       age,
+//       role,
+//       runs,
+//       wickets,
+//       strikeRate,
+//       basePrice,
+//       isDebut,
+//       bidplace,
+//       set,
+//       setname
+//     } = req.body;
+//     let image;
+//     if(req.file==undefined){
+//       image=req.body.image
+//     }
+//     else{ 
+//    image = req.file;  
+  
+//     if (!image) {
+//       return res.status(400).send('No image file uploaded');
+//     }
+//     // Upload image to Cloudinary
+//     console.log("in uploadimg")
+//     const uploadImage = await import('../uploadimage.mjs');
+//     try {
+      
+//       const uploadedImageUrl = await uploadImage.uploadImages(image);
+//       console.log("Uploaded Image URL:", uploadedImageUrl);
+//       image = uploadedImageUrl;
+//     }
+//     catch(err){
+//       console.log("error while uploading photo")
+//       return res.status(500).send({ message: 'error while uploaidng photo'});
+//     }
+//   }
+//       const id = req.body._id; 
+//      if(id){
+//       const existingPlayer = await Player.findOne({_id:id });
+//        console.log(id);
+//        console.log(existingPlayer)
+       
+//       if (existingPlayer) {
+//         console.log("in existingPlayer")
+//         existingPlayer.name = name;
+//         existingPlayer.nationality = nationality;
+//         existingPlayer.age = age;
+//         existingPlayer.role = role;
+//         existingPlayer.runs = runs;
+//         existingPlayer.wickets = wickets;
+//         existingPlayer.strikeRate = strikeRate;
+        
+//         existingPlayer.image = image; 
+//         // Save Cloudinary URL
+//         existingPlayer.basePrice = req.body.basePrice;
+//         existingPlayer.isDebut=req.body.isDebut;
+//         existingPlayer.bidplace = req.body.bidplace;
+//         existingPlayer.set = req.body.set;
+//         existingPlayer.setname=req.body.setname;
+//         const updatedPlayer = await existingPlayer.save();
+//         console.log("in updateplayer")
+//         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });
+//       }
+//      } else {
+//         const newPlayer = new Player({
+//           name,
+//           nationality,
+//           age,
+//           role,
+//           runs,
+//           wickets,
+//           strikeRate,
+//           image, // Save Cloudinary URL
+//           basePrice,
+//           isDebut,
+//           bidplace,
+//           set,
+//           setname,
+//         });
+
+//         const result = await newPlayer.save();
+//         console.log("in new player")
+//         return res.status(200).json({message:'added player successfully'});
+//       }
+  
+//   }
+//   catch (error) {
+
+//     console.log('Error in player function:', error);
+//     return res.status(500).send('Error processing request');
+//   }
+// };
+
 const player = async (req, res) => {
   try {
     console.log("Player function:", req.body);
@@ -160,38 +259,44 @@ const player = async (req, res) => {
       set,
       setname
     } = req.body;
+
     let image;
-    if(req.file==undefined){
-      image=req.body.image
+    if (req.file == undefined) {
+      image = req.body.image;
+    } else {
+      image = req.file;
+
+      if (!image) {
+        return res.status(400).send('No image file uploaded');
+      }
+
+      // Upload image to Cloudinary with 1:1 aspect ratio
+      console.log("Uploading image...");
+      const uploadImage = await import('../uploadimage.mjs');
+
+      try {
+        const uploadedImageUrl = await uploadImage.uploadImages(image, {
+          transformation: [
+            { width: 500, height: 500, crop: "fill", gravity: "auto" } // Ensures 1:1 aspect ratio
+          ]
+        });
+
+        console.log("Uploaded Image URL:", uploadedImageUrl);
+        image = uploadedImageUrl;
+      } catch (err) {
+        console.log("Error while uploading photo");
+        return res.status(500).send({ message: 'Error while uploading photo' });
+      }
     }
-    else{ 
-   image = req.file;  
-  
-    if (!image) {
-      return res.status(400).send('No image file uploaded');
-    }
-    // Upload image to Cloudinary
-    console.log("in uploadimg")
-    const uploadImage = await import('../uploadimage.mjs');
-    try {
-      
-      const uploadedImageUrl = await uploadImage.uploadImages(image);
-      console.log("Uploaded Image URL:", uploadedImageUrl);
-      image = uploadedImageUrl;
-    }
-    catch(err){
-      console.log("error while uploading photo")
-      return res.status(500).send({ message: 'error while uploaidng photo'});
-    }
-  }
-      const id = req.body._id; 
-     if(id){
-      const existingPlayer = await Player.findOne({_id:id });
-       console.log(id);
-       console.log(existingPlayer)
-       
+
+    const id = req.body._id;
+    if (id) {
+      const existingPlayer = await Player.findOne({ _id: id });
+      console.log(id);
+      console.log(existingPlayer);
+
       if (existingPlayer) {
-        console.log("in existingPlayer")
+        console.log("Updating existing player...");
         existingPlayer.name = name;
         existingPlayer.nationality = nationality;
         existingPlayer.age = age;
@@ -199,47 +304,44 @@ const player = async (req, res) => {
         existingPlayer.runs = runs;
         existingPlayer.wickets = wickets;
         existingPlayer.strikeRate = strikeRate;
-        
-        existingPlayer.image = image; 
-        // Save Cloudinary URL
-        existingPlayer.basePrice = req.body.basePrice;
-        existingPlayer.isDebut=req.body.isDebut;
-        existingPlayer.bidplace = req.body.bidplace;
-        existingPlayer.set = req.body.set;
-        existingPlayer.setname=req.body.setname;
+        existingPlayer.image = image; // Save Cloudinary URL
+        existingPlayer.basePrice = basePrice;
+        existingPlayer.isDebut = isDebut;
+        existingPlayer.bidplace = bidplace;
+        existingPlayer.set = set;
+        existingPlayer.setname = setname;
+
         const updatedPlayer = await existingPlayer.save();
-        console.log("in updateplayer")
+        console.log("Player updated successfully");
         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });
       }
-     } else {
-        const newPlayer = new Player({
-          name,
-          nationality,
-          age,
-          role,
-          runs,
-          wickets,
-          strikeRate,
-          image, // Save Cloudinary URL
-          basePrice,
-          isDebut,
-          bidplace,
-          set,
-          setname,
-        });
+    } else {
+      console.log("Adding new player...");
+      const newPlayer = new Player({
+        name,
+        nationality,
+        age,
+        role,
+        runs,
+        wickets,
+        strikeRate,
+        image, // Save Cloudinary URL
+        basePrice,
+        isDebut,
+        bidplace,
+        set,
+        setname,
+      });
 
-        const result = await newPlayer.save();
-        console.log("in new player")
-        return res.status(200).json({message:'added player successfully'});
-      }
-  
-  }
-  catch (error) {
-
+      await newPlayer.save();
+      return res.status(200).json({ message: 'Player added successfully' });
+    }
+  } catch (error) {
     console.log('Error in player function:', error);
     return res.status(500).send('Error processing request');
   }
 };
+
 
 const createTeam = async (req, res) => {
     try {
@@ -293,11 +395,8 @@ const bid = async (req, res) => {
   const fetchsets = async (req, res) => {
     console.log("in fetchsets")
     try {
-      // const sets = await Player.aggregate([
-      //   { $group: { _id: null, setname: { $addToSet: "$setname" }, set: { $addToSet: "$set" } } }
-      // ]);
       const sets = await Player.aggregate([
-        { $match: { isSold: false } }, // Filter players who are NOT sold
+        { $match: { isSold: false } },
         { 
           $group: { 
             _id: null, 

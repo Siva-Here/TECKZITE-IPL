@@ -306,7 +306,10 @@ const HomePage = () => {
     console.log(set)
     console.log(player)
     setShowModal2(false)
-  
+    if(!continueauction){
+      toast.error("auction is paused,resume it");
+      return;
+    }
     const url = bidplace
       ? `http://localhost:8000/api/playersToBuy?set=${set}&bidplace=${bidplace}&direction=${direction}`
       : `http://localhost:8000/api/playersToBuy?set=${set}`;
@@ -352,6 +355,10 @@ const HomePage = () => {
   };
 
   const handleIncreaseBid = () => {
+    if(!continueauction){
+      toast.error("Auction is paused,Resume it");
+      return;
+    }
     if (player) {
       const increment = getBidIncrement(player.basePrice)
       setBidAmount((prev) => prev + increment);
@@ -361,6 +368,10 @@ const HomePage = () => {
   };
 
   const handleDecreaseBid = () => {
+    if(!continueauction){
+      toast.error("Auction is paused,Resume it");
+      return;
+    }
     if (player) {
       const decrement = getBidIncrement(player.basePrice)
       setBidAmount((prev) => Math.max(player.basePrice, prev - decrement));
@@ -400,9 +411,14 @@ const HomePage = () => {
         )
         .then(() => {
           alert('Bid confirmed!');
+      socket.emit("bidConfirmed",true);
+         //fetchPlayer( player.set,player.bidplace, "next");
+        
 
-         fetchPlayer( player.set,player.bidplace, "next");
-           
+         setTimeout(() => {
+          socket.emit("bidConfirmed",false);
+             fetchPlayer(player.set, player.bidplace, "next");
+         }, 8000);
         })
         .catch((error) => {
           console.error('Error confirming bid:', error);

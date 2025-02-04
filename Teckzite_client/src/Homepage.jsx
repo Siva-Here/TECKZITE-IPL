@@ -10,6 +10,8 @@ import {
   FaPauseCircle,
   FaHourglassStart,
 } from 'react-icons/fa';
+import ConfettiComponent from './ConfettiComponent';
+import SoldSVG from './SoldSVG';
 
 const TeamsContainer = styled.div`
   position: relative;
@@ -57,6 +59,7 @@ const HomePage = () => {
   const [player, setPlayer] = useState({});
   const [amount, setAmount] = useState('');
 const[auctionstatus,setAuctionStatus]=useState(false);
+const [popper,setPopper]=useState(false)
   useEffect(() => {
     // Listen for updates from the server
     const handleUpdateViewer = (newImage) => {
@@ -71,9 +74,11 @@ const[auctionstatus,setAuctionStatus]=useState(false);
       setAmount(bidAmount); // Update amount state
     };
   const handlepause=(status)=>{
-  
   setAuctionStatus(status)
-  
+  }
+  const handleConfirmBid=(status)=>{
+   
+  setPopper(status)
   }
  
     // Attach socket listeners
@@ -81,11 +86,13 @@ const[auctionstatus,setAuctionStatus]=useState(false);
     socket.on('bidAmount', handleBidAmount);
     socket.on('pauseAuction',handlepause);
     socket.emit('requestData');
+    socket.on('bidConfirmed',handleConfirmBid);
     // Cleanup listeners on component unmount
     return () => {
       socket.off('updateViewer', handleUpdateViewer);
       socket.off('bidAmount', handleBidAmount);
       socket.off('pauseAuction',handlepause);
+      socket.off('bidConfirmed',handleConfirmBid);
     };
   }, []);
   return (
@@ -93,11 +100,19 @@ const[auctionstatus,setAuctionStatus]=useState(false);
     {
       player?
       (
+        
         <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
       <div className="flex flex-col md:flex-row flex-1 h-screen">
+      {
+          popper && <ConfettiComponent />
+        }
+             
         <div className="relative w-full h-1/2 md:h-full md:w-1/2">
           <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
+          {popper && <SoldSVG name={player.name} team={player.soldTeam} />}
           <GradientOverlay />
+     
+
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center space-x-3 text-gray-200">

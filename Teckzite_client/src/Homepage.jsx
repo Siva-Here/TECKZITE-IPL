@@ -10,6 +10,8 @@ import {
   FaPauseCircle,
   FaHourglassStart,
 } from 'react-icons/fa';
+import ConfettiComponent from './ConfettiComponent';
+import SoldSVG from './SoldSVG';
 
 const TeamsContainer = styled.div`
   position: relative;
@@ -56,7 +58,8 @@ const socket = io('http://localhost:8000');
 const HomePage = () => {
   const [player, setPlayer] = useState({});
   const [amount, setAmount] = useState('');
-const[auctionstatus,setAuctionStatus]=useState(false);
+  const [auctionstatus, setAuctionStatus] = useState(false);
+  const [popper, setPopper] = useState(false)
   useEffect(() => {
     // Listen for updates from the server
     const handleUpdateViewer = (newImage) => {
@@ -70,209 +73,221 @@ const[auctionstatus,setAuctionStatus]=useState(false);
       console.log('Bid amount received:', bidAmount);
       setAmount(bidAmount); // Update amount state
     };
-  const handlepause=(status)=>{
-  
-  setAuctionStatus(status)
-  
-  }
- 
+    const handlepause = (status) => {
+      setAuctionStatus(status)
+    }
+    const handleConfirmBid = (status) => {
+
+      setPopper(status)
+    }
+
     // Attach socket listeners
     socket.on('updateViewer', handleUpdateViewer);
     socket.on('bidAmount', handleBidAmount);
-    socket.on('pauseAuction',handlepause);
+    socket.on('pauseAuction', handlepause);
     socket.emit('requestData');
+    socket.on('bidConfirmed', handleConfirmBid);
     // Cleanup listeners on component unmount
     return () => {
       socket.off('updateViewer', handleUpdateViewer);
       socket.off('bidAmount', handleBidAmount);
-      socket.off('pauseAuction',handlepause);
+      socket.off('pauseAuction', handlepause);
+      socket.off('bidConfirmed', handleConfirmBid);
     };
   }, []);
   return (
     <>
-    {
-      player?
-      (
-        <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
-      <div className="flex flex-col md:flex-row flex-1 h-screen">
-        <div className="relative  w-full h-1/2 md:h-full md:w-1/2">
-          <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
-          <GradientOverlay />
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center space-x-3 text-gray-200">
-                <i className="fas fa-flag w-5 h-5 text-cyan-500">
-                </i>
-                <FaFlag className="w-5 h-5 text-cyan-300" />
-                <span className="text-lg">
-                  {player.nationality}
-                </span>
+      {
+        player ?
+          (
+
+            <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
+              <div className="flex flex-col md:flex-row flex-1 h-screen">
+                {
+                  popper && <ConfettiComponent />
+                }
+
+                <div className="relative w-full h-1/2 md:h-full md:w-1/2">
+                  <img alt="A placeholder image of a cricket player in action" className="w-full h-full object-cover object-top" height="400" src={player.image} width="600" />
+                  {popper && <SoldSVG name={player.name} team={player.soldTeam} />}
+                  <GradientOverlay />
+
+
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
+                    <div className="max-w-4xl mx-auto">
+                      <div className="flex items-center space-x-3 text-gray-200">
+                        <i className="fas fa-flag w-5 h-5 text-cyan-500">
+                        </i>
+                        <FaFlag className="w-5 h-5 text-cyan-300" />
+                        <span className="text-lg">
+                          {player.nationality}
+                        </span>
+                      </div>
+                      <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2">
+                        {player.name}
+                      </h1>
+                      <div className="flex flex-wrap gap-2 text-sm md:text-base">
+                        <div className="flex items-center">
+                          <FaBaseballBall className="w-5 h-5 mr-2 text-cyan-300" />
+
+                          <span className='text-[#fff]'>
+                            {player.role}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <FaCalendarAlt className="w-5 h-5 mr-2 text-cyan-300" />
+                          <span className='text-[#fff]'>
+                            {player.age}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/2 p-4 md:p-8 lg:p-12 ">
+                  <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 mb-8 transition-transform transform">
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                      <i className="fas fa-dollar-sign w-6 h-6 mr-3 text-cyan-500">
+                      </i>
+                      <FaDollarSign className="w-6 h-6 mr-3 text-cyan-300" />
+                      Auction Details
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Baseprice
+                        </span>
+                        <div className="text-2xl md:text-3xl font-bold">
+                          {player.basePrice}
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Current bid
+                        </span>
+                        <div className="text-green-400 md:text-3xl font-bold">
+                          {amount}
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 transition-transform transform">
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                      <i className="fas fa-chart-line w-5 h-5 mr-3 text-cyan-500">
+                      </i>
+                      <FaChartLine className="w-5 h-5 mr-3 text-cyan-300" />
+                      Career Statistics
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Runs
+                        </span>
+                        <div className="text-2xl md:text-3xl font-bold">
+                          5,000
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Runs
+                        </span>
+                        <div className="text-2xl md:text-3xl font-bold">
+                          5,000
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Runs
+                        </span>
+                        <div className="text-2xl md:text-3xl font-bold">
+                          5,000
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                      <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                        {/* Button Content */}
+                        <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                          {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                          Runs
+                        </span>
+                        <div className="text-2xl md:text-3xl font-bold">
+                          5,000
+                        </div>
+
+                        {/* Geometric Accents */}
+                        <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                        <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                        <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2">
-                {player.name}
-              </h1>
-              <div className="flex flex-wrap gap-2 text-sm md:text-base">
-                <div className="flex items-center">
-                <FaBaseballBall className="w-5 h-5 mr-2 text-cyan-300" />
-
-                  <span className='text-[#fff]'>
-                    {player.role}
-                  </span>
-                </div>
-                <div className="flex items-center">
-                <FaCalendarAlt className="w-5 h-5 mr-2 text-cyan-300" />
-                  <span className='text-[#fff]'>
-                    {player.age}
-                  </span>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-        <div className="w-full md:w-1/2 p-4 md:p-8 lg:p-12 ">
-          <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 mb-8 transition-transform transform">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
-              <i className="fas fa-dollar-sign w-6 h-6 mr-3 text-cyan-500">
-              </i>
-              <FaDollarSign className="w-6 h-6 mr-3 text-cyan-300" />
-              Auction Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-            {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Baseprice
-                </span>
-                <div className="text-2xl md:text-3xl font-bold">
-                  {player.basePrice}
-                </div>
+          ) :
+          (
+            <TeamsContainer>
+              <Message className='text-center'>
+                {auctionstatus ? (
+                  <>
+                    <span className='text-cyan-300'>
+                      <FaPauseCircle /> {/* Icon for paused state */}
+                    </span>
+                    Oops.... Auction Paused
+                  </>
+                ) : (
+                  <>
+                    <span className='text-cyan-300'>
+                      <FaHourglassStart /> {/* Icon for not started/completed state */}
+                    </span>
+                    Oops !! Auction Not Yet Started/Completed
+                  </>
+                )}
+              </Message>
+            </TeamsContainer>
+          )
 
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-                {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Current bid
-                </span>
-                <div className="text-green-400 md:text-3xl font-bold">
-                  {amount}
-                </div>
-
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-            </div>
-          </div>
-          <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 transition-transform transform">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
-              <i className="fas fa-chart-line w-5 h-5 mr-3 text-cyan-500">
-              </i>
-              <FaChartLine className="w-5 h-5 mr-3 text-cyan-300" />
-              Career Statistics
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-                {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Runs
-                </span>
-                <div className="text-2xl md:text-3xl font-bold">
-                  5,000
-                </div>
-
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-                {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Runs
-                </span>
-                <div className="text-2xl md:text-3xl font-bold">
-                  5,000
-                </div>
-
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-                {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Runs
-                </span>
-                <div className="text-2xl md:text-3xl font-bold">
-                  5,000
-                </div>
-
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-              <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
-                {/* Button Content */}
-                <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
-                  {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                  Runs
-                </span>
-                <div className="text-2xl md:text-3xl font-bold">
-                  5,000
-                </div>
-
-                {/* Geometric Accents */}
-                <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
-                <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
-                <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-      ) :
-      (
-        <TeamsContainer>
-        <Message className='text-center'>
-          {auctionstatus ? (
-            <>
-              <span className='text-cyan-300'>
-                <FaPauseCircle /> {/* Icon for paused state */}
-              </span>
-              Oops.... Auction Paused
-            </>
-          ) : (
-            <>
-              <span className='text-cyan-300'>
-                <FaHourglassStart /> {/* Icon for not started/completed state */}
-              </span>
-              Oops !! Auction Not Yet Started/Completed
-            </>
-          )}
-        </Message>
-      </TeamsContainer>
-      )
-
-    }
+      }
     </>
   )
 };

@@ -1,0 +1,28 @@
+/* 
+.content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-transform: uppercase;
+  opacity: 0.3;
+  font-size: 20vmin;
+  color: #999;
+}
+
+button {
+  border-radius: 30px;
+  background-color: #777;
+  opacity: 0.3;
+  font-size: 70%;
+  color: #efefef;
+  padding: 1rem 3rem;
+  border: none;
+}
+button:hover, button:active {
+  opacity: 0.8;
+} */

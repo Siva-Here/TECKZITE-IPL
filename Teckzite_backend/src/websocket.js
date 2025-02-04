@@ -89,7 +89,7 @@ const setupWebSocket = (server) => {
   let currentBidAmount = '';
   let pause = false;
   let adminSocketId = '';
-
+let popper=false;
   // Function to emit the current auction state
   const emitCurrentState = (socket) => {
     if (pause) {
@@ -98,7 +98,13 @@ const setupWebSocket = (server) => {
     } else {
       socket.emit('updateViewer', currentPlayerImage);
       socket.emit('bidAmount', currentBidAmount);
+      if(popper){
+        socket.emit('bidConfirmed',true)
+      }else{
+        socket.emit('bidConfirmed',false)
+      }
     }
+
   };
 
   io.on('connection', (socket) => {
@@ -125,7 +131,11 @@ const setupWebSocket = (server) => {
       currentBidAmount = amount;
       io.emit('bidAmount', amount);
     });
-
+    socket.on('bidConfirmed',(message)=>{
+      popper=message
+      console.log("popper",popper)
+     io.emit('bidConfirmed',message);
+    })
     // Pause auction logic
     socket.on('pauseAuction', (message) => {
       console.log("Auction paused:", message);

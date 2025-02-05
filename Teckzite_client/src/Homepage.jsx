@@ -132,7 +132,7 @@ const HomePage = () => {
     <>
      {popper && (
               <SoldOverlay>
-                <SoldSVG name={player.name} team={team} />
+                <SoldSVG name={player.name} team={team} color={!team ? "#38ad34": "red"}/>
               </SoldOverlay>
             )}
       {player ? (

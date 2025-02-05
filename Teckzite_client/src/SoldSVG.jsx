@@ -1,4 +1,5 @@
 const SoldSVG = ({ name, team }) => {
+  console.log("name and tesm:",name,team);
   return (
     <div style={{
      
@@ -16,7 +17,7 @@ const SoldSVG = ({ name, team }) => {
           <path id="text-path" d="M66 126A60 60 0 1 0 66 6a60 60 0 0 0 0 120" fill="none"/>
         </defs>
         <text dominantBaseline="middle" textAnchor="middle" x="50%" y="58%" fontFamily="Manrope3-ExtraBold, Manrope3" fontSize="40" fontWeight="600" fill="none" stroke="#C8102E" strokeWidth="2">
-          Sold
+          Sold by 
         </text>
         <text>
           <textPath href="#text-path" fontFamily="Manrope3-ExtraBold, Manrope3" fontSize="10" fontWeight="600" fill="#C8102E" letterSpacing="2.14">

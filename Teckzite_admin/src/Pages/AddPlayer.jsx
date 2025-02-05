@@ -662,6 +662,7 @@ const AddPlayer = () => {
                 <TableHeader>Wickets</TableHeader>
                 <TableHeader>Strike Rate</TableHeader>
                 <TableHeader>Base Price</TableHeader>
+                <TableHeader>Set</TableHeader>
                 <TableHeader>Bid Place</TableHeader>
                 <TableHeader>Status</TableHeader>
               </tr>
@@ -676,6 +677,7 @@ const AddPlayer = () => {
                     <TableData>{player.wickets}</TableData>
                     <TableData>{player.strikeRate}</TableData>
                     <TableData>${player.basePrice}</TableData>
+                    <TableData>{player.set}</TableData>
                     <TableData>{player.bidplace}</TableData>
                     <TableData>{player.isSold ? "sold" : "unsold"}</TableData>
                     <TableData

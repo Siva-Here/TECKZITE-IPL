@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fa';
 
 const Container = styled.div`
-  height: 88vh;
+  height: 80vh;
   background: linear-gradient(to bottom right, #1f1f1f, #000);
   color: white;
   font-family: 'Roboto', sans-serif;
@@ -40,6 +40,7 @@ const ImageContainer = styled.div`
   position: relative;
   width: 100%;
   height: 88vh;
+  overflow:hidden;
 
   @media (min-width: 768px) {
     height: 88vh;
@@ -111,11 +112,13 @@ const HeroSubText = styled.div`
 const MainContent = styled.div`
   width: 100%;
   padding: 1rem;
-  height:88vh;
+  height:auto;
+  background-color:black; 
 
   @media (min-width: 768px) {
     width: 50%;
     padding: 1rem;
+    height:88vh;
   }
 
   @media (min-width: 1024px) {
@@ -126,15 +129,13 @@ const MainContent = styled.div`
 const Card = styled.div`
   background: rgba(31, 31, 31, 0.8);
   backdrop-filter: blur(10px);
-  padding: 0px;
+  padding: 10px;
   margin-bottom: 1rem;
   transition: all 0.3s ease-in-out;
-  height:32vh;
+  // height:32vh;
 
-  &:hover {
-    background: rgba(31, 31, 31, 0.9);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    transform: scale(1.03);
+  @media (max-width: 768px) {
+    margin-top:40px;
   }
 `;
 
@@ -211,7 +212,8 @@ const Button = styled.button`
 
   &:hover {
     background: #d600d6;
-    transform: scale(1);
+    transform: scale(1.01);
+
   }
 
   @media (min-width: 768px) {
@@ -234,6 +236,7 @@ const NeonButton = styled.button`
   cursor: pointer;
   width: 10rem;
   transition: background 0.3s ease;
+  z-index:2;
 
   &:hover {
     background: linear-gradient(45deg, #00ffff, #ff00ff);
@@ -242,6 +245,40 @@ const NeonButton = styled.button`
   @media (max-width: 768px) {
     width: 8rem;
     padding: 0.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 6rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    top: 2px;
+    right: 0;
+  }
+`;
+
+
+const NeonButton1 = styled.button`
+  background: linear-gradient(45deg, #ff00ff, #00ffff);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  width: 5rem;
+  transition: background 0.3s ease;
+  position:fixed;
+  top:3px;
+  right:0px;
+
+  &:hover {
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+  }
+
+  @media (max-width: 768px) {
+    width: 8rem;
+    padding: 0.5rem 1rem;
+    top:8px;
+    right:3px;
   }
 
   @media (max-width: 480px) {
@@ -379,6 +416,10 @@ const HomePage = () => {
     }
   };
   const handleAssignClick = () => {
+    if(!continueauction){
+      toast.error("Auction is paused,Resume it");
+      return;
+    }
     setShowModal(true); // Open the modal
   };
 
@@ -483,13 +524,15 @@ const HomePage = () => {
   return (
     <Container>
       <HeroSection>
-
+        
         {player ? (
           <>
+          
             <ImageContainer>
               <Image src={player.image} alt={player.name} />
               <GradientOverlay />
               <HeroContent>
+                
                 <HeroText>
                   <div className="flex items-center space-x-3 text-gray-200 mb-2">
                     <FaFlag className="w-5 h-5 text-[#ff00ff]" />
@@ -508,12 +551,16 @@ const HomePage = () => {
                   </HeroSubText>
                 </HeroText>
               </HeroContent>
+              
             </ImageContainer>
+            
             <MainContent>
-            <NeonButton onClick={()=>pauseAuction()}>{continueauction?"pause":"resume"}</NeonButton>
+              
               <Card>
                 <CardTitle>
                   <FaChartLine className=" mr-1  text-[#ff00ff]" />
+                  <NeonButton1 onClick={()=>pauseAuction()}>{continueauction?"pause":"resume"}</NeonButton1>
+
                   Career Statistics
                 </CardTitle>
                 <CardGrid>
@@ -655,7 +702,7 @@ const HomePage = () => {
           </div>
         </div> 
       ) : (
-        <p>hiii</p>
+        ""
       )}
 
     </Container>

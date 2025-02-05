@@ -62,6 +62,7 @@ const Home = () => {
         border-radius: 0.5rem;
         background: transparent;
         transition: all 0.3s ease;
+
       }
 
       .static-border:hover {

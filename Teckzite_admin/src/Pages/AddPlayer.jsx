@@ -530,7 +530,7 @@ const AddPlayer = () => {
 
   const handlesetdataSubmit = async (e) => {
     e.preventDefault();
-    
+    fetchPlayers();
 
     const { setname, setno } = setData;
     
@@ -548,6 +548,7 @@ const AddPlayer = () => {
         if (matchedSet.setno !== setno) {
           // handle case where setno doesn't match
           toast.error("Setno does not match");
+          return;
         }
       }
     
@@ -557,6 +558,7 @@ const AddPlayer = () => {
         if (matchedSet.setname !== setname) {
           // handle case where setname doesn't match
           toast.error("Setname does not match");
+          return;
         }
       }
     }

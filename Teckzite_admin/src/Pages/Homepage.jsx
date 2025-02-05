@@ -452,12 +452,13 @@ const HomePage = () => {
         )
         .then(() => {
           alert('Bid confirmed!');
-      socket.emit("bidConfirmed",true);
+          alert(selectedTeam)
+      socket.emit("bidConfirmed",true,selectedTeam);
          //fetchPlayer( player.set,player.bidplace, "next");
         
 
          setTimeout(() => {
-          socket.emit("bidConfirmed",false);
+          socket.emit("bidConfirmed",false,null);
              fetchPlayer(player.set, player.bidplace, "next");
          }, 8000);
         })

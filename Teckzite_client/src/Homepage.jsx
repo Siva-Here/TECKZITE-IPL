@@ -87,7 +87,7 @@ const HomePage = () => {
   const [amount, setAmount] = useState('');
   const [auctionstatus, setAuctionStatus] = useState(false);
   const [popper, setPopper] = useState(false);
-
+  const [team,setTeam]=useState(null);
   useEffect(() => {
     // Listen for updates from the server
     const handleUpdateViewer = (newImage) => {
@@ -106,8 +106,10 @@ const HomePage = () => {
       setAuctionStatus(status);
     };
 
-    const handleConfirmBid = (status) => {
+    const handleConfirmBid = (status,team) => {
+      alert(team)
       setPopper(status);
+      setTeam(team)
     };
 
     // Attach socket listeners
@@ -130,7 +132,7 @@ const HomePage = () => {
     <>
      {popper && (
               <SoldOverlay>
-                <SoldSVG name={player.name} team={player.soldTeam} />
+                <SoldSVG name={player.name} team={team} />
               </SoldOverlay>
             )}
       {player ? (

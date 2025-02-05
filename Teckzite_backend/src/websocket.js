@@ -99,9 +99,9 @@ let popper=false;
       socket.emit('updateViewer', currentPlayerImage);
       socket.emit('bidAmount', currentBidAmount);
       if(popper){
-        socket.emit('bidConfirmed',true)
+        socket.emit('bidConfirmed',true,team)
       }else{
-        socket.emit('bidConfirmed',false)
+        socket.emit('bidConfirmed',false,null)
       }
     }
 
@@ -131,10 +131,10 @@ let popper=false;
       currentBidAmount = amount;
       io.emit('bidAmount', amount);
     });
-    socket.on('bidConfirmed',(message)=>{
+    socket.on('bidConfirmed',(message,team)=>{
       popper=message
-      console.log("popper",popper)
-     io.emit('bidConfirmed',message);
+      console.log("popper",popper,team)
+     io.emit('bidConfirmed',message,team);
     })
     // Pause auction logic
     socket.on('pauseAuction', (message) => {

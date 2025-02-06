@@ -4,6 +4,8 @@ import styled from "styled-components";
 import ParticleField from "../components/ParticleField";
 import { OrbitControls } from "@react-three/drei";
 import {useNavigate} from "react-router-dom";
+import { useState, useEffect } from 'react';
+import {toast} from "react-toastify";
 
 const Container = styled.div`
   position: relative;
@@ -32,6 +34,24 @@ const Home = () => {
   const handleClick = () =>{
     navigate("/auction");
   }
+  const [playerData, setPlayerData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/playerinfo');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setPlayerData(data);
+    } catch (error) {
+      toast.error('Error fetching player data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <Container>
 
@@ -97,7 +117,7 @@ const Home = () => {
           <div className="static-border w-full slide-in-top">
             <div className="backdrop-blur-md rounded-lg p-4 text-center">
               <h2 className="text-l font-bold mb-2 text-cyan-300">Total Players</h2>
-              <p className="text-2xl font-bold text-cyan-300">150</p>
+              <p className="text-2xl font-bold text-cyan-300">{playerData.totalPlayers}</p>
             </div>
           </div>
 
@@ -106,13 +126,13 @@ const Home = () => {
             <div className="static-border slide-in-left">
               <div className="backdrop-blur-md rounded-lg p-6 text-center">
                 <h2 className="text-l font-bold mb-4 text-cyan-300">Sold Players</h2>
-                <p className="text-2xl font-bold text-cyan-300">90</p>
+                <p className="text-2xl font-bold text-cyan-300">{playerData.totalSoldPlayers}</p>
               </div>
             </div>
             <div className="static-border slide-in-right">
               <div className="backdrop-blur-md rounded-lg p-6 text-center">
                 <h2 className="text-l font-bold mb-4 text-cyan-300">Unsold Players</h2>
-                <p className="text-2xl font-bold text-cyan-300">60</p>
+                <p className="text-2xl font-bold text-cyan-300">{playerData.totalUnsoldPlayers}</p>
               </div>
             </div>
           </div>

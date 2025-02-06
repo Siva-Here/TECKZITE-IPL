@@ -141,106 +141,6 @@ const getTeams = async(req,res)=>{
     }
 }
 
-
-// const player = async (req, res) => {
-//   try {
-//     console.log("Player function:", req.body);
-
-//     const {
-//       name,
-//       nationality,
-//       age,
-//       role,
-//       runs,
-//       wickets,
-//       strikeRate,
-//       basePrice,
-//       isDebut,
-//       bidplace,
-//       set,
-//       setname
-//     } = req.body;
-//     let image;
-//     if(req.file==undefined){
-//       image=req.body.image
-//     }
-//     else{ 
-//    image = req.file;  
-  
-//     if (!image) {
-//       return res.status(400).send('No image file uploaded');
-//     }
-//     // Upload image to Cloudinary
-//     console.log("in uploadimg")
-//     const uploadImage = await import('../uploadimage.mjs');
-//     try {
-      
-//       const uploadedImageUrl = await uploadImage.uploadImages(image);
-//       console.log("Uploaded Image URL:", uploadedImageUrl);
-//       image = uploadedImageUrl;
-//     }
-//     catch(err){
-//       console.log("error while uploading photo")
-//       return res.status(500).send({ message: 'error while uploaidng photo'});
-//     }
-//   }
-//       const id = req.body._id; 
-//      if(id){
-//       const existingPlayer = await Player.findOne({_id:id });
-//        console.log(id);
-//        console.log(existingPlayer)
-       
-//       if (existingPlayer) {
-//         console.log("in existingPlayer")
-//         existingPlayer.name = name;
-//         existingPlayer.nationality = nationality;
-//         existingPlayer.age = age;
-//         existingPlayer.role = role;
-//         existingPlayer.runs = runs;
-//         existingPlayer.wickets = wickets;
-//         existingPlayer.strikeRate = strikeRate;
-        
-//         existingPlayer.image = image; 
-//         // Save Cloudinary URL
-//         existingPlayer.basePrice = req.body.basePrice;
-//         existingPlayer.isDebut=req.body.isDebut;
-//         existingPlayer.bidplace = req.body.bidplace;
-//         existingPlayer.set = req.body.set;
-//         existingPlayer.setname=req.body.setname;
-//         const updatedPlayer = await existingPlayer.save();
-//         console.log("in updateplayer")
-//         return res.status(200).send({ message: 'Player updated successfully', player: updatedPlayer });
-//       }
-//      } else {
-//         const newPlayer = new Player({
-//           name,
-//           nationality,
-//           age,
-//           role,
-//           runs,
-//           wickets,
-//           strikeRate,
-//           image, // Save Cloudinary URL
-//           basePrice,
-//           isDebut,
-//           bidplace,
-//           set,
-//           setname,
-//         });
-
-//         const result = await newPlayer.save();
-//         console.log("in new player")
-//         return res.status(200).json({message:'added player successfully'});
-//       }
-  
-//   }
-//   catch (error) {
-
-//     console.log('Error in player function:', error);
-//     return res.status(500).send('Error processing request');
-//   }
-// };
-
 const player = async (req, res) => {
   try {
     console.log("Player function:", req.body);
@@ -532,88 +432,6 @@ const deletePlayer = async (req, res) => {
   }
 };
 
-
-// const addset = async (req, res) => {
-//   try {
-//     console.log("add set function;");
-
-//     const { setname, setno } = req.body;
-//     console.log(req.body);
-//     console.log("Set Name:", setname);
-//     console.log("Set Number:", setno);
- 
-//     // if (!req.file) {
-//     //   console.log("No file uploaded");
-//     //   return res.status(400).json({ message: "No file uploaded" });
-//     // }
-
-//     // if (!req.file.mimetype.toLowerCase().includes('excel')) {
-//     //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
-//     // }
-    
-
-//     // console.log("path:", req.file.path);
-// console.log("file",req.file.buffer)
-//     const workbook = new ExcelJS.Workbook();
-//     await workbook.xlsx.load(req.file.buffer); 
-//      console.log("processing");// Use buffer if you're using memoryStorage
-//     const worksheet = workbook.worksheets[0];
-//     const players = [];
-
-//     worksheet.eachRow((row, rowNumber) => {
-//       console.log("in map")
-//       if (rowNumber === 1) return; // Skip the header row
-
-//       const playerData = {
-//         name: row.getCell(1).value,
-//         nationality: row.getCell(2).value,
-//         age: parseInt(row.getCell(3).value, 10),
-//         role: row.getCell(4).value ? row.getCell(4).value.toLowerCase() : "",
-//         runs: row.getCell(5).value ? parseInt(row.getCell(5).value, 10) : undefined,
-//         wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
-//         set: parseInt(setno, 10), // Using set number from the request
-//         isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
-//         basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
-//         strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
-//         bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
-//         setname:setname,
-//       };
-   
-//       // Validate that required fields are present
-//       if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
-//         console.log(`Skipping row ${rowNumber} due to missing critical data`);
-//         return; // Skip this row if any required field is missing
-//       }
-
-//       // Validate the role field
-//       const validRoles = ["batsman", "bowler", "wicketkeeper", "allrounder"];
-//       if (!validRoles.includes(playerData.role)) {
-//         console.log(`Invalid role for row ${rowNumber}:`, playerData.role);
-//         return; // Skip this row if role is invalid
-//       }
-
-//       players.push(playerData);
-//     });
-//      console.log("out from map",players)
-//     if (players.length > 0) {
-//       await Player.insertMany(players);
-//       console.log(`${players.length} players inserted into the database.`);
-//     }
-
-//     res.status(200).json({
-//       message: "Data received successfully and inserted into the database",
-//       data: {
-//         setname,
-//         setno,
-//         file: req.file.originalname,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error in add set function:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
-
 const addset = async (req, res) => {
   try {
     console.log("add set function started");
@@ -699,6 +517,24 @@ const addset = async (req, res) => {
   }
 };
 
+const playerinfo = async (req, res) => {
+  try {
+    const totalPlayers = await Player.countDocuments();
+
+    const totalSoldPlayers = await Player.countDocuments({ isSold: true });
+
+    const totalUnsoldPlayers = await Player.countDocuments({ isSold: false, inAuction: true });
+
+    res.status(200).json({
+      totalPlayers,
+      totalSoldPlayers,
+      totalUnsoldPlayers
+    });
+  } catch (error) {
+    console.error('Error fetching player info:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 
 
@@ -706,4 +542,7 @@ const addset = async (req, res) => {
 
 
 
-module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset,fetchsets,unsold};
+
+
+
+module.exports = {getplayers,playersToBuy,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset,fetchsets,unsold,playerinfo};

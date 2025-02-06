@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "./poppercss.css"; // Import your CSS file
+// import "./poppercss.css"; // Import your CSS file
 
 const ConfettiComponent = () => {
   useEffect(() => {

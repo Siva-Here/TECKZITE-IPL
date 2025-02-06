@@ -52,20 +52,6 @@ const GradientOverlay = styled.div`
   inset: 0;
   background: linear-gradient(to top, #1f1f1f, rgba(31, 31, 31, 0.5), transparent);
 `;
-
-// const SoldOverlay = styled.div`
-//   position: fixed; /* Fixed to cover the entire viewport */
-//   top: 50%; /* Center vertically */
-//   left: 0;
-//   width: 100%;
-//   height: auto; /* Adjust height automatically */
-//   display: flex;
-//   justify-content: center;
-//   align-items: center; /* Center content vertically */
-//   transform: translateY(-50%); /* Adjust for exact vertical centering */
-//   z-index: 1000; /* Ensure it's on top of everything */
-// `;
-
 const SoldOverlay = styled.div`
   position: fixed; /* Always fixed */
   top: 50%;
@@ -107,7 +93,7 @@ const HomePage = () => {
     };
 
     const handleConfirmBid = (status,team) => {
-      alert(team)
+      // alert(team)
       setPopper(status);
       setTeam(team)
     };

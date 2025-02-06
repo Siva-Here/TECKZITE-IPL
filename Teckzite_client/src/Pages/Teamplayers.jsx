@@ -52,25 +52,16 @@ const AnimatedBox = styled.div`
   width: 300px;
   height: 320px;
   transform-style: preserve-3d;
-  animation: ${css`${rotateAnimation} 25s linear infinite`};
-  
+  animation: ${css`${rotateAnimation} 30s linear infinite`}; /* Smooth easing */
+
   &:hover {
     animation-play-state: paused;
+    transition: transform 1s ease-out; /* Smooth pause effect */
   }
 `;
 
 
-const spanStyle = {
-  position: 'absolute',
-  top: '0',
-  left: '0',
-  width: '100%',
-  height: '100%',
-  transformOrigin: 'center',
-  transformStyle: 'preserve-3d',
-  transform: 'rotateY(calc(var(--i) * 60deg)) translateZ(400px)',
-  WebkitBoxReflect: 'below 1px linear-gradient(transparent,transparent,#0004)',
-};
+
 
 const imgStyle = {
   position: 'absolute',

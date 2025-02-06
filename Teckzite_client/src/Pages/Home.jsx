@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import styled from "styled-components";
 import ParticleField from "../components/ParticleField";
 import { OrbitControls } from "@react-three/drei";
+import {useNavigate} from "react-router-dom";
 
 const Container = styled.div`
   position: relative;
@@ -27,6 +28,10 @@ const BackgroundVideo = styled.video`
 
 
 const Home = () => {
+  const navigate = useNavigate();
+  const handleClick = () =>{
+    navigate("/auction");
+  }
   return (
     <Container>
 
@@ -114,7 +119,7 @@ const Home = () => {
 
           {/* Live Auction Button */}
           <div className="mt-8 static-border">
-            <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full">
+            <button className="backdrop-blur-md cursor text-cyan-300 font-bold py-2 px-4 rounded-full" onClick={handleClick}>
               Live Auction
             </button>
           </div>

@@ -103,9 +103,9 @@ const HomePage = () => {
       setPopper(status);
       setTeam(team)
     };
-     const handleauctionstart=()=>{
-      
-       setStart(true)
+     const handleauctionstart=(message)=>{
+      // alert(message)
+       setStart(message)
      }
     // Attach socket listeners
     socket.on('updateViewer', handleUpdateViewer);
@@ -302,9 +302,10 @@ const HomePage = () => {
                 <span className="text-cyan-300">
                   <FaPauseCircle /> 
                 </span>
-                Oops.... Auction Paused
+                Oops.... Auction Paused????
               </>
-            ) : (
+            ) 
+            : (
               <>
               {
                 !start ? 

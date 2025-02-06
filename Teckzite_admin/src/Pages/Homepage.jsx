@@ -506,6 +506,28 @@ const HomePage = () => {
     console.log("out")
     fetchPlayer(player.set,player.bidplace, "next")
   }
+  // const accelerate=async()=>{
+  //   try{ 
+  //   const response = await fetch("http://localhost:8000/api/getunsoldplayers");
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log(data)
+       
+      
+  //     }
+  //     else {
+  //       console.log("error while fetching data");
+  //       alert("Error while fetching data");
+  //     }
+  //   }
+  //   catch (error) {
+  //     console.log(error);
+  //   }
+    
+  // }
+  const endauction=()=>{
+    socket.emit("endauction",true)
+  }
   const pauseAuction=()=>{
    
     setContinue((prev) => {
@@ -655,6 +677,10 @@ const HomePage = () => {
         </ButtonGroup >}
       </HeroSection>
       {showModal2 ? (
+       <>
+        <NeonButton onClick={()=>accelerate()}>Accelerate</NeonButton>
+        <NeonButton onClick={()=>endauction()}>End Auction</NeonButton>
+       
         <div
           style={{
             height: "100vh",
@@ -681,7 +707,9 @@ const HomePage = () => {
             }}
           > 
            {setnames.setname.length > 0 ? (
+            
         setnames.setname.map((setno, index) => (
+          
           <div
             key={index}
             style={{
@@ -696,6 +724,8 @@ const HomePage = () => {
       </NeonButton>
           </div>
         ))
+       
+        
       ) : (
         <p>No sets available...</p>
       )}
@@ -703,6 +733,7 @@ const HomePage = () => {
 
           </div>
         </div> 
+        </>
       ) : (
         ""
       )}

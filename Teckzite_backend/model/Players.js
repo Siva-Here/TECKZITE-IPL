@@ -74,6 +74,9 @@ const playerSchema = new mongoose.Schema({
     },
     "bidplace":{
         type:Number,
+    },
+    "50/100":{
+        type:String,
     }
 });
 

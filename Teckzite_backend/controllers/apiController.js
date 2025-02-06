@@ -28,6 +28,174 @@ const getplayers = async(req,res)=>{
         res.status(400).send(err)
     }
 }
+// const playersToBuy = async (req, res) => {
+//   console.log("In playersToBuy function");
+//   try {
+//     const {  set,bidplace, direction } = req.query;
+// console.log(set)
+   
+//     const bidPlaceValue = parseInt(bidplace, 10);
+//     const setValue = parseInt(set, 10);
+
+//     let sortOrder = 1;
+//     let query = { isSold: { $ne: true },inAuction:{$ne:true},set:setValue};
+
+//     if (direction === "next") {
+//       query = {
+//         ...query,
+         
+//           set: setValue, bidplace: { $gt: bidPlaceValue } ,
+        
+//       };
+
+//       sortOrder = 1; 
+
+//     } else if (direction === "prev") {
+//       query = {
+//         ...query,
+        
+//         set: setValue, bidplace: { $lt: bidPlaceValue } ,
+        
+//       };
+//       sortOrder = -1; // Descending order for "prev"
+//     }
+
+    
+//     let players = await Player.find(query)
+//       .sort({  bidplace: sortOrder })
+//       .limit(1);
+
+//     if (players.length > 0) {
+//       console.log("Player fetched:", players[0]);
+//       return res.status(200).send(players[0]); 
+//     }
+
+//     // If no players are found, wrap around for cyclic behavior
+//     console.log("No players found. Wrapping around for cyclic behavior...");
+//     if (direction === "next") {
+//       query = {
+//         isSold: { $ne: true },
+//          inAuction:{$ne:true},
+         
+//          set: setValue, bidplace: { $lte: bidPlaceValue } 
+//       };
+//       sortOrder = 1; 
+
+
+//     } else if (direction === "prev") {
+//       query = {
+//         isSold: { $ne: true },
+//        inAuction:{$ne:true},
+//        set: setValue, bidplace: { $gte: bidPlaceValue } 
+//       };
+//       sortOrder = -1; 
+//     }
+
+//     players = await Player.find(query)
+//       .sort({  bidplace: sortOrder })
+//       .limit(1);
+
+//     if (players.length > 0) {
+//       console.log("Player fetched after wrapping:", players[0]);
+     
+//       res.status(200).send(players[0]); // Send the player data
+//     } else {
+//       res.status(200).send("No available players to sell...");
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(400).send(err);
+//   }
+// };
+// const playersToBuy = async (req, res) => {
+//   console.log("In playersToBuy function");
+//   try {
+//     const { set, bidplace, direction, accelerate } = req.query;
+//     console.log(req.query)
+//     let query = {};
+//     let sortOrder = 1;
+
+//     if (accelerate === 'true') {
+//       // Ignore the set value.
+//       query = { isSold: false, inAuction: true };
+//       // Sort by set first, then bidplace.
+//       const players = await Player.find(query)
+//         .sort({ set: 1, bidplace: 1 })
+//         .limit(1);
+      
+//       if (players.length > 0) {
+//         console.log("Accelerated unsold player fetched:", players[0]);
+//         return res.status(200).send(players[0]);
+//       } else {
+//         console.log("No unsold players available in accelerate mode...");
+//         return res.status(200).send("No available players to sell...");
+//       }
+//     } else {
+//       // Normal behavior: use provided set value and other filters.
+//       const setValue = parseInt(set, 10);
+//       const bidPlaceValue = bidplace ? parseInt(bidplace, 10) : null;
+//       query = { isSold: { $ne: true }, inAuction: { $ne: true }, set: setValue };
+
+//       if (direction === "next" && bidPlaceValue !== null) {
+//         query.bidplace = { $gt: bidPlaceValue };
+//       } else if (direction === "prev" && bidPlaceValue !== null) {
+//         query.bidplace = { $lt: bidPlaceValue };
+//         sortOrder = -1;
+//       }
+
+//       let players = await Player.find(query)
+//         .sort({ bidplace: sortOrder })
+//         .limit(1);
+
+//       // Wrap-around logic if no players are found.
+//       if (players.length === 0 && bidPlaceValue !== null) {
+//         console.log("No players found. Wrapping around for cyclic behavior...");
+//         if (direction === "next") {
+//           query = {
+//             isSold: { $ne: true },
+//             inAuction: { $ne: true },
+//             set: setValue,
+//             bidplace: { $lte: bidPlaceValue }
+//           };
+//           sortOrder = 1;
+//         } else if (direction === "prev") {
+//           query = {
+//             isSold: { $ne: true },
+//             inAuction: { $ne: true },
+//             set: setValue,
+//             bidplace: { $gte: bidPlaceValue }
+//           };
+//           sortOrder = -1;
+//         }
+//         players = await Player.find(query)
+//           .sort({ bidplace: sortOrder })
+//           .limit(1);
+//       }
+
+//       if (players.length > 0) {
+//         console.log("Player fetched:", players[0]);
+//         return res.status(200).send(players[0]);
+//       } else {
+//         console.log("No available players to sell...");
+//         return res.status(200).send("No available players to sell...");
+//       }
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(400).send(err);
+//   }
+// };
+
+// const soldPlayers = async(req,res)=>{
+//     try{
+//         const players=await Player.find({isSold:{$eq:true}})
+//         res.status(200).send(players)
+//     }
+//     catch(err){
+//         console.log(err)
+//         res.status(400).send(err)
+//     }
+// }
 const playersToBuy = async (req, res) => {
   console.log("In playersToBuy function");
   try {
@@ -38,7 +206,7 @@ console.log(set)
     const setValue = parseInt(set, 10);
 
     let sortOrder = 1;
-    let query = { isSold: { $ne: true },inAuction:{$ne:true},set:setValue};
+    let query = { isSold: { $ne: false },inAuction:{$ne:true}};
 
     if (direction === "next") {
       query = {
@@ -74,7 +242,7 @@ console.log(set)
     console.log("No players found. Wrapping around for cyclic behavior...");
     if (direction === "next") {
       query = {
-        isSold: { $ne: true },
+        isSold: { $ne: false },
          inAuction:{$ne:true},
          
          set: setValue, bidplace: { $lte: bidPlaceValue } 
@@ -107,17 +275,6 @@ console.log(set)
     res.status(400).send(err);
   }
 };
-
-const soldPlayers = async(req,res)=>{
-    try{
-        const players=await Player.find({isSold:{$eq:true}})
-        res.status(200).send(players)
-    }
-    catch(err){
-        console.log(err)
-        res.status(400).send(err)
-    }
-}
 const unsold=async(req,res)=>{
   console.log("unsold")
   const id=req.body.id;

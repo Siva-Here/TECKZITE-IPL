@@ -365,6 +365,7 @@ const HomePage = () => {
         } else {
           setPlayer(null);
           socket.emit('updateViewer', null)
+          socket.emit('pauseAuction',true)
           setShowModal2(true)
         }
       })
@@ -452,7 +453,7 @@ const HomePage = () => {
         )
         .then(() => {
           alert('Bid confirmed!');
-          alert(selectedTeam)
+          
       socket.emit("bidConfirmed",true,selectedTeam);
          //fetchPlayer( player.set,player.bidplace, "next");
         
@@ -696,7 +697,7 @@ const HomePage = () => {
           </div>
         ))
       ) : (
-        <p>Loading sets...</p>
+        <p>No sets available...</p>
       )}
 
 

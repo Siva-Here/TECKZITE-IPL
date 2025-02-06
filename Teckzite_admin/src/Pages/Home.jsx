@@ -109,6 +109,7 @@ function Home() {
   const navigate = useNavigate();
 
   const handleClick = () =>{
+    localStorage.setItem("auction",true);
     navigate('/auction');
   }
 

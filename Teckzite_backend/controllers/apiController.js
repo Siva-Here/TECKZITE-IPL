@@ -533,68 +533,153 @@ const deletePlayer = async (req, res) => {
 };
 
 
-const addset = async (req, res) => {
-  try {
-    console.log("add set function;");
+// const addset = async (req, res) => {
+//   try {
+//     console.log("add set function;");
 
-    const { setname, setno } = req.body;
-    console.log(req.body);
-    console.log("Set Name:", setname);
-    console.log("Set Number:", setno);
+//     const { setname, setno } = req.body;
+//     console.log(req.body);
+//     console.log("Set Name:", setname);
+//     console.log("Set Number:", setno);
  
-    // if (!req.file) {
-    //   console.log("No file uploaded");
-    //   return res.status(400).json({ message: "No file uploaded" });
-    // }
+//     // if (!req.file) {
+//     //   console.log("No file uploaded");
+//     //   return res.status(400).json({ message: "No file uploaded" });
+//     // }
 
-    // if (!req.file.mimetype.toLowerCase().includes('excel')) {
-    //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
-    // }
+//     // if (!req.file.mimetype.toLowerCase().includes('excel')) {
+//     //   return res.status(400).json({ message: "Uploaded file is not an Excel file" });
+//     // }
     
 
-    // console.log("path:", req.file.path);
-console.log("file",req.file.buffer)
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(req.file.buffer); 
-     console.log("processing");// Use buffer if you're using memoryStorage
-    const worksheet = workbook.worksheets[0];
-    const players = [];
+//     // console.log("path:", req.file.path);
+// console.log("file",req.file.buffer)
+//     const workbook = new ExcelJS.Workbook();
+//     await workbook.xlsx.load(req.file.buffer); 
+//      console.log("processing");// Use buffer if you're using memoryStorage
+//     const worksheet = workbook.worksheets[0];
+//     const players = [];
 
-    worksheet.eachRow((row, rowNumber) => {
-      console.log("in map")
-      if (rowNumber === 1) return; // Skip the header row
+//     worksheet.eachRow((row, rowNumber) => {
+//       console.log("in map")
+//       if (rowNumber === 1) return; // Skip the header row
 
-      const playerData = {
-        name: row.getCell(1).value,
-        nationality: row.getCell(2).value,
-        age: parseInt(row.getCell(3).value, 10),
-        role: row.getCell(4).value ? row.getCell(4).value.toLowerCase() : "",
-        runs: row.getCell(5).value ? parseInt(row.getCell(5).value, 10) : undefined,
-        wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
-        set: parseInt(setno, 10), // Using set number from the request
-        isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
-        basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
-        strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
-        bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
-        setname:setname,
-      };
+//       const playerData = {
+//         name: row.getCell(1).value,
+//         nationality: row.getCell(2).value,
+//         age: parseInt(row.getCell(3).value, 10),
+//         role: row.getCell(4).value ? row.getCell(4).value.toLowerCase() : "",
+//         runs: row.getCell(5).value ? parseInt(row.getCell(5).value, 10) : undefined,
+//         wickets: row.getCell(6).value ? parseInt(row.getCell(6).value, 10) : undefined,
+//         set: parseInt(setno, 10), // Using set number from the request
+//         isDebut: row.getCell(7).value?.toString().trim().toUpperCase() === "TRUE",
+//         basePrice: row.getCell(8).value ? parseInt(row.getCell(8).value, 10) : 50000,
+//         strikeRate: row.getCell(9).value ? row.getCell(9).value.toString() : undefined,
+//         bidplace: row.getCell(10).value ? parseInt(row.getCell(10).value, 10) : undefined,
+//         setname:setname,
+//       };
    
-      // Validate that required fields are present
-      if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
-        console.log(`Skipping row ${rowNumber} due to missing critical data`);
-        return; // Skip this row if any required field is missing
-      }
+//       // Validate that required fields are present
+//       if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
+//         console.log(`Skipping row ${rowNumber} due to missing critical data`);
+//         return; // Skip this row if any required field is missing
+//       }
 
-      // Validate the role field
-      const validRoles = ["batsman", "bowler", "wicketkeeper", "allrounder"];
-      if (!validRoles.includes(playerData.role)) {
-        console.log(`Invalid role for row ${rowNumber}:`, playerData.role);
-        return; // Skip this row if role is invalid
-      }
+//       // Validate the role field
+//       const validRoles = ["batsman", "bowler", "wicketkeeper", "allrounder"];
+//       if (!validRoles.includes(playerData.role)) {
+//         console.log(`Invalid role for row ${rowNumber}:`, playerData.role);
+//         return; // Skip this row if role is invalid
+//       }
 
-      players.push(playerData);
+//       players.push(playerData);
+//     });
+//      console.log("out from map",players)
+//     if (players.length > 0) {
+//       await Player.insertMany(players);
+//       console.log(`${players.length} players inserted into the database.`);
+//     }
+
+//     res.status(200).json({
+//       message: "Data received successfully and inserted into the database",
+//       data: {
+//         setname,
+//         setno,
+//         file: req.file.originalname,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error in add set function:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+const addset = async (req, res) => {
+  try {
+    console.log("add set function started");
+
+    const { setname, setno } = req.body;
+    console.log("Set Name:", setname);
+    console.log("Set Number:", setno);
+
+    if (!req.file || !req.file.buffer) {
+      console.log("No file uploaded");
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(req.file.buffer);
+
+    const players = [];
+    const validRoles = ["batsman", "bowler", "wicketkeeper", "allrounder"];
+
+    workbook.eachSheet((worksheet, sheetId) => {
+      console.log(`Processing Sheet ${sheetId}: ${worksheet.name}`);
+
+      let headers = [];
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) {
+          headers = row.values.map((val) => val?.toString().trim().toLowerCase()); // Extract header row
+          return;
+        }
+
+        const playerData = {};
+        row.eachCell((cell, colNumber) => {
+          const key = headers[colNumber]; 
+          if (key) playerData[key] = cell.value;
+          
+        });
+        
+        
+        // Convert & validate values
+        playerData.age = parseInt(playerData.age, 10);
+        playerData.runs = playerData.runs ? parseInt(playerData.runs, 10) : undefined;
+        playerData.wickets = playerData.wickets ? parseInt(playerData.wickets, 10) : undefined;
+        playerData.set = parseInt(setno, 10);
+        playerData.isDebut = playerData.isdebut?.toString().trim().toUpperCase() === "TRUE";
+        playerData.basePrice = playerData.baseprice ? parseInt(playerData.baseprice, 10) : 50000;
+        playerData.bidplace = playerData.bidplace ? parseInt(playerData.bidplace, 10) : undefined;
+        playerData.setname = setname;
+        playerData.role = playerData.role ? String(playerData.role).toLowerCase() : "";
+        playerData.strikeRate=playerData.strikerate?String(playerData.strikerate):"";
+       console.log(playerData.name,playerData.nationality,playerData.age,playerData.role)
+        // Validate required fields
+        if (!playerData.name || !playerData.nationality || isNaN(playerData.age) || !playerData.role) {
+          console.log(`Skipping row ${rowNumber} in sheet ${worksheet.name} due to missing data`);
+          return;
+        }
+
+        if (!validRoles.includes(playerData.role)) {
+          console.log(`Invalid role in row ${rowNumber}, sheet ${worksheet.name}: ${playerData.role}`);
+          return;
+        }
+        console.log(playerData)
+        players.push(playerData);
+      });
     });
-     console.log("out from map",players)
+
+    console.log(`Total players parsed: ${players.length}`);
+
     if (players.length > 0) {
       await Player.insertMany(players);
       console.log(`${players.length} players inserted into the database.`);
@@ -613,7 +698,6 @@ console.log("file",req.file.buffer)
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 
 

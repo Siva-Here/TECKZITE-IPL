@@ -7,10 +7,10 @@ const setupWebSocket = (server) => {
   let currentBidAmount = '';
   let pause = false;
   let adminSocketId = '';
+  let adminConnected=false
 let popper=false;
   // Function to emit the current auction state
   const emitCurrentState = (socket) => {
-    console.log("Pause:",pause,"currentplayer",currentPlayerImage);
     if (pause) {
       socket.emit('updateViewer', null);
       socket.emit('pauseAuction', true);
@@ -22,16 +22,19 @@ let popper=false;
       }else{
         socket.emit('bidConfirmed',false,null)
       }
+      if(adminSocketId || adminConnected)
+      socket.emit('started',true)
     }
 
   };
 
   io.on('connection', (socket) => {
     console.log('A user (viewer) connected:', socket.id);
-
+    
     socket.on('adminConnected', () => {
       console.log('Admin connected:', socket.id);
       adminSocketId = socket.id;
+      socket.emit("started",true);
     });
 
     // Send current state to newly connected client
@@ -72,8 +75,10 @@ let popper=false;
         adminSocketId = null;
         currentPlayerImage = '';
         currentBidAmount = '';
+        adminConnected=true;
         io.emit('updateViewer', null);
         io.emit('bidAmount', null);
+        io.emit("started",true);
       }
     });
   });

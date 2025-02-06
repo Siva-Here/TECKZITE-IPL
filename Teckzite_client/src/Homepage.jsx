@@ -52,6 +52,9 @@ const GradientOverlay = styled.div`
   inset: 0;
   background: linear-gradient(to top, #1f1f1f, rgba(31, 31, 31, 0.5), transparent);
 `;
+
+
+
 const SoldOverlay = styled.div`
   position: fixed; /* Always fixed */
   top: 50%;
@@ -74,6 +77,7 @@ const HomePage = () => {
   const [auctionstatus, setAuctionStatus] = useState(false);
   const [popper, setPopper] = useState(false);
   const [team,setTeam]=useState(null);
+  const [start,setStart]=useState(false)
   useEffect(() => {
     // Listen for updates from the server
     const handleUpdateViewer = (newImage) => {
@@ -89,28 +93,34 @@ const HomePage = () => {
     };
 
     const handlepause = (status) => {
+     
       setAuctionStatus(status);
     };
 
     const handleConfirmBid = (status,team) => {
+     
       // alert(team)
       setPopper(status);
       setTeam(team)
     };
-
+     const handleauctionstart=()=>{
+      
+       setStart(true)
+     }
     // Attach socket listeners
     socket.on('updateViewer', handleUpdateViewer);
     socket.on('bidAmount', handleBidAmount);
     socket.on('pauseAuction', handlepause);
     socket.emit('requestData');
     socket.on('bidConfirmed', handleConfirmBid);
-
+    socket.on('started',handleauctionstart)
     // Cleanup listeners on component unmount
     return () => {
       socket.off('updateViewer', handleUpdateViewer);
       socket.off('bidAmount', handleBidAmount);
       socket.off('pauseAuction', handlepause);
       socket.off('bidConfirmed', handleConfirmBid);
+      socket.off('started',handleauctionstart)
     };
   }, []);
 
@@ -118,7 +128,7 @@ const HomePage = () => {
     <>
      {popper && (
               <SoldOverlay>
-                <SoldSVG name={player.name} team={team} color={!team ? "#38ad34": "red"}/>
+                <SoldSVG name={player.name} team={team} color={team ? "#38ad34": "red"}/>
               </SoldOverlay>
             )}
       {player ? (
@@ -222,7 +232,7 @@ const HomePage = () => {
                       Runs
                     </span>
                     <div className="text-2xl md:text-3xl font-bold">
-                      5,000
+                      {player.runs}
                     </div>
 
                     {/* Geometric Accents */}
@@ -235,10 +245,10 @@ const HomePage = () => {
                     {/* Button Content */}
                     <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
                       {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                      Runs
+                      Wickets
                     </span>
                     <div className="text-2xl md:text-3xl font-bold">
-                      5,000
+                     { player.wickets}
                     </div>
 
                     {/* Geometric Accents */}
@@ -251,10 +261,10 @@ const HomePage = () => {
                     {/* Button Content */}
                     <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
                       {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                      Runs
+                      Strike Rate
                     </span>
                     <div className="text-2xl md:text-3xl font-bold">
-                      5,000
+                      {player.strikeRate}
                     </div>
 
                     {/* Geometric Accents */}
@@ -290,18 +300,31 @@ const HomePage = () => {
             {auctionstatus ? (
               <>
                 <span className="text-cyan-300">
-                  <FaPauseCircle /> {/* Icon for paused state */}
+                  <FaPauseCircle /> 
                 </span>
                 Oops.... Auction Paused
               </>
             ) : (
               <>
+              {
+                !start ? 
+                <>
                 <span className="text-cyan-300">
-                  <FaHourglassStart /> {/* Icon for not started/completed state */}
+                  <FaHourglassStart /> 
                 </span>
                 Oops !! Auction Not Yet Started/Completed
+              </> :
+              <>
+                <span className="text-cyan-300">
+                  <FaPauseCircle /> 
+                </span>
+                Oops.... Auction Paused
               </>
-            )}
+
+              }
+              </>
+            )
+             }
           </Message>
         </TeamsContainer>
       )}

@@ -303,6 +303,7 @@ const HomePage = () => {
   const [showModal2, setShowModal2] = useState(false);
   const [selectedSet,setSelectedSet]=useState('');
   const [continueauction,setContinue]=useState(true);
+  const [accelerate,setAccelerate]=useState(false);
   const [setnames,setSetnames]=useState({ 
     setname:[],
     set:[]
@@ -343,6 +344,7 @@ const HomePage = () => {
     console.log(set)
     console.log(player)
     setShowModal2(false)
+    setAccelerate(false)
     if(!continueauction){
       toast.error("auction is paused,resume it");
       return;
@@ -375,21 +377,39 @@ const HomePage = () => {
   };
 
   const handleNext = () => {
-
-    if (player?.set && player?.bidplace) {
+    if(accelerate){
+      if (player?.set && player?.bidplace) {
+        accelerateplayers(player.set,player.bidplace, "next");
+      } else {
+        fetchPlayer(player.set);
+      }
+    }
+   else { 
+   if (player?.set && player?.bidplace) {
       fetchPlayer(selectedSet,player.bidplace, "next");
     } else {
       fetchPlayer(selectedSet);
     }
+  }
   };
 
   const handlePrev = () => {
+    if(accelerate){
+      if (player?.bidplace && player.bidplace > 1 && player?.set) {
+        accelerateplayers(player.set,player.bidplace, "prev");
+      }
+      else {
+        accelerateplayers(player.set)
+      }
+    }
+    else{ 
     if (player?.bidplace && player.bidplace > 1 && player?.set) {
       fetchPlayer(selectedSet,player.bidplace, "prev");
     }
     else {
       fetchPlayer(selectedSet)
     }
+  }
   };
 
   const handleIncreaseBid = () => {
@@ -505,6 +525,35 @@ const HomePage = () => {
     }
     console.log("out")
     fetchPlayer(player.set,player.bidplace, "next")
+  }
+  const accelerateplayers=async(set,bidplace=null,direction)=>{
+setAccelerate(true)
+setShowModal2(false)
+    const url = bidplace
+      ? `http://localhost:8000/api/accelerateplayers?set=${set}&bidplace=${bidplace}&direction=${direction}`
+      : `http://localhost:8000/api/accelerateplayers?`;
+    
+
+    axios
+      .get(url)
+      .then((response) => {
+        socket.emit('adminConnected');
+        if (response.data && typeof response.data === 'object') {
+          setPlayer(response.data);
+
+          setBidAmount(response.data.basePrice || 0);
+          setSelectedTeam('');
+          socket.emit('updateViewer', response.data);
+        } else {
+          setPlayer(null);
+          socket.emit('updateViewer', null)
+          socket.emit('pauseAuction',true)
+          setShowModal2(true)
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching player:', err);
+      });
   }
   // const accelerate=async()=>{
   //   try{ 
@@ -678,7 +727,7 @@ const HomePage = () => {
       </HeroSection>
       {showModal2 ? (
        <>
-        <NeonButton onClick={()=>accelerate()}>Accelerate</NeonButton>
+        <NeonButton onClick={()=>accelerateplayers()}>Accelerate</NeonButton>
         <NeonButton onClick={()=>endauction()}>End Auction</NeonButton>
        
         <div
@@ -744,7 +793,6 @@ const HomePage = () => {
 }
 
 export default HomePage;
-
 
 
 

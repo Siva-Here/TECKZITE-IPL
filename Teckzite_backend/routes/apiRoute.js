@@ -11,6 +11,7 @@ router.get('/getTeams',apiController.getTeams);
 router.get('/getteamplayers/:id',apiController.getteamplayers);
 router.get('/getsets',apiController.fetchsets);
 router.get('/playerinfo',apiController.playerinfo);
+router.get('/accelerateplayers',apiController.accelerateplayers)
 //router.post("/createplayer",apiController.player);
 router.post("/createTeam",authenticateAdmin,apiController.createTeam);
 router.post('/bid',authenticateAdmin,apiController.bid);

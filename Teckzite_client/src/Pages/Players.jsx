@@ -33,7 +33,6 @@ const Content = styled.div`
 `;
 
 const Players = () => {
-  const formatCurrency = (amount) => `$${amount.toLocaleString()}`;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [playersdata, setPlayersdata] = useState([]); // Data to display (filtered)
@@ -123,7 +122,7 @@ const Players = () => {
                 <option value="unsold">Unsold</option>
               </select>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {playersdata.length > 0 ? (
                 playersdata.map((player, index) => (
                   <div
@@ -229,7 +228,7 @@ const Players = () => {
                               <div className="mt-1 text-xs flex justify-between text-gray-400">
                                 <span>{player.soldTeam}</span>
                                 <span className="text-cyan-400 font-bold">
-                                  {formatCurrency(player.soldAmount)}
+                                  {player.soldAmount} Rs
                                 </span>
                               </div>
                             )}

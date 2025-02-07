@@ -38,6 +38,7 @@ const Players = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [playersdata, setPlayersdata] = useState([]); // Data to display (filtered)
   const [allPlayers, setAllPlayers] = useState([]); // Original data
+  const [filter, setFilter] = useState('all'); // 'all', 'sold', or 'unsold'
 
   const fetchPlayers = async () => {
     try {
@@ -63,14 +64,39 @@ const Players = () => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
-    if (query === '') {
-      setPlayersdata(allPlayers); // Reset to original data when the query is empty
-    } else {
-      const filteredPlayers = allPlayers.filter((player) =>
+    let filteredPlayers = allPlayers;
+    if (query !== '') {
+      filteredPlayers = filteredPlayers.filter((player) =>
         player.name.toLowerCase().includes(query)
       );
-      setPlayersdata(filteredPlayers);
     }
+
+    if (filter === 'sold') {
+      filteredPlayers = filteredPlayers.filter((player) => player.isSold);
+    } else if (filter === 'unsold') {
+      filteredPlayers = filteredPlayers.filter((player) => !player.isSold);
+    }
+
+    setPlayersdata(filteredPlayers);
+  };
+
+  const handleFilterChange = (selectedFilter) => {
+    setFilter(selectedFilter);
+
+    let filteredPlayers = allPlayers;
+    if (searchQuery !== '') {
+      filteredPlayers = filteredPlayers.filter((player) =>
+        player.name.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    if (selectedFilter === 'sold') {
+      filteredPlayers = filteredPlayers.filter((player) => player.isSold);
+    } else if (selectedFilter === 'unsold') {
+      filteredPlayers = filteredPlayers.filter((player) => !player.isSold);
+    }
+
+    setPlayersdata(filteredPlayers);
   };
 
   return (
@@ -79,7 +105,7 @@ const Players = () => {
         <div className="min-h-screen text-white">
           {/* <Navbar /> */}
           <div className="p-6">
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-8 flex-col md:flex-row gap-4">
               <input
                 type="text"
                 placeholder="Search for players..."
@@ -87,6 +113,15 @@ const Players = () => {
                 onChange={handleChange}
                 className="bg-[#161929] text-cyan-400 px-4 py-2 rounded-lg w-full md:w-1/2 outline-none shadow-[0_0_10px_rgba(0,255,255,0.5)] focus:shadow-[0_0_10px_rgba(0,255,255,0.8)]"
               />
+              <select
+                value={filter}
+                onChange={(e) => handleFilterChange(e.target.value)}
+                className="bg-[#161929] text-cyan-400 px-4 py-2 rounded-lg outline-none shadow-[0_0_10px_rgba(0,255,255,0.5)] focus:shadow-[0_0_10px_rgba(0,255,255,0.8)]"
+              >
+                <option value="all">All Players</option>
+                <option value="sold">Sold</option>
+                <option value="unsold">Unsold</option>
+              </select>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
               {playersdata.length > 0 ? (

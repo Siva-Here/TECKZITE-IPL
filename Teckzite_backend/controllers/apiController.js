@@ -233,7 +233,9 @@ const player = async (req, res) => {
       wickets,
       strikeRate,
       basePrice,
-      isDebut,
+      fiftybyhundred,
+      economy,
+      average,
       bidplace,
       set,
       setname
@@ -285,7 +287,9 @@ const player = async (req, res) => {
         existingPlayer.strikeRate = strikeRate;
         existingPlayer.image = image; // Save Cloudinary URL
         existingPlayer.basePrice = basePrice;
-        existingPlayer.isDebut = isDebut;
+        existingPlayer.fiftybyhundred = fiftybyhundred;
+        existingPlayer.economy = economy;
+        existingPlayer.average = average;
         existingPlayer.bidplace = bidplace;
         existingPlayer.set = set;
         existingPlayer.setname = setname;
@@ -306,7 +310,9 @@ const player = async (req, res) => {
         strikeRate,
         image, // Save Cloudinary URL
         basePrice,
-        isDebut,
+        fiftybyhundred,
+        economy,
+        average,
         bidplace,
         set,
         setname,

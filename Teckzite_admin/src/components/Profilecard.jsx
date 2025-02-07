@@ -350,8 +350,16 @@ const ProfileCard = ({ player }) => {
               <TableData>{player.strikeRate || 'N/A'}</TableData>
             </tr>
             <tr>
-              <TableData>Debut</TableData>
-              <TableData>{player.isDebut ? 'Yes' : 'No'}</TableData>
+              <TableData>50/100</TableData>
+              <TableData>{player.fiftybyhundred}</TableData>
+            </tr>
+            <tr>
+              <TableData>Economy</TableData>
+              <TableData>{player.economy}</TableData>
+            </tr>
+            <tr>
+              <TableData>Average</TableData>
+              <TableData>{player.average}</TableData>
             </tr>
             <tr>
               <TableData>Sold</TableData>

@@ -123,7 +123,7 @@ const Players = () => {
                 <option value="unsold">Unsold</option>
               </select>
             </div>
-            <div className="flex flex-wrap justify-center gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {playersdata.length > 0 ? (
                 playersdata.map((player, index) => (
                   <div
@@ -132,7 +132,7 @@ const Players = () => {
                     style={{ minWidth: '350px', minHeight: '300px' }}
                   >
                     <div
-                      className={`bg-transparent border rounded-lg overflow-hidden shadow-md hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out ${
+                      className={`bg-[#161929] border rounded-lg overflow-hidden shadow-md hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out ${
                         player.isSold
                           ? 'shadow-[0_0_15px_rgba(6,182,212,0.3)] border-cyan-100'
                           : 'shadow-[0_0_10px_rgba(239,68,68,0.2)] border-red-100'
@@ -140,7 +140,7 @@ const Players = () => {
                     >
                       <div className="relative rounded-lg">
                         <div className="relative">
-                          <div className="w-24 h-24 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
+                          <div className="w-36 h-36 mx-auto mt-4 rounded-full overflow-hidden border-2 border-cyan-500/30">
                             <img
                               src={player.image}
                               alt={`Image of ${player.name}`}
@@ -172,7 +172,7 @@ const Players = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="grid grid-cols-3 gap-2">
+                          <div className="grid grid-cols-3 gap-3">
                             <div className="bg-[#232533] p-2 rounded-lg">
                               <p className="text-gray-400 text-xs">Runs</p>
                               <p className="text-sm font-bold text-cyan-400">
@@ -186,9 +186,27 @@ const Players = () => {
                               </p>
                             </div>
                             <div className="bg-[#232533] p-2 rounded-lg">
+                              <p className="text-gray-400 text-xs">50/100</p>
+                              <p className="text-sm font-bold text-cyan-400">
+                                {player.fiftybyhundred}
+                              </p>
+                            </div>
+                            <div className="bg-[#232533] p-2 rounded-lg">
                               <p className="text-gray-400 text-xs">Strike Rate</p>
                               <p className="text-sm font-bold text-cyan-400">
                                 {player.strikeRate}
+                              </p>
+                            </div>
+                            <div className="bg-[#232533] p-2 rounded-lg">
+                              <p className="text-gray-400 text-xs">Economy</p>
+                              <p className="text-sm font-bold text-cyan-400">
+                                {player.economy}
+                              </p>
+                            </div>
+                            <div className="bg-[#232533] p-2 rounded-lg">
+                              <p className="text-gray-400 text-xs">Average</p>
+                              <p className="text-sm font-bold text-cyan-400">
+                                {player.average}
                               </p>
                             </div>
                           </div>

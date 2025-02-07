@@ -275,10 +275,12 @@ const AddPlayer = () => {
     strikeRate: '',
     image: null,
     basePrice: '',
-    isDebut: false,
+    "fiftybyhundred": '',
+    economy:"",
+    average:"",
     bidplace: '',
     set: '',
-    setname:''
+    setname: ''
 
   });
   const [loading, setLoading] = useState(true);
@@ -293,18 +295,20 @@ const AddPlayer = () => {
     strikeRate: '',
     image: null,
     basePrice: '',
-    isDebut: false,
+    "fiftybyhundred": '',
+    economy:'',
+    average:'',
     bidplace: '',
     set: '',
-    setname:''
+    setname: ''
   });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [Players, setPlayers] = useState([]);
   const [filterplayers, setFilterPlayers] = useState([]);
   const [setnames, setSetNames] = useState({
-    setname:"",
-    setno:""
+    setname: "",
+    setno: ""
   });
 
 
@@ -318,7 +322,7 @@ const AddPlayer = () => {
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-  
+
     // Check if the input is a radio button for setname
     if (name === "setname") {
       const [setname, set] = value.split('-'); // Split values
@@ -334,7 +338,7 @@ const AddPlayer = () => {
       });
     }
   };
-  
+
   const fetchPlayers = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/getplayers");
@@ -344,19 +348,19 @@ const AddPlayer = () => {
         setPlayers(data);
         setFilterPlayers(data);
         setLoading(false);
-       
+
         const uniqueSetNamesAndNos = [
           ...new Set(data.map(player => `${player.setname}-${player.set}`))
         ];
-    
-      //   // Now, extract the unique combinations back to an object array
+
+        //   // Now, extract the unique combinations back to an object array
         const extractedSetNames = uniqueSetNamesAndNos.map(pair => {
           const [setname, setno] = pair.split('-');
           return { setname, setno };
         });
-    
+
         setSetNames(extractedSetNames);
-       }
+      }
       else {
         console.log("error while fetching data");
         toast.error("Error while fetching data");
@@ -399,10 +403,12 @@ const AddPlayer = () => {
       strikeRate: '',
       image: null,
       basePrice: '',
-      isDebut: false,
+      'fiftybyhundred': '',
+      economy:'',
+      average:'',
       bidplace: '',
       set: '',
-      setname:''
+      setname: ''
     });
     setIsModalOpen(false);
 
@@ -466,7 +472,7 @@ const AddPlayer = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id }), 
+        body: JSON.stringify({ id }),
       });
       if (response.ok) {
         // Successfully deleted the player
@@ -509,7 +515,7 @@ const AddPlayer = () => {
     }
   };
 
-  
+
   useEffect(() => {
     fetchPlayers();
   }, []);
@@ -533,14 +539,14 @@ const AddPlayer = () => {
     fetchPlayers();
 
     const { setname, setno } = setData;
-    
+
     // const matchedSet = setnames.find(
     //   (item) => item.setname === setname || item.setno === setno
     // );
     const matchedSet = Array.isArray(setnames)
-  ? setnames.find((item) => item.setname === setname || item.setno === setno)
-  : null;
-    
+      ? setnames.find((item) => item.setname === setname || item.setno === setno)
+      : null;
+
     if (matchedSet) {
       // If setname in setData matches setname in setnames
       if (matchedSet.setname === setname) {
@@ -551,7 +557,7 @@ const AddPlayer = () => {
           return;
         }
       }
-    
+
       // If setno in setData matches setno in setnames
       if (matchedSet.setno === setno) {
         // Ensure setname matches too
@@ -568,7 +574,7 @@ const AddPlayer = () => {
       toast.error("Please upload a file.");
       return;
     }
-  
+
     // Validate the file's extension
     const validExtensions = [".xlsx", ".xls"];
     const fileExtension = file.name.slice(file.name.lastIndexOf("."));
@@ -576,13 +582,13 @@ const AddPlayer = () => {
       toast.error("Please upload a valid Excel file (.xlsx or .xls).");
       return;
     }
-  
+
     // Create FormData for sending to the backend
     const formData = new FormData();
     formData.append("setname", setData.setname);
     formData.append("setno", setData.setno);
     formData.append("excel", file);
-  
+
     try {
       // Get the JWT token from local storage
       const token = localStorage.getItem("Token");
@@ -590,7 +596,7 @@ const AddPlayer = () => {
         toast.error("JWT token not found. Please log in again.");
         return;
       }
-  
+
       // Make the POST request to the backend using fetch
       const response = await fetch("http://localhost:8000/api/addset", {
         method: "POST",
@@ -599,12 +605,12 @@ const AddPlayer = () => {
         },
         body: formData, // FormData includes the file and other fields
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to upload data");
       }
-  
+
       // Handle success
       const responseData = await response.json();
       console.log("Upload successful:", responseData);
@@ -663,6 +669,7 @@ const AddPlayer = () => {
                 <TableHeader>Runs</TableHeader>
                 <TableHeader>Wickets</TableHeader>
                 <TableHeader>Strike Rate</TableHeader>
+                <TableHeader>50/100</TableHeader>
                 <TableHeader>Base Price</TableHeader>
                 <TableHeader>Set</TableHeader>
                 <TableHeader>Bid Place</TableHeader>
@@ -678,6 +685,7 @@ const AddPlayer = () => {
                     <TableData>{player.runs}</TableData>
                     <TableData>{player.wickets}</TableData>
                     <TableData>{player.strikeRate}</TableData>
+                    <TableData>{player.fiftybyhundred}</TableData>
                     <TableData>${player.basePrice}</TableData>
                     <TableData>{player.set}</TableData>
                     <TableData>{player.bidplace}</TableData>
@@ -778,6 +786,30 @@ const AddPlayer = () => {
               required
             />
             <ModalInput
+              type="text"
+              name="fiftybyhundred"
+              placeholder="50/100"
+              value={newPlayer.fiftybyhundred}
+              onChange={handleInputChange}
+              required
+            />
+              <ModalInput
+              type="text"
+              name="economy"
+              placeholder="Economy"
+              value={newPlayer.economy}
+              onChange={handleInputChange}
+              required
+            />
+              <ModalInput
+              type="text"
+              name="average"
+              placeholder="Average"
+              value={newPlayer.average}
+              onChange={handleInputChange}
+              required
+            />
+            <ModalInput
               type="file"
               name="image"
 
@@ -806,95 +838,31 @@ const AddPlayer = () => {
               onChange={handleInputChange}
               required
             />
-            {/* <fieldset style={{ border: 'none', margin: '10px 0' }} >
-              <legend style={{ fontWeight: 'bold' }}>Set</legend>
-              <label style={{ marginRight: '10px' }}>
-                <input
-                  type="radio"
-                  name="set"
-                  value="1"
-                  checked={newPlayer.set == '1'}
-                  onChange={handleInputChange}
-                  style={{ marginRight: '5px' }}
-                  required
-                />
-                1
-              </label>
-              <label style={{ marginRight: '10px', }}>
-                <input
-                  type="radio"
-                  name="set"
-                  value="2"
-                  checked={newPlayer.set == '2'}
-                  onChange={handleInputChange}
-                  style={{ marginRight: '5px' }}
-                />
-                2
-              </label>
-              <label style={{}}>
-                <input
-                  type="radio"
-                  name="set"
-                  value="3"
-                  checked={newPlayer.set == '3'}
-                  onChange={handleInputChange}
-                  style={{ marginRight: '5px' }}
-                />
-                3
-              </label>
-            </fieldset> */}
-            {/* {setnames &&setnames.length > 0 ? (
-  <>
-    { setnames.map((player, index) => (
-      <label key={index}>
-        <input
-          type="radio"
-          name="setname"
-          value={player}
-          checked={newPlayer.setname === player}
-          onChange={handleInputChange}
-          required
-        />
-       {player}
-      </label>
-    ))}
-  </>
-) : (
-  <p>No sets to add</p>
-)} */}
-{Array.isArray(setnames) ? (
-  setnames.map((player, index) => (
-    <label key={index}>
-      {/* <input
-        type="radio"
-        name="setname"
-        value={player.setname}
-        checked={newPlayer.setname === player.setname}
-        onChange={handleInputChange}
-        required
-      /> */}
-      <input
-  type="radio"
-  name="setname"
-  value={`${player.setname}-${player.setno}`}  // Combine values
-  checked={newPlayer.setname === player.setname}
-  onChange={handleInputChange}
-  required
-/>
+            {Array.isArray(setnames) ? (
+              setnames.map((player, index) => (
+                <label key={index}>
+                  <input
+                    type="radio"
+                    name="setname"
+                    value={`${player.setname}-${player.setno}`}  // Combine values
+                    checked={newPlayer.setname === player.setname}
+                    onChange={handleInputChange}
+                    required
+                  />
 
-      {player.setname}
-    </label>
-  ))
-) : (
-  <p>No sets to add</p>
-)}
+                  {player.setname}
+                </label>
+              ))
+            ) : (
+              <p>No sets to add</p>
+            )}
 
 
             <SubmitButton type="submit">Submit</SubmitButton>
           </ModalForm>
         </ModalContent>
       </Modal>
-    
+
 
 
       {

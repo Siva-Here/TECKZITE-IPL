@@ -37,10 +37,6 @@ const playerSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    "isDebut": {
-        type: Boolean,
-        required: true
-    },
     "image": {
         type: String,  // Storing the file itself as binary data
         
@@ -75,7 +71,13 @@ const playerSchema = new mongoose.Schema({
     "bidplace":{
         type:Number,
     },
-    "50/100":{
+    "fiftybyhundred":{
+        type:String,
+    },
+    "economy":{
+        type:String,
+    },
+    "average":{
         type:String,
     }
 });

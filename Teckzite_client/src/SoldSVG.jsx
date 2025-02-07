@@ -32,7 +32,9 @@ const SoldSVG = ({ name, team, color }) => {
             stroke={color}
             strokeWidth="3"
           >
-            Sold by {team}
+            {
+              team?`sold by ${team}`:"UN SOLD"
+            }
           </text>
           <text>
             <textPath

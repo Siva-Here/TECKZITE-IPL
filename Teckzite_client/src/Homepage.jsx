@@ -134,7 +134,7 @@ const HomePage = () => {
       {player ? (
         <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
           <div className="flex flex-col md:flex-row flex-1 h-screen">
-            {popper && <ConfettiComponent />}
+            {popper && team && <ConfettiComponent />}
 
             {/* SoldSVG Overlay */}
            

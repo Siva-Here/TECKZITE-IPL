@@ -104,13 +104,14 @@ const setupWebSocket = (server) => {
   let adminConnected = false;
   let popper = false;
   let auctionEnded = false;  // Track auction end state
-
+  let selectedTeam="";
   // Function to emit the current auction state
   const emitCurrentState = (socket) => {
     if (auctionEnded) {
       socket.emit('updateViewer', null);
       socket.emit('bidAmount', null);
       socket.emit('auctionEnded', true);
+     
     } else if (pause) {
       socket.emit('updateViewer', null);
       socket.emit('bidAmount', null);
@@ -120,10 +121,10 @@ const setupWebSocket = (server) => {
       socket.emit('bidAmount', currentBidAmount);
       socket.emit('pauseAuction', false);
       socket.emit('auctionEnded',false);
-      if (popper) {
-        socket.emit('bidConfirmed', true);
+      if (selectedTeam) {
+        socket.emit('bidConfirmed',popper, selectedTeam);
       } else {
-        socket.emit('bidConfirmed', false);
+        socket.emit('bidConfirmed', popper,false);
       }
       if (adminSocketId || adminConnected) socket.emit('started', true);
     }
@@ -158,12 +159,18 @@ const setupWebSocket = (server) => {
       io.emit('bidAmount', amount);
     });
 
-    // Handle bid confirmation
-    socket.on('bidConfirmed', (message) => {
-      if (auctionEnded) return;
-      popper = message;
-      io.emit('bidConfirmed', message);
-    });
+    // // Handle bid confirmation
+    // socket.on('bidConfirmed', (message) => {
+    //   if (auctionEnded) return;
+    //   popper = message;
+    //   io.emit('bidConfirmed', message);
+    // });
+    socket.on('bidConfirmed',(message,team)=>{
+            popper=message
+            selectedTeam=team
+            console.log("popper",popper,team)
+           io.emit('bidConfirmed',message,team);
+          })
 
     // Handle auction end
     socket.on('endauction', (message) => {
@@ -172,6 +179,7 @@ const setupWebSocket = (server) => {
       io.emit('updateViewer', null);
       io.emit('bidAmount', null);
       io.emit('auctionEnded', true);
+      
     });
 
     // Pause auction logic

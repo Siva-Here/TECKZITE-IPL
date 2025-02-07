@@ -382,7 +382,7 @@ const HomePage = () => {
       if (player?.set && player?.bidplace) {
         accelerateplayers(player.set,player.bidplace, "next");
       } else {
-        fetchPlayer(player.set);
+        accelerateplayers();
       }
     }
    else { 
@@ -400,7 +400,7 @@ const HomePage = () => {
         accelerateplayers(player.set,player.bidplace, "prev");
       }
       else {
-        accelerateplayers(player.set)
+        accelerateplayers()
       }
     }
     else{ 
@@ -531,13 +531,29 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error sending request:", error);
     }
-    if(accelerate){
-       accelerateplayers(player.set,player.bidplace,"next")
-    }else{ 
-    fetchPlayer(selectedSet,player.bidplace, "next")
-    }
+    // if(accelerate){
+    //    accelerateplayers(player.set,player.bidplace,"next")
+    // }else{ 
+    // fetchPlayer(selectedSet,player.bidplace, "next")
+    // }
+    socket.emit("bidConfirmed",true,null);
+    //fetchPlayer( player.set,player.bidplace, "next");
+   
+
+    setTimeout(() => {
+     socket.emit("bidConfirmed",false,null);
+     if(accelerate){
+        accelerateplayers(player.set, player.bidplace, "next");
+     }
+        fetchPlayer(selectedSet, player.bidplace, "next");
+    }, 8000);
+  
   }
   const accelerateplayers=async(set,bidplace=null,direction)=>{
+    if(!continueauction){
+      toast.error("auction is paused,resume it");
+      return;
+    }
 setAccelerate(true)
 setShowModal2(false)
     const url = bidplace

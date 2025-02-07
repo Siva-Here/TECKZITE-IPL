@@ -237,6 +237,7 @@ const NeonButton = styled.button`
   width: 10rem;
   transition: background 0.3s ease;
   z-index:2;
+  margin-top:5px;
 
   &:hover {
     background: linear-gradient(45deg, #00ffff, #ff00ff);
@@ -728,7 +729,7 @@ setShowModal2(false)
       {showModal2 ? (
        <>
         <NeonButton onClick={()=>accelerateplayers()}>Accelerate</NeonButton>
-        <NeonButton onClick={()=>endauction()}>End Auction</NeonButton>
+        <NeonButton onClick={()=>endauction()}>EndAuction</NeonButton>
        
         <div
           style={{

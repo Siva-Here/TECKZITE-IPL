@@ -113,6 +113,7 @@ const setupWebSocket = (server) => {
       socket.emit('auctionEnded', true);
      
     } else if (pause) {
+      console.log("paused while refreshing")
       socket.emit('updateViewer', null);
       socket.emit('bidAmount', null);
       socket.emit('pauseAuction', true);
@@ -121,6 +122,7 @@ const setupWebSocket = (server) => {
       socket.emit('bidAmount', currentBidAmount);
       socket.emit('pauseAuction', false);
       socket.emit('auctionEnded',false);
+      pause=false;
       if (selectedTeam) {
         socket.emit('bidConfirmed',popper, selectedTeam);
       } else {
@@ -150,6 +152,7 @@ const setupWebSocket = (server) => {
       if (auctionEnded) return;
       currentPlayerImage = image;
       io.emit('updateViewer', image);
+      pause=false;
     });
 
     // Update and broadcast bid amount

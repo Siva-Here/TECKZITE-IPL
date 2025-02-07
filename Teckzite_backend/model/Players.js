@@ -79,7 +79,11 @@ const playerSchema = new mongoose.Schema({
     },
     "average":{
         type:String,
-    }
+    },
+    "inaccelerate":{
+      type:Boolean,
+      default:false
+    },
 });
 
 playerSchema.pre('save', function(next) {

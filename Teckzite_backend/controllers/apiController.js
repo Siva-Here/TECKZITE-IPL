@@ -109,6 +109,7 @@ console.log(set)
 };
 const accelerateplayers = async (req, res) => {
     console.log("In accelerate function");
+    console.log(req.body)
     try {
       const {  set,bidplace, direction } = req.query;
   console.log(set)
@@ -117,7 +118,7 @@ const accelerateplayers = async (req, res) => {
       const setValue = parseInt(set, 10);
   
       let sortOrder = 1;
-      let query = { isSold: { $ne: true },inAuction:{$ne:false}};
+      let query = { isSold: { $ne: true },inAuction:{$ne:false},inaccelerate:{$ne:true}};
   
       if (direction === "next") {
         query = {
@@ -155,7 +156,7 @@ const accelerateplayers = async (req, res) => {
         query = {
           isSold: { $ne: true },
            inAuction:{$ne:false},
-           
+           inaccelerate:{$ne:true},
            set: {$lte:setValue}, bidplace: { $lte: bidPlaceValue } 
         };
         sortOrder = 1; 
@@ -165,6 +166,7 @@ const accelerateplayers = async (req, res) => {
         query = {
           isSold: { $ne: true },
          inAuction:{$ne:false},
+         inaccelerate:{$ne:true},
          set:{$gte: setValue}, bidplace: { $gte: bidPlaceValue } 
         };
         sortOrder = -1; 
@@ -200,11 +202,15 @@ const soldPlayers = async(req,res)=>{
 const unsold=async(req,res)=>{
   console.log("unsold")
   const id=req.body.id;
+  const inaccelerate=req.body.inaccelerate
     const player = await Player.findById(id);
     if (!player) {
       return res.status(404).send({ message: "Player not found" });
     }else{ 
   player.inAuction=true;
+  if(inaccelerate){
+    player.inaccelerate=true;
+  }
   await player.save();
   return res.status(200).send({message:"unsold"})
     }

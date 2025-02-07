@@ -12,6 +12,7 @@ import {
   FaArrowLeft,
   FaArrowRight,
 } from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom'
 
 const Container = styled.div`
   height: 80vh;
@@ -315,6 +316,7 @@ const HomePage = () => {
   useEffect(() => {
     fetchTeams();
   }, []);
+  const navigate = useNavigate();
   const token = localStorage.getItem("Token");
   const fetchTeams=async()=>{
     console.log("fetching sets")
@@ -513,13 +515,18 @@ const HomePage = () => {
     if(!confirmed){
       return;
     }
+     let inaccelerate=false
+    if(accelerate){
+    inaccelerate=true;
+
+    }
     try {
       const response = await fetch("http://localhost:8000/api/unsold", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }), 
+        body: JSON.stringify({ id,inaccelerate }), 
       });
   
       if (response.ok) {
@@ -544,8 +551,9 @@ const HomePage = () => {
      socket.emit("bidConfirmed",false,null);
      if(accelerate){
         accelerateplayers(player.set, player.bidplace, "next");
-     }
+     }else{ 
         fetchPlayer(selectedSet, player.bidplace, "next");
+     }
     }, 8000);
   
   }
@@ -603,6 +611,8 @@ setShowModal2(false)
   // }
   const endauction=()=>{
     socket.emit("endauction",true)
+
+    navigate('/');
   }
   const pauseAuction=()=>{
    

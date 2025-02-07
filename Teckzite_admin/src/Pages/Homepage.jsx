@@ -481,7 +481,10 @@ const HomePage = () => {
 
          setTimeout(() => {
           socket.emit("bidConfirmed",false,null);
-             fetchPlayer(player.set, player.bidplace, "next");
+          if(accelerate){
+             accelerateplayers(player.set, player.bidplace, "next");
+          }
+             fetchPlayer(selectedSet, player.bidplace, "next");
          }, 8000);
         })
         .catch((error) => {
@@ -506,6 +509,10 @@ const HomePage = () => {
     fetchPlayer(set);
   }
   const handleunsold = async(id) => {
+    const confirmed=confirm("do you want to make player as unsold?")
+    if(!confirmed){
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8000/api/unsold", {
         method: "POST",
@@ -524,8 +531,11 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error sending request:", error);
     }
-    console.log("out")
-    fetchPlayer(player.set,player.bidplace, "next")
+    if(accelerate){
+       accelerateplayers(player.set,player.bidplace,"next")
+    }else{ 
+    fetchPlayer(selectedSet,player.bidplace, "next")
+    }
   }
   const accelerateplayers=async(set,bidplace=null,direction)=>{
 setAccelerate(true)

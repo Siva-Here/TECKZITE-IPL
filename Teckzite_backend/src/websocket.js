@@ -119,6 +119,7 @@ const setupWebSocket = (server) => {
       socket.emit('updateViewer', currentPlayerImage);
       socket.emit('bidAmount', currentBidAmount);
       socket.emit('pauseAuction', false);
+      socket.emit('auctionEnded',false);
       if (popper) {
         socket.emit('bidConfirmed', true);
       } else {
@@ -188,7 +189,11 @@ const setupWebSocket = (server) => {
       console.log('User disconnected:', socket.id);
       if (socket.id === adminSocketId) {
         console.log('Admin disconnected:', socket.id);
+        io.emit('updateViewer',null);
+        io.emit('pauseAuction',true)
         adminSocketId = null;
+        currentPlayerImage = '';
+        currentBidAmount = '';
         adminConnected = true;
       }
     });

@@ -171,11 +171,11 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-
-            <div className="w-full md:w-1/2 p-4 md:p-8 lg:p-12">
+            
+            <div className="w-full md:w-1/2 p-4 md:p-8 lg:p-12 bg-gradient-to-br from-cyan-9000 via-cyan to-gray-9000 ">
               {/* Auction Details and Career Statistics sections */}
               {/* ... (rest of your code) ... */}
-              <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 mb-8 transition-transform transform">
+              <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 mb-8 transition-transform transform border border border-cyan-500/60 hover:scale-105">
                 <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
                   <i className="fas fa-dollar-sign w-6 h-6 mr-3 text-cyan-500">
                   </i>
@@ -217,14 +217,14 @@ const HomePage = () => {
                   </button>
                 </div>
               </div>
-              <div className="bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 transition-transform transform">
+              <div className=" hover:scale-105 bg-opacity-80 backdrop-blur-md rounded-xl p-4 md:p-8 transition-transform transform border border-cyan-500/60">
                 <h2 className="text-xl md:text-2xl font-bold mb-4 flex items-center">
                   <i className="fas fa-chart-line w-5 h-5 mr-3 text-cyan-500">
                   </i>
                   <FaChartLine className="w-5 h-5 mr-3 text-cyan-300" />
                   Career Statistics
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4  p-4">
                   <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
                     {/* Button Content */}
                     <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
@@ -277,10 +277,42 @@ const HomePage = () => {
                     {/* Button Content */}
                     <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
                       {/* <span className="w-4 h-4"><FiUsers /></span> */}
-                      Runs
+                      50/100
                     </span>
                     <div className="text-2xl md:text-3xl font-bold">
-                      5,000
+                      {player.fiftybyhundred}
+                    </div>
+
+                    {/* Geometric Accents */}
+                    <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                    <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                    <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                    <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                  </button>
+                  <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                    {/* Button Content */}
+                    <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                      {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                      Average
+                    </span>
+                    <div className="text-2xl md:text-3xl font-bold">
+                      {player.average}
+                    </div>
+
+                    {/* Geometric Accents */}
+                    <div className="absolute -top-[1px] -left-[1px] w-2 h-2 border-t border-l border-cyan-500"></div>
+                    <div className="absolute -top-[1px] -right-[1px] w-2 h-2 border-t border-r border-cyan-500"></div>
+                    <div className="absolute -bottom-[1px] -left-[1px] w-2 h-2 border-b border-l border-cyan-500"></div>
+                    <div className="absolute -bottom-[1px] -right-[1px] w-2 h-2 border-b border-r border-cyan-500"></div>
+                  </button>
+                  <button className="relative group/btn w-full px-4 py-2 bg-gradient-to-r from-[#090A0C] to-[#3155AE] hover:from-[#3155AE] hover:to-[#161929] backdrop-blur-md border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 rounded">
+                    {/* Button Content */}
+                    <span className="relative flex items-center justify-center gap-2 text-cyan-300 group-hover/btn:text-cyan-200 transition-colors duration-300">
+                      {/* <span className="w-4 h-4"><FiUsers /></span> */}
+                      Economy
+                    </span>
+                    <div className="text-2xl md:text-3xl font-bold">
+                      {player.economy}
                     </div>
 
                     {/* Geometric Accents */}
@@ -302,7 +334,7 @@ const HomePage = () => {
                 <span className="text-cyan-300">
                   <FaPauseCircle /> 
                 </span>
-                Oops.... Auction Paused????
+                Oops.... Auction Paused
               </>
             ) 
             : (
@@ -313,7 +345,7 @@ const HomePage = () => {
                 <span className="text-cyan-300">
                   <FaHourglassStart /> 
                 </span>
-                Oops !! Auction Not Yet Started/Completed
+                Oops !! Auction Not Yet Started.
               </> :
               <>
                 <span className="text-cyan-300">

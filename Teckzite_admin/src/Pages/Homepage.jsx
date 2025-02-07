@@ -308,7 +308,9 @@ const HomePage = () => {
   const [accelerate,setAccelerate]=useState(false);
   const [setnames,setSetnames]=useState({ 
     setname:[],
-    set:[]
+    set:[],
+    setwithoutplayer_set:[],
+    setwithoutplayer_setname:[]
   }
   ) 
   const [teamnames,setTeamNames]=useState([]);
@@ -326,8 +328,10 @@ const HomePage = () => {
       if (response.ok) {
         console.log(data)
         setSetnames({
-          setname: data.setname || [],  // Ensure empty array if undefined
-          set: data.set || []
+          setname: data.setname || [],  
+          set: data.set || [],
+          setwithoutplayer_set:data.setwithoutplayers_set ||[],
+          setwithoutplayer_setname:data.setwithoutplayers_setname ||[],
         });
         setTeamNames(data.teamnames);
       setShowModal2(true)
@@ -372,6 +376,7 @@ const HomePage = () => {
           socket.emit('updateViewer', null)
           socket.emit('pauseAuction',true)
           setShowModal2(true)
+          fetchTeams()
         }
       })
       .catch((err) => {
@@ -584,6 +589,7 @@ setShowModal2(false)
           socket.emit('updateViewer', null)
           socket.emit('pauseAuction',true)
           setShowModal2(true)
+          fetchTeams()
         }
       })
       .catch((err) => {
@@ -792,8 +798,9 @@ setShowModal2(false)
               maxWidth: "500px",
             }}
           > 
-           {setnames.setname.length > 0 ? (
-            
+          
+           {setnames.setname.length > 0 && (
+           
         setnames.setname.map((setno, index) => (
           
           <div
@@ -810,12 +817,31 @@ setShowModal2(false)
       </NeonButton>
           </div>
         ))
-       
-        
-      ) : (
-        <p>No sets available...</p>
-      )}
-
+      )
+    }
+      {/* // ) : (
+      //   <p></p>
+      // )} */}
+ {  setnames.setwithoutplayer_setname.length > 0 && (
+    <>
+      <h4>Sets without Players</h4>
+      {setnames.setwithoutplayer_setname.map((setObj, index) => (
+        <div
+          key={`without-${index}`}
+          style={{
+            margin: "10px",
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <NeonButton onClick={()=>toast.error("no players in this set")}>
+            {setObj}
+          </NeonButton>
+        </div>
+      ))}
+    </>
+  )}
 
           </div>
         </div> 

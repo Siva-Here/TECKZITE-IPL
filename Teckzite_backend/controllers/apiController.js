@@ -383,28 +383,91 @@ const bid = async (req, res) => {
   }
 };
 
+  // const fetchsets = async (req, res) => {
+  //   console.log("in fetchsets")
+  //   try {
+  //     const sets = await Player.aggregate([
+  //       { $match: { isSold: false } },
+  //       { 
+  //         $group: { 
+  //           _id: null, 
+  //           setname: { $addToSet: "$setname" }, 
+  //           set: { $addToSet: "$set" } 
+  //         } 
+  //       }
+  //     ]);
+      
+  //     // Extract unique setnames and setnos from the result
+  //     const setname = sets[0]?.setname || [];
+  //     const set = sets[0]?.set || [];
+  //     const teams = await Team.find({}, 'teamID'); 
+  //       const teamnames = teams.map(team => team.teamID);
+  //     res.status(200).json({
+  //       setname,
+  //       set,
+  //       teamnames
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: "Failed to fetch sets" });
+  //   }
+  // };
   const fetchsets = async (req, res) => {
-    console.log("in fetchsets")
+    console.log("in fetchsets");
     try {
-      const sets = await Player.aggregate([
-        { $match: { isSold: false } },
+      // 1. Query for sets with unsold players.
+      //    We match players that are unsold (isSold: false, inAuction: false)
+      //    and then group by set.
+      const setsWithPlayersAgg = await Player.aggregate([
+        { $match: { isSold: false, inAuction: false } },
         { 
           $group: { 
-            _id: null, 
-            setname: { $addToSet: "$setname" }, 
-            set: { $addToSet: "$set" } 
+            _id: "$set", 
+            setname: { $first: "$setname" } 
           } 
         }
       ]);
+      const setsWithoutPlayersAgg=await Player.aggregate([
+        {
+          $match: {
+            $or: [
+              { isSold: true },
+              { isSold: false, inAuction: true }
+            ]
+          }
+        },
+          { 
+            $group: { 
+              _id: "$set", 
+              setname: { $first: "$setname" } 
+            } 
+          }
+        
+      ])
+  
+    console.log(setsWithPlayersAgg,setsWithoutPlayersAgg)
+      // Map aggregation results to arrays of objects for easier extraction.
+      const setsWithPlayers = setsWithPlayersAgg.map(doc => ({
+        set: doc._id,
+        setname: doc.setname
+      }));
+      const setsWithoutPlayers = setsWithoutPlayersAgg.map(doc => ({
+        set: doc._id,
+        setname: doc.setname
+      }));
+  
       
-      // Extract unique setnames and setnos from the result
-      const setname = sets[0]?.setname || [];
-      const set = sets[0]?.set || [];
-      const teams = await Team.find({}, 'teamID'); 
-        const teamnames = teams.map(team => team.teamID);
+      const teams = await Team.find({}, 'teamID');
+      const teamnames = teams.map(team => team.teamID);
       res.status(200).json({
-        setname,
-        set,
+        // Arrays for sets that have unsold players.
+        setname: setsWithPlayers.map(item => item.setname), // e.g. ["Set One", "Set Two"]
+        set: setsWithPlayers.map(item => item.set),         // e.g. [1, 2]
+  
+        // Arrays for sets that do not have unsold players.
+        setwithoutplayers_set: setsWithoutPlayers.map(item => item.set),         // e.g. [3, 4]
+        setwithoutplayers_setname: setsWithoutPlayers.map(item => item.setname), // e.g. ["Set Three", "Set Four"]
+  
         teamnames
       });
     } catch (error) {
@@ -412,6 +475,8 @@ const bid = async (req, res) => {
       res.status(500).json({ message: "Failed to fetch sets" });
     }
   };
+
+  
 
 const deleteTeam = async (req, res) => {
   const { id } = req.body;

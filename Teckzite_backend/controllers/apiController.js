@@ -427,36 +427,21 @@ const bid = async (req, res) => {
           } 
         }
       ]);
-      // const setsWithoutPlayersAgg=await Player.aggregate([
-      //   {
-      //     $match: {
-      //       $or: [
-      //         { isSold: true },
-      //         { isSold: false, inAuction: true }
-      //       ]
-      //     }
-      //   },
-      //     { 
-      //       $group: { 
-      //         _id: "$set", 
-      //         setname: { $first: "$setname" } 
-      //       } 
-      //     }
-        
-      // ])
+      
+
       const setsWithoutPlayersAgg = await Player.aggregate([
         {
           $group: {
             _id: "$set",
             setname: { $first: "$setname" },
-            totalPlayers: { $sum: 1 },  
+            totalPlayers: { $sum: 1 },
             matchingPlayers: {
               $sum: {
                 $cond: [
-                  { 
+                  {
                     $or: [
-                      { isSold: true },
-                      { $and: [{ isSold: false }, { inAuction: true }] }
+                      { $eq: ["$isSold", true] },  // Corrected condition for isSold
+                      { $and: [{ $eq: ["$isSold", false] }, { $eq: ["$inAuction", true] }] } // Corrected condition for isSold: false and inAuction: true
                     ]
                   },
                   1,
@@ -473,7 +458,7 @@ const bid = async (req, res) => {
         }
       ]);
       
-  
+     
     console.log(setsWithPlayersAgg,setsWithoutPlayersAgg)
       // Map aggregation results to arrays of objects for easier extraction.
       const setsWithPlayers = setsWithPlayersAgg.map(doc => ({

@@ -122,13 +122,13 @@ const Players = () => {
                 <option value="unsold">Unsold</option>
               </select>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
               {playersdata.length > 0 ? (
                 playersdata.map((player, index) => (
                   <div
                     key={index}
                     className="flex justify-center"
-                    style={{ minWidth: '350px', minHeight: '300px' }}
+                    style={{ minWidth: 'auto', minHeight: '300px' }}
                   >
                     <div
                       className={`bg-[#161929] border rounded-lg overflow-hidden shadow-md hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out ${

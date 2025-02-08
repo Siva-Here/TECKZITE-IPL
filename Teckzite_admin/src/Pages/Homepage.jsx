@@ -516,10 +516,15 @@ const HomePage = () => {
     fetchPlayer(set);
   }
   const handleunsold = async(id) => {
+    if(!continueauction){
+      toast.error("Auction is paused,Resume it");
+      return;
+    }
     const confirmed=confirm("do you want to make player as unsold?")
     if(!confirmed){
       return;
     }
+    
      let inaccelerate=false
     if(accelerate){
     inaccelerate=true;

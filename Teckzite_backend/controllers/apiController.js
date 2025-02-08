@@ -415,9 +415,6 @@ const bid = async (req, res) => {
   const fetchsets = async (req, res) => {
     console.log("in fetchsets");
     try {
-      // 1. Query for sets with unsold players.
-      //    We match players that are unsold (isSold: false, inAuction: false)
-      //    and then group by set.
       const setsWithPlayersAgg = await Player.aggregate([
         { $match: { isSold: false, inAuction: false } },
         { 
@@ -440,8 +437,8 @@ const bid = async (req, res) => {
                 $cond: [
                   {
                     $or: [
-                      { $eq: ["$isSold", true] },  // Corrected condition for isSold
-                      { $and: [{ $eq: ["$isSold", false] }, { $eq: ["$inAuction", true] }] } // Corrected condition for isSold: false and inAuction: true
+                      { $eq: ["$isSold", true] },  
+                      { $and: [{ $eq: ["$isSold", false] }, { $eq: ["$inAuction", true] }] } 
                     ]
                   },
                   1,
@@ -460,7 +457,7 @@ const bid = async (req, res) => {
       
      
     console.log(setsWithPlayersAgg,setsWithoutPlayersAgg)
-      // Map aggregation results to arrays of objects for easier extraction.
+      
       const setsWithPlayers = setsWithPlayersAgg.map(doc => ({
         set: doc._id,
         setname: doc.setname

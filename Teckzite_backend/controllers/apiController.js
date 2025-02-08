@@ -706,6 +706,22 @@ const playerinfo = async (req, res) => {
   }
 };
 
+const getTeaminfo = async (req, res) => {
+  try {
+    const { id } = req.params; // Extracting team ID from the request parameters
+
+    const team = await Team.findById(id); // Finding the team by ID in the database
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    res.status(200).json(team); // Sending the team data as a response
+  } catch (error) {
+    console.error("Error fetching team info:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 
 
@@ -715,4 +731,6 @@ const playerinfo = async (req, res) => {
 
 
 
-module.exports = {getplayers,playersToBuy,accelerateplayers,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset,fetchsets,unsold,playerinfo};
+
+
+module.exports = {getplayers,playersToBuy,accelerateplayers,soldPlayers,getTeams,player,createTeam,bid,deleteTeam,deletePlayer,getteamplayers,addset,fetchsets,unsold,playerinfo,getTeaminfo};

@@ -131,7 +131,7 @@ const Players = () => {
                     style={{ minWidth: 'auto', minHeight: '300px' }}
                   >
                     <div
-                      className={`md:bg-gradient-to-bl from-cyan-900 via-black to-gray-900 border rounded-lg overflow-hidden shadow-md hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out ${
+                      className={`border rounded-lg overflow-hidden shadow-md hover:bg-[#161929] cursor-pointer transition-colors duration-300 ease-in-out ${
                         player.isSold
                           ? 'shadow-[0_0_15px_rgba(6,182,212,0.3)] border-cyan-100'
                           : 'shadow-[0_0_10px_rgba(239,68,68,0.2)] border-red-100'

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'; // Importing Toast for notifications
 import ProfileCard from '../components/ProfileCard';
 import Oval from "react-loading-icons/dist/esm/components/oval";
 import { useParams } from 'react-router-dom';
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
 
 const GradientCards = styled.div`
   display: flex;
@@ -110,7 +111,7 @@ const Teamplayers = () => {
   const fetchPlayers = async () => {
     try {
 
-      const response = await fetch(`http://localhost:8000/api/getteamplayers/${id}`);
+      const response = await fetch(`${Backend_Url}/api/getteamplayers/${id}`);
       const data = await response.json();
       if (response.ok) {
         setPlayers(data);

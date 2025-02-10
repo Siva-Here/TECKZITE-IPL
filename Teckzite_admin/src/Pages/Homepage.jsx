@@ -13,6 +13,8 @@ import {
   FaArrowRight,
 } from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom'
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
 
 const Container = styled.div`
   height: 80vh;
@@ -295,7 +297,7 @@ import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { Modal } from "react-bootstrap";
-const socket = io('http://localhost:8000');
+const socket = io(Backend_Url);
 
 const HomePage = () => {
   const [player, setPlayer] = useState(null); // Current player data
@@ -323,7 +325,7 @@ const HomePage = () => {
   const fetchTeams=async()=>{
     console.log("fetching sets")
     try {
-      const response = await fetch("http://localhost:8000/api/getsets");
+      const response = await fetch(`${Backend_Url}/api/getsets`);
       const data = await response.json();
       if (response.ok) {
         console.log(data)
@@ -357,8 +359,8 @@ const HomePage = () => {
       return;
     }
     const url = bidplace
-      ? `http://localhost:8000/api/playersToBuy?set=${set}&bidplace=${bidplace}&direction=${direction}`
-      : `http://localhost:8000/api/playersToBuy?set=${set}`;
+      ? `${Backend_Url}/api/playersToBuy?set=${set}&bidplace=${bidplace}&direction=${direction}`
+      : `${Backend_Url}/api/playersToBuy?set=${set}`;
     
 
     axios
@@ -466,7 +468,7 @@ const HomePage = () => {
     if (player) {
       axios
         .post(
-          'http://localhost:8000/api/bid',
+          `${Backend_Url}/api/bid`,
           {
             playerId: player._id,
             biddingAmount: bidAmount,
@@ -531,7 +533,7 @@ const HomePage = () => {
 
     }
     try {
-      const response = await fetch("http://localhost:8000/api/unsold", {
+      const response = await fetch(`${Backend_Url}/api/unsold`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -548,15 +550,7 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error sending request:", error);
     }
-    // if(accelerate){
-    //    accelerateplayers(player.set,player.bidplace,"next")
-    // }else{ 
-    // fetchPlayer(selectedSet,player.bidplace, "next")
-    // }
     socket.emit("bidConfirmed",true,null);
-    //fetchPlayer( player.set,player.bidplace, "next");
-   
-
     setTimeout(() => {
      socket.emit("bidConfirmed",false,null);
      if(accelerate){
@@ -575,10 +569,8 @@ const HomePage = () => {
 setAccelerate(true)
 setShowModal2(false)
     const url = bidplace
-      ? `http://localhost:8000/api/accelerateplayers?set=${set}&bidplace=${bidplace}&direction=${direction}`
-      : `http://localhost:8000/api/accelerateplayers?`;
-    
-
+      ? `${Backend_Url}/api/accelerateplayers?set=${set}&bidplace=${bidplace}&direction=${direction}`
+      : `${Backend_Url}/api/accelerateplayers?`;
     axios
       .get(url)
       .then((response) => {
@@ -601,25 +593,6 @@ setShowModal2(false)
         console.error('Error fetching player:', err);
       });
   }
-  // const accelerate=async()=>{
-  //   try{ 
-  //   const response = await fetch("http://localhost:8000/api/getunsoldplayers");
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       console.log(data)
-       
-      
-  //     }
-  //     else {
-  //       console.log("error while fetching data");
-  //       alert("Error while fetching data");
-  //     }
-  //   }
-  //   catch (error) {
-  //     console.log(error);
-  //   }
-    
-  // }
   const endauction=()=>{
     socket.emit("endauction",true)
 
@@ -698,9 +671,9 @@ setShowModal2(false)
                     <CardItemValue>{player.strikeRate}</CardItemValue>
                   </CardItem>
                   <CardItem>
-                    <CardItemTitle>Debut</CardItemTitle>
+                    <CardItemTitle>50/100</CardItemTitle>
                     <CardItemValue>{player.
-                      isDebut}</CardItemValue>
+                      fiftybyhundred}</CardItemValue>
                   </CardItem>
                 </CardGrid>
               </Card>

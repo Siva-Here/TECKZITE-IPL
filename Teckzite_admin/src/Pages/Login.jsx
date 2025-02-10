@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import {useAuth} from "../Authcontext"
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
 
 const Container = styled.div`
   background-color: #1a202c;
@@ -92,8 +94,7 @@ const Login = () => {
     }
 
     try {
-      const API_URL = "http://localhost:8000";
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${Backend_Url}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-// import "./poppercss.css"; // Import your CSS file
-
 const ConfettiComponent = () => {
   useEffect(() => {
     "use strict";
@@ -238,16 +236,6 @@ const ConfettiComponent = () => {
                 setTimeout(() => {
                     manager.addConfetti();
                     },7500);
-    
-    // const triggerButton = document.getElementById("show-again");
-    // if (triggerButton) {
-    //   triggerButton.addEventListener("click", () => manager.addConfetti());
-    // }
-
-    // const resetInput = document.getElementById("reset");
-    // if (resetInput) {
-    //   resetInput.addEventListener("input", () => manager.resetAndStart());
-    // }
   }, []);
 
   return (

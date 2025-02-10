@@ -12,6 +12,8 @@ import {
 } from 'react-icons/fa';
 import ConfettiComponent from './ConfettiComponent';
 import SoldSVG from './SoldSVG';
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
 
 const TeamsContainer = styled.div`
   position: relative;
@@ -69,7 +71,7 @@ const SoldOverlay = styled.div`
 `;
 
 
-const socket = io('http://localhost:8000');
+const socket = io(`${Backend_Url}`);
 
 const HomePage = () => {
   const [player, setPlayer] = useState({});
@@ -206,7 +208,7 @@ const HomePage = () => {
                       Current bid
                     </span>
                     <div className="text-green-400 md:text-3xl font-bold">
-                      {amount}
+                      {amount?amount:player.basePrice}
                     </div>
 
                     {/* Geometric Accents */}

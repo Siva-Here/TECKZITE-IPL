@@ -5,6 +5,8 @@ import {toast} from "react-toastify";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Oval from "react-loading-icons/dist/esm/components/oval";
 import {useNavigate} from "react-router-dom";
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
 
 
 const AddTeamContainer = styled.div`
@@ -387,7 +389,7 @@ const AddTeam = () => {
     }
   
     try {
-      const url = "http://localhost:8000/api/createTeam"; // Create API endpoint
+      const url = `${Backend_Url}/api/createTeam`; // Create API endpoint
   
       const response = await fetch(url, {
         method: "POST", // Use PUT for editing, POST for adding
@@ -415,7 +417,7 @@ const AddTeam = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/getTeams");
+      const response = await fetch(`${Backend_Url}/api/getTeams`);
       const data = await response.json();
       if (response.ok) {
         setTeamData(data);
@@ -458,7 +460,7 @@ const AddTeam = () => {
           return;
         }
   
-        const response = await fetch("http://localhost:8000/api/deleteTeam", {
+        const response = await fetch(`${Backend_Url}/api/deleteTeam`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

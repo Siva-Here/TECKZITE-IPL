@@ -382,36 +382,6 @@ const bid = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-  // const fetchsets = async (req, res) => {
-  //   console.log("in fetchsets")
-  //   try {
-  //     const sets = await Player.aggregate([
-  //       { $match: { isSold: false } },
-  //       { 
-  //         $group: { 
-  //           _id: null, 
-  //           setname: { $addToSet: "$setname" }, 
-  //           set: { $addToSet: "$set" } 
-  //         } 
-  //       }
-  //     ]);
-      
-  //     // Extract unique setnames and setnos from the result
-  //     const setname = sets[0]?.setname || [];
-  //     const set = sets[0]?.set || [];
-  //     const teams = await Team.find({}, 'teamID'); 
-  //       const teamnames = teams.map(team => team.teamID);
-  //     res.status(200).json({
-  //       setname,
-  //       set,
-  //       teamnames
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ message: "Failed to fetch sets" });
-  //   }
-  // };
   const fetchsets = async (req, res) => {
     console.log("in fetchsets");
     try {

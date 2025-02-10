@@ -9,7 +9,6 @@ import AddPlayer from './Pages/AddPlayer';
 import AddTeam from './Pages/AddTeam';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Auction from './Pages/Auction';
 import HomePage from './Pages/Homepage';
 import Teamplayers from './Pages/Teamplayers';
 

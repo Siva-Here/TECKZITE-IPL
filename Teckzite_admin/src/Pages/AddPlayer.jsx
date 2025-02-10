@@ -7,6 +7,9 @@ import SpinningCircles from "react-loading-icons/dist/esm/components/spinning-ci
 import Oval from "react-loading-icons/dist/esm/components/oval";
 //search styles
 
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
+
 const CenterSpinner = styled.div`
   display: flex;
   justify-content: center;
@@ -313,6 +316,8 @@ const AddPlayer = () => {
 
 
   const [editoption, setEditoption] = useState(false);
+
+
   const handleAddPlayer = () => {
     setIsModalOpen(true);
   };
@@ -341,7 +346,7 @@ const AddPlayer = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/getplayers");
+      const response = await fetch(`${Backend_Url}/api/getplayers`);
       const data = await response.json();
       if (response.ok) {
         console.log(data)
@@ -424,7 +429,7 @@ const AddPlayer = () => {
     }
     setUploading(true);
     try {
-      const url = "http://localhost:8000/api/createplayer"; // Create API endpoint
+      const url = `${Backend_Url}/api/createplayer`; // Create API endpoint
 
       const response = await fetch(url, {
         method: "POST",
@@ -466,7 +471,7 @@ const AddPlayer = () => {
     const id = player._id;
 
     try {
-      const response = await fetch("http://localhost:8000/api/deletePlayer", {
+      const response = await fetch(`${Backend_Url}/api/deletePlayer`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -598,7 +603,7 @@ const AddPlayer = () => {
       }
 
       // Make the POST request to the backend using fetch
-      const response = await fetch("http://localhost:8000/api/addset", {
+      const response = await fetch(`${Backend_Url}/api/addset`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Attach the JWT token

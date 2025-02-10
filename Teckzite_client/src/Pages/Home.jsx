@@ -6,6 +6,8 @@ import { OrbitControls } from "@react-three/drei";
 import {useNavigate} from "react-router-dom";
 import { useState, useEffect } from 'react';
 import {toast} from "react-toastify";
+const Backend_Url = import.meta.env.VITE_BACKEND_URL;
+
 
 const Container = styled.div`
   position: relative;
@@ -38,7 +40,7 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/playerinfo');
+      const response = await fetch(`${Backend_Url}/api/playerinfo`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }

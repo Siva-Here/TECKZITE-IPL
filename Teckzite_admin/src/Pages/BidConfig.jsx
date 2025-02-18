@@ -1,4 +1,3 @@
-
 export const getBidIncrement = (basePrice) => {
     if (basePrice <= 20000000) {
       return 2000000; // 20 lakh

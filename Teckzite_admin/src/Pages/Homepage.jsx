@@ -307,6 +307,7 @@ const HomePage = () => {
   const [showModal2, setShowModal2] = useState(false);
   const [selectedSet,setSelectedSet]=useState('');
   const [continueauction,setContinue]=useState(true);
+  const [successbid,setSuccessbid]=useState(false);
   const [accelerate,setAccelerate]=useState(false);
   const [setnames,setSetnames]=useState({ 
     setname:[],
@@ -486,10 +487,13 @@ const HomePage = () => {
           
       socket.emit("bidConfirmed",true,selectedTeam);
          //fetchPlayer( player.set,player.bidplace, "next");
-        
-
+     
+         setSuccessbid(true)
+         setPlayer(false)
          setTimeout(() => {
           socket.emit("bidConfirmed",false,null);
+          setSuccessbid(false)
+          
           if(accelerate){
              accelerateplayers(player.set, player.bidplace, "next");
           }
@@ -551,8 +555,11 @@ const HomePage = () => {
       console.error("Error sending request:", error);
     }
     socket.emit("bidConfirmed",true,null);
+    setSuccessbid(true)
+    setPlayer(false)
     setTimeout(() => {
      socket.emit("bidConfirmed",false,null);
+     setSuccessbid(false)
      if(accelerate){
         accelerateplayers(player.set, player.bidplace, "next");
      }else{ 
@@ -618,7 +625,13 @@ setShowModal2(false)
   return (
     <Container>
       <HeroSection>
-        
+      {successbid && (
+          <div className="fixed z-110 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-green-300 p-8 rounded-lg shadow-lg">
+              <h2 className="text-4xl font-bold mb-4">Successfully sold or unsold</h2>
+            </div>
+          </div> 
+        )}
         {player ? (
           <>
           
@@ -649,7 +662,7 @@ setShowModal2(false)
             </ImageContainer>
             
             <MainContent>
-              
+          
               <Card>
                 <CardTitle>
                   <FaChartLine className=" mr-1  text-[#ff00ff]" />
@@ -742,9 +755,9 @@ setShowModal2(false)
             </MainContent>
           </>
 
-        ) : <ButtonGroup>
+        ) : !successbid? <ButtonGroup>
           <Card><p>No palyers available</p></Card>
-        </ButtonGroup >}
+        </ButtonGroup >:null}
       </HeroSection>
       {showModal2 ? (
        <>

@@ -92,7 +92,7 @@ const Login = () => {
       toast.warn("Please enter your password");
       return;
     }
-
+  
     try {
       const response = await fetch(`${Backend_Url}/auth/login`, {
         method: "POST",

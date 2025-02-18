@@ -133,7 +133,40 @@ const HomePage = () => {
                 <SoldSVG name={player.name} team={team} color={team ? "#38ad34": "red"}/>
               </SoldOverlay>
             )}
-      {player ? (
+              <TeamsContainer>
+          <Message className="text-center">
+            {auctionstatus ? (
+              <>
+                <span className="text-cyan-300">
+                  <FaPauseCircle /> 
+                </span>
+                Oops.... Auction Paused
+              </>
+            ) 
+            : (
+              <>
+              {
+                !start ? 
+                <>
+                <span className="text-cyan-300">
+                  <FaHourglassStart /> 
+                </span>
+                Oops !! Auction Not Yet Started.
+              </> :
+              <>
+                <span className="text-cyan-300">
+                  <FaPauseCircle /> 
+                </span>
+                Oops.... Auction Paused
+              </>
+
+              }
+              </>
+            )
+             }
+          </Message>
+        </TeamsContainer>
+      {!auctionstatus&!start&player ? (
         <div className="bg-gradient-to-br from-cyan-900 via-black to-gray-900 text-cyan-300 min-h-screen flex flex-col">
           <div className="flex flex-col md:flex-row flex-1 h-screen">
             {popper && team && <ConfettiComponent />}
@@ -329,39 +362,7 @@ const HomePage = () => {
           </div>
         </div>
       ) : (
-        <TeamsContainer>
-          <Message className="text-center">
-            {auctionstatus ? (
-              <>
-                <span className="text-cyan-300">
-                  <FaPauseCircle /> 
-                </span>
-                Oops.... Auction Paused
-              </>
-            ) 
-            : (
-              <>
-              {
-                !start ? 
-                <>
-                <span className="text-cyan-300">
-                  <FaHourglassStart /> 
-                </span>
-                Oops !! Auction Not Yet Started.
-              </> :
-              <>
-                <span className="text-cyan-300">
-                  <FaPauseCircle /> 
-                </span>
-                Oops.... Auction Paused
-              </>
-
-              }
-              </>
-            )
-             }
-          </Message>
-        </TeamsContainer>
+      <p>Oops.... Auction Paused</p>
       )}
     </>
   );
